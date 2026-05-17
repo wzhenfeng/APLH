@@ -46,7 +46,7 @@ namespace APLH.Data
                 user.Email,
                 user.Password,
                 user.Role,
-                Joined = DateTime.Now
+                Joined = DateTime.UtcNow.AddHours(8)
             });
 
             user.Id = id;
@@ -169,7 +169,7 @@ namespace APLH.Data
             {
                 UserId = userId,
                 CourseId = courseId,
-                EnrolledDate = DateTime.Now
+                EnrolledDate = DateTime.UtcNow.AddHours(8)
             });
 
             await IncrementCourseEnrollmentAsync(courseId);
@@ -252,7 +252,7 @@ namespace APLH.Data
                 score.Score,
                 score.TotalQuestions,
                 Percentage = percentage,
-                QuizDate = DateTime.Now
+                QuizDate = DateTime.UtcNow.AddHours(8)
             });
         }
 
