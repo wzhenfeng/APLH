@@ -24,7 +24,7 @@ builder.Services.AddScoped<EmailService>();
 
 
 // Register services
-builder.Services.AddSingleton<SqlRepository>();
+builder.Services.AddScoped<SqlRepository>();
 builder.Services.AddScoped<LearningService>();
 
 builder.Services.AddAuthentication(options =>

@@ -1,5 +1,5 @@
 using System.Data;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using Dapper;
 using APLH.Models;
 
@@ -15,7 +15,7 @@ namespace APLH.Data
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
 
-        private IDbConnection CreateConnection() => new SqlConnection(_connectionString);
+        private IDbConnection CreateConnection() => new NpgsqlConnection(_connectionString);
 
         // ── User operations ─────────────────────────────────────────────────────
 
@@ -38,7 +38,7 @@ namespace APLH.Data
             using var connection = CreateConnection();
             var sql = @"INSERT INTO users (name, email, password, role, joined)
                         VALUES (@Name, @Email, @Password, @Role, @Joined);
-                        SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                        RETURNING id;";
 
             var id = await connection.ExecuteScalarAsync<int>(sql, new
             {
@@ -101,7 +101,7 @@ namespace APLH.Data
             using var connection = CreateConnection();
             var sql = @"INSERT INTO courses (title, description, category, level, price, duration, emoji)
                         VALUES (@Title, @Description, @Category, @Level, @Price, @Duration, @Emoji);
-                        SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                        RETURNING id;";
 
             var id = await connection.ExecuteScalarAsync<int>(sql, new
             {
@@ -214,7 +214,7 @@ namespace APLH.Data
             using var connection = CreateConnection();
             var sql = @"INSERT INTO quiz_questions (question, option_a, option_b, option_c, option_d, correct_answer, course_id)
             VALUES (@Question, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectAnswer, @CourseId);
-            SELECT CAST(SCOPE_IDENTITY() AS INT);";
+            RETURNING id;";
 
             var id = await connection.ExecuteScalarAsync<int>(sql, new
             {
@@ -279,7 +279,7 @@ namespace APLH.Data
             using var connection = CreateConnection();
 
             var sql = @"INSERT INTO activity_logs (user_id, activity, created_at)
-                        VALUES (@UserId, @Activity, GETDATE())";
+                        VALUES (@UserId, @Activity, NOW())";
 
             await connection.ExecuteAsync(sql, new
             {
