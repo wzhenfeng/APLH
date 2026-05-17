@@ -155,3 +155,6 @@ C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\refint\APLH.dll
 C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.pdb
 C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.genruntimeconfig.cache
 C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\ref\APLH.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Npgsql.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.sourcelink.json
