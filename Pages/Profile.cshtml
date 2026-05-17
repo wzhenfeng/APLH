@@ -1,0 +1,100 @@
+﻿@page
+@model APLH.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="profile-container">
+
+    <div class="profile-header">
+        <h1>My Profile</h1>
+        <p>Welcome back, @Model.UserName 👋</p>
+    </div>
+
+    <div class="profile-grid">
+
+        <div class="profile-card">
+            <h3>Account Information</h3>
+
+            <div class="profile-info">
+                <p><strong>Name:</strong> @Model.UserName</p>
+                <p><strong>Email:</strong> @Model.UserEmail</p>
+                <p><strong>Role:</strong> @Model.UserRole</p>
+            </div>
+        </div>
+
+        @if (!User.IsInRole("admin"))
+        {
+            <div class="profile-card">
+                <h3>Statistics</h3>
+
+                <div class="profile-info">
+                    <p><strong>Enrolled Courses:</strong> @Model.Course.Count</p>
+                    <p><strong>Total Quiz Attempts:</strong> @Model.QuizScore.Count</p>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    @if (!User.IsInRole("admin"))
+    {
+        <div class="profile-card" style="margin-top:30px;">
+            <h3>Enrolled Courses</h3>
+
+            @if (Model.Course.Count > 0)
+            {
+                @foreach (var course in Model.Course)
+                {
+                    <div class="course-item">
+                        <h4>@course.Title</h4>
+                        <p>@course.Description</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No enrolled courses.</p>
+            }
+        </div>
+
+        <div class="profile-card" style="margin-top:30px;">
+            <h3>Quiz Scores</h3>
+
+            @if (Model.QuizScore.Count > 0)
+            {
+                <table class="quiz-table">
+
+                    <thead>
+                        <tr>
+                            <th>Score</th>
+                            <th>Total Questions</th>
+                            <th>Percentage</th>
+                            <th>Quiz Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var score in Model.QuizScore)
+                        {
+                            <tr>
+                                <td>@score.Score</td>
+                                <td>@score.TotalQuestions</td>
+                                <td>@score.Percentage%</td>
+                                <td>@score.QuizDate.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <p>No quiz results.</p>
+            }
+        </div>
+    }
+
+</div>

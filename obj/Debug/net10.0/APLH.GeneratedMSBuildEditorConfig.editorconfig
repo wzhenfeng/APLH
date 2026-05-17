@@ -1,0 +1,87 @@
+is_global = true
+build_property.TargetFramework = net10.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = APLH
+build_property.RootNamespace = APLH
+build_property.ProjectDir = C:\APU\Degree Y2\SEM 2\Web Application\APLH\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\APU\Degree Y2\SEM 2\Web Application\APLH
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 10.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/About.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWJvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Admin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Courses.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291cnNlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/CoursesDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291cnNlc0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/HashPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSGFzaFBhc3N3b3JkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Quiz.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUXVpei5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/TestDb.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGVzdERiLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/TestQuiz.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGVzdFF1aXouY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/APU/Degree Y2/SEM 2/Web Application/APLH/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-flf4smra79

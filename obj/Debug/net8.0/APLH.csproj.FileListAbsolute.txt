@@ -1,0 +1,157 @@
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.csproj.AssemblyReference.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.AssemblyInfoInputs.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.AssemblyInfo.cs
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.csproj.CoreCompileInputs.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.RazorAssemblyInfo.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.RazorAssemblyInfo.cs
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.dll
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\refint\APLH.dll
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.pdb
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\appsettings.json
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.staticwebassets.runtime.json
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.staticwebassets.endpoints.json
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.exe
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.deps.json
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.runtimeconfig.json
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\APLH.pdb
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Azure.Core.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Dapper.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\MailKit.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\MimeKit.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.ClientModel.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.Memory.Data.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.Runtime.Caching.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\de\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\es\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\fr\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\it\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\ja\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\ko\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\pt-BR\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\ru\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\zh-Hans\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\zh-Hant\Microsoft.Data.SqlClient.resources.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\unix\lib\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Runtime.Caching.dll
+C:\Users\bennc\Downloads\APLH\APLH\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\scopedcss\Pages\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\scopedcss\bundle\APLH.styles.css
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\scopedcss\projectbundle\APLH.bundle.scp.css
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\swae.build.ex.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.csproj.Up2Date
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\APLH.genruntimeconfig.cache
+C:\Users\bennc\Downloads\APLH\APLH\obj\Debug\net8.0\ref\APLH.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\appsettings.Development.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\appsettings.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.staticwebassets.runtime.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.staticwebassets.endpoints.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.exe
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.deps.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.runtimeconfig.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\APLH.pdb
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Azure.Core.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Azure.Identity.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Dapper.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\MailKit.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\MimeKit.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.ClientModel.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.Memory.Data.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.Runtime.Caching.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\de\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\es\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\fr\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\it\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\ja\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\ko\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\pt-BR\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\ru\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\zh-Hans\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\zh-Hant\Microsoft.Data.SqlClient.resources.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\unix\lib\net8.0\Microsoft.Data.SqlClient.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Runtime.Caching.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.csproj.AssemblyReference.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.GeneratedMSBuildEditorConfig.editorconfig
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.AssemblyInfoInputs.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.AssemblyInfo.cs
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.csproj.CoreCompileInputs.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.MvcApplicationPartsAssemblyInfo.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.RazorAssemblyInfo.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.RazorAssemblyInfo.cs
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\scopedcss\Pages\Shared\_Layout.cshtml.rz.scp.css
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\scopedcss\bundle\APLH.styles.css
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\scopedcss\projectbundle\APLH.bundle.scp.css
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\staticwebassets.build.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\staticwebassets.development.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\swae.build.ex.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.csproj.Up2Date
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\refint\APLH.dll
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.pdb
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\APLH.genruntimeconfig.cache
+C:\APU\Degree Y2\SEM 2\Web Application\APLH\obj\Debug\net8.0\ref\APLH.dll

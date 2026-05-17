@@ -1,0 +1,61 @@
+﻿@page
+@model CoursesModel
+@{
+    ViewData["Title"] = "Courses - APLH";
+}
+
+<div class="page-header">
+    <div style="max-width:1200px;margin:0 auto">
+        <h1>All Courses</h1>
+        <p>Explore our catalog — from beginner to advanced, across every field.</p>
+    </div>
+</div>
+
+<div class="courses-container">
+    <div class="courses-toolbar">
+        <div class="search-box">
+            <input type="text" id="courseSearch" placeholder="Search courses..." onkeyup="loadCourses()">
+        </div>
+        <button class="filter-btn active" onclick="filterCourses('all', this)">All</button>
+        <button class="filter-btn" onclick="filterCourses('Technology', this)">Tech</button>
+        <button class="filter-btn" onclick="filterCourses('Design', this)">Design</button>
+        <button class="filter-btn" onclick="filterCourses('Business', this)">Business</button>
+        <button class="filter-btn" onclick="filterCourses('Science', this)">Science</button>
+        <button class="btn btn-primary btn-sm" id="addCourseBtn" style="display:none; margin-left:auto" onclick="openAddCourseModal()">+ Add Course</button>
+    </div>
+    <div id="coursesGrid" class="courses-grid"></div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            loadCourses();
+            checkAdminAccess();
+        });
+
+        function checkAdminAccess() {
+            $.ajax({
+                url: '/api/auth/currentuser',
+                type: 'GET',
+                success: function(user) {
+                    if (user && user.Role === 'admin') {
+                        $('#addCourseBtn').show();
+                    }
+                }
+            });
+        }
+
+        function openAddCourseModal() {
+            $('#courseModalTitle').html('Add <span>Course</span>');
+            $('#courseEditId').val('');
+            $('#courseTitle').val('');
+            $('#courseDesc').val('');
+            $('#courseCat').val('Technology');
+            $('#courseLevel').val('Beginner');
+            $('#coursePrice').val(0);
+            $('#courseDuration').val(8);
+            $('#courseEmoji').val('📚');
+            openModal('courseModal');
+        }
+    </script>
+}

@@ -1,0 +1,63 @@
+﻿@page
+@{
+    ViewData["Title"] = "Home - APLH";
+}
+
+<div class="hero @(User.Identity?.IsAuthenticated ?? false ? "logged-in" : "")">
+
+    <div>
+        <h1>Learn Skills That <em>Actually Matter</em></h1>
+        <p>
+            Access world-class courses, take interactive quizzes,
+            and track your progress — all in one beautiful platform.
+        </p>
+        <div class="hero-actions">
+            @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <button class="btn btn-primary btn-lg"
+                            onclick="location.href='/Courses'">
+                        Browse Courses
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-lg"
+                            onclick="showCoursesLoginMessage()">
+                        Browse Courses
+                    </button>
+                }
+
+            @if (!(User.Identity?.IsAuthenticated ?? false))
+            {
+                <button class="btn btn-ghost btn-lg"
+                        onclick="openRegisterModal()">
+                    Join for Free
+                </button>
+            }
+
+        </div>
+    </div>
+
+    @if (!(User.Identity?.IsAuthenticated ?? false))
+    {
+        <div class="hero-visual">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-num">6</div>
+                    <div class="stat-label">Courses available</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">3</div>
+                    <div class="stat-label">Registered learners</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">4.9★</div>
+                    <div class="stat-label">Average rating</div>
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

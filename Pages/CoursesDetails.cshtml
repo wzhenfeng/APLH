@@ -1,0 +1,334 @@
+﻿@page
+@model CourseDetailModel
+@{
+    ViewData["Title"] = Model.Course?.Title + " - APLH";
+}
+
+@if (Model.Course != null)
+{
+    var enrolled = Model.IsEnrolled;
+    
+    <div class="course-detail-layout">
+        <div class="course-detail-main">
+            <div class="course-detail-thumb" style="background: @Model.GetCategoryBg()">
+                @Model.Course.Emoji
+            </div>
+            <div class="course-cat" style="color:@Model.GetCategoryColor(); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem">
+                @Model.Course.Category · @Model.Course.Level
+            </div>
+            <div class="course-detail-title">@Model.Course.Title</div>
+            <div class="course-detail-desc">@Model.Course.Description</div>
+            <div style="display:flex; gap:1.5rem; margin-bottom:1.5rem; font-size:0.875rem; color:var(--text2)">
+                <span>⏱ @Model.Course.Duration minutes</span>
+                <span>⭐ @Model.Course.Rating rating</span>
+                <span>👥 @Model.Course.Enrolled.ToLocaleString() students</span>
+            </div>
+            <div class="curriculum">
+                <div class="curriculum-header">📋 Course Curriculum</div>
+                @for (int i = 1; i <= 6; i++)
+                {
+                    <div class="curriculum-item">
+                        <span>Module @i: @Model.GetModuleName(i)</span>
+                        <span style="color:var(--text3)">@(Model.Course.Duration / 6 + (i == 1 ? 2 : 0)) minutes</span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="course-detail-sidebar">
+            <div class="sticky-sidebar">
+                <div class="sidebar-card">
+                    <div class="sidebar-price @(Model.Course.Price == 0 ? "free" : "")">
+                        @(Model.Course.Price == 0 ? "FREE" : "RM " + Model.Course.Price)
+                    </div>
+                    @if (User.IsInRole("admin"))
+                        {
+                            <button class="btn btn-primary"
+                                    style="width:100%; padding:14px; font-size:1rem"
+                                    onclick="openQuizQuestionModal()">
+                                Add / Edit Quiz Questions
+                            </button>
+                        }
+                        else if (enrolled)
+                        {
+                            <button class="btn btn-success"
+                                    style="width:100%; padding:14px; font-size:1rem"
+                                    onclick="location.href='/Quiz?courseId=@Model.Course.Id'">
+
+                                Continue Learning →
+
+                            </button>
+
+                            <p style="color:var(--green); text-align:center; margin-top:8px; font-size:0.875rem">
+                                ✓ You are enrolled!
+                            </p>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary"
+                                    style="width:100%; padding:14px; font-size:1rem"
+                                    onclick="enrollCourse(@Model.Course.Id)">
+
+                                @(Model.Course.Price == 0 ? "Enroll for Free" : "Enroll Now")
+
+                            </button>
+                        }
+                    <div class="sidebar-includes">
+                        <div>📹 @Model.Course.Duration minutes of video content</div>
+                        <div>📝 Quizzes and assessments</div>
+                        <div>🏆 Certificate of completion</div>
+                        <div>♾ Full lifetime access</div>
+                        <div>📱 Access on mobile & desktop</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <div class="icon">🔍</div>
+        <p>Course not found.</p>
+    </div>
+}
+
+<div class="modal-overlay" id="quizQuestionModal">
+    <div class="modal" style="max-width:700px;">
+        <h2>Add <span>Quiz Questions</span></h2>
+
+        <div id="quizQuestionList"></div>
+
+        <button class="btn btn-ghost" onclick="addQuestionForm()">
+            + Add Another Question
+        </button>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" style="flex:1" onclick="saveAllQuizQuestions()">
+                Save All Questions
+            </button>
+
+            <button class="btn btn-ghost" onclick="closeModal('quizQuestionModal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let questionIndex = 0;
+    const currentCourseId = @Model.Course.Id;
+
+    function enrollCourse(courseId) {
+        $.ajax({
+            url: '/api/api/courses/enroll',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ courseId: courseId }),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Successfully enrolled! 🎉', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                }
+            },
+            error: function() {
+                openLoginModal();
+            }
+        });
+    }
+
+    function openQuizQuestionModal() {
+        $('#quizQuestionList').html('');
+        questionIndex = 0;
+        openModal('quizQuestionModal');
+
+        $.ajax({
+            url: `/api/api/quiz/questions?courseId=${currentCourseId}`,
+            type: 'GET',
+            success: function(questions) {
+                if (!questions || questions.length === 0) {
+                    addQuestionForm();
+                    return;
+                }
+
+                questions.forEach(q => {
+                    addExistingQuestionForm(q);
+                });
+            },
+            error: function() {
+                showToast('Failed to load quiz questions', 'error');
+            }
+        });
+    }
+
+    function addQuestionForm() {
+        questionIndex++;
+
+        $('#quizQuestionList').append(`
+            <div class="quiz-question-form" style="border:1px solid var(--border);padding:15px;border-radius:12px;margin-bottom:15px;">
+                <h3>Question ${questionIndex}</h3>
+
+                <div class="form-group">
+                    <label>Question</label>
+                    <input type="text" class="q-question" placeholder="Enter question">
+                </div>
+
+                <div class="form-group">
+                    <label>Option A</label>
+                    <input type="text" class="q-option-a" placeholder="Option A">
+                </div>
+
+                <div class="form-group">
+                    <label>Option B</label>
+                    <input type="text" class="q-option-b" placeholder="Option B">
+                </div>
+
+                <div class="form-group">
+                    <label>Option C</label>
+                    <input type="text" class="q-option-c" placeholder="Option C">
+                </div>
+
+                <div class="form-group">
+                    <label>Option D</label>
+                    <input type="text" class="q-option-d" placeholder="Option D">
+                </div>
+
+                <div class="form-group">
+                    <label>Correct Answer</label>
+                    <select class="q-correct-answer">
+                        <option value="0">Option A</option>
+                        <option value="1">Option B</option>
+                        <option value="2">Option C</option>
+                        <option value="3">Option D</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-danger btn-sm"
+                        style="margin-top:12px;"
+                        onclick="removeQuestion(this)">
+                    Remove Question
+                </button>
+            </div>
+        `);
+    }
+
+    function addExistingQuestionForm(q) {
+        questionIndex++;
+
+        $('#quizQuestionList').append(`
+            <div class="quiz-question-form" style="border:1px solid var(--border);padding:15px;border-radius:12px;margin-bottom:15px;">
+                <h3>Question ${questionIndex}</h3>
+
+                <input type="hidden" class="q-id" value="${q.id}">
+
+                <div class="form-group">
+                    <label>Question</label>
+                    <input type="text" class="q-question" value="${q.question}">
+                </div>
+
+                <div class="form-group">
+                    <label>Option A</label>
+                    <input type="text" class="q-option-a" value="${q.optionA}">
+                </div>
+
+                <div class="form-group">
+                    <label>Option B</label>
+                    <input type="text" class="q-option-b" value="${q.optionB}">
+                </div>
+
+                <div class="form-group">
+                    <label>Option C</label>
+                    <input type="text" class="q-option-c" value="${q.optionC}">
+                </div>
+
+                <div class="form-group">
+                    <label>Option D</label>
+                    <input type="text" class="q-option-d" value="${q.optionD}">
+                </div>
+
+                <div class="form-group">
+                    <label>Correct Answer</label>
+                    <select class="q-correct-answer">
+                        <option value="0" ${q.correctAnswer == 0 ? 'selected' : ''}>Option A</option>
+                        <option value="1" ${q.correctAnswer == 1 ? 'selected' : ''}>Option B</option>
+                        <option value="2" ${q.correctAnswer == 2 ? 'selected' : ''}>Option C</option>
+                        <option value="3" ${q.correctAnswer == 3 ? 'selected' : ''}>Option D</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-danger btn-sm"
+                        style="margin-top:12px;"
+                        onclick="removeQuestion(this)">
+                    Remove Question
+                </button>
+            </div>
+        `);
+    }
+
+    function removeQuestion(button) {
+    const form = $(button).closest('.quiz-question-form');
+    const questionId = form.find('.q-id').val();
+
+    if (!questionId) {
+        form.remove();
+        return;
+    }
+
+    if (!confirm('Remove this question permanently?')) return;
+
+    $.ajax({
+        url: `/api/api/quiz/questions/${questionId}`,
+        type: 'DELETE',
+        success: function(response) {
+            if (response.success) {
+                form.remove();
+                showToast('Question removed successfully', 'success');
+            } else {
+                showToast('Failed to remove question', 'error');
+            }
+        },
+        error: function() {
+            showToast('Server error while removing question', 'error');
+        }
+    });
+    }
+
+    function saveAllQuizQuestions() {
+        const forms = $('.quiz-question-form');
+
+        if (forms.length === 0) {
+            showToast('Please add at least one question', 'error');
+            return;
+        }
+
+        forms.each(function () {
+            const form = $(this);
+
+            const question = {
+                id: parseInt(form.find('.q-id').val()) || 0,
+                question: form.find('.q-question').val(),
+                optionA: form.find('.q-option-a').val(),
+                optionB: form.find('.q-option-b').val(),
+                optionC: form.find('.q-option-c').val(),
+                optionD: form.find('.q-option-d').val(),
+                correctAnswer: parseInt(form.find('.q-correct-answer').val()),
+                courseId: currentCourseId
+            };
+
+            $.ajax({
+                url: '/api/api/quiz/questions/save',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(question)
+            });
+        });
+
+        showToast('All quiz questions saved successfully 🎉', 'success');
+
+        setTimeout(() => {
+            closeModal('quizQuestionModal');
+            location.reload();
+        }, 1000);
+    }
+</script>
+}

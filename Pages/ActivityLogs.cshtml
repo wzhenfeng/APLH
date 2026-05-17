@@ -1,0 +1,52 @@
+﻿@page
+@model APLH.Pages.ActivityLogsModel
+@{
+    ViewData["Title"] = "Activity Logs";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <h1>Activity Logs</h1>
+            <p>Track user and admin actions in the system.</p>
+        </div>
+    </div>
+
+    <div class="admin-table-card">
+
+        <h2>System Activity</h2>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Activity</th>
+                    <th>Date / Time</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Logs.Count > 0)
+                {
+                    foreach (var log in Model.Logs)
+                    {
+                        <tr>
+                            <td>@log.UserId</td>
+                            <td>@log.Activity</td>
+                            <td>@log.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3">No activity logs yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

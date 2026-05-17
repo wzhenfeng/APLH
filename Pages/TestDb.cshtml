@@ -1,0 +1,34 @@
+@page
+@model APLH.Pages.TestDbModel
+@{
+    ViewData["Title"] = "Database Test";
+}
+
+<h2>Database Connection Test</h2>
+
+@if (Model.IsConnected)
+{
+    <div style="color: green;">
+        <h3>✓ Database Connected Successfully!</h3>
+        <p>Connection String: @Model.ConnectionString</p>
+        <p>User Count: @Model.UserCount</p>
+        @if (Model.Users != null && Model.Users.Any())
+        {
+            <h4>Users in database:</h4>
+            <ul>
+                @foreach (var user in Model.Users)
+                {
+                    <li>@user.Email - @user.Role</li>
+                }
+            </ul>
+        }
+    </div>
+}
+else
+{
+    <div style="color: red;">
+        <h3>✗ Database Connection Failed</h3>
+        <p><strong>Error:</strong> @Model.ErrorMessage</p>
+        <p><strong>Connection String:</strong> @Model.ConnectionString</p>
+    </div>
+}

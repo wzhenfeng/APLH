@@ -1,0 +1,32 @@
+@page
+@model APLH.Pages.TestQuizModel
+@{
+    ViewData["Title"] = "Quiz Test";
+}
+
+<h2>Quiz Questions Test</h2>
+
+<p><strong>Question Count:</strong> @Model.QuestionCount</p>
+
+@if (Model.Questions != null && Model.Questions.Any())
+{
+    <h3>Questions:</h3>
+    @foreach (var q in Model.Questions)
+    {
+        <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0;">
+            <p><strong>Q:</strong> @q.Question</p>
+            <ul>
+                <li>A: @q.OptionA</li>
+                <li>B: @q.OptionB</li>
+                <li>C: @q.OptionC</li>
+                <li>D: @q.OptionD</li>
+            </ul>
+            <p><strong>Correct Answer:</strong> @q.CorrectAnswer</p>
+            <p><strong>Options Property:</strong> @string.Join(", ", q.Options)</p>
+        </div>
+    }
+}
+else
+{
+    <p style="color: red;">No quiz questions found in database!</p>
+}
