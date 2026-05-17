@@ -37,7 +37,7 @@ namespace APLH.Data
         {
             using var connection = CreateConnection();
             var sql = @"INSERT INTO users (name, email, password, role, joined)
-                        VALUES (@Name, @Email, @Password, @Role, @Joined);
+                        VALUES (@Name, @Email, @Password, @Role, @Joined)
                         RETURNING id;";
 
             var id = await connection.ExecuteScalarAsync<int>(sql, new
@@ -100,7 +100,7 @@ namespace APLH.Data
         {
             using var connection = CreateConnection();
             var sql = @"INSERT INTO courses (title, description, category, level, price, duration, emoji)
-                        VALUES (@Title, @Description, @Category, @Level, @Price, @Duration, @Emoji);
+                        VALUES (@Title, @Description, @Category, @Level, @Price, @Duration, @Emoji)
                         RETURNING id;";
 
             var id = await connection.ExecuteScalarAsync<int>(sql, new
@@ -213,7 +213,7 @@ namespace APLH.Data
         {
             using var connection = CreateConnection();
             var sql = @"INSERT INTO quiz_questions (question, option_a, option_b, option_c, option_d, correct_answer, course_id)
-            VALUES (@Question, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectAnswer, @CourseId);
+            VALUES (@Question, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectAnswer, @CourseId)
             RETURNING id;";
 
             var id = await connection.ExecuteScalarAsync<int>(sql, new
