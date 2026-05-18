@@ -1,0 +1,116 @@
+﻿@page
+@model APLH.Pages.UserManagementModel
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="admin-page">
+
+    <div class="admin-header">
+
+        <div>
+            <h1>User Management</h1>
+            <p>Manage student accounts in the system.</p>
+        </div>
+
+    </div>
+
+    <div class="admin-table-card">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+
+                        <td>@user.Id</td>
+
+                        <td>@user.Name</td>
+
+                        <td>@user.Email</td>
+
+                        <td>@user.Role</td>
+
+                        <td>@user.Joined.ToString("dd MMM yyyy")</td>
+
+                        <td>
+
+                            @if (user.Role != "admin")
+                            {
+                                <button class="icon-btn del"
+                                        onclick="deleteUser(@user.Id)">
+
+                                    Delete
+
+                                </button>
+                            }
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+<script>
+
+function deleteUser(id) {
+
+    if (!confirm('Delete this user?')) return;
+
+    $.ajax({
+
+        url: `/api/api/users/${id}`,
+
+        type: 'DELETE',
+
+        success: function(response) {
+
+            if (response.success) {
+
+                showToast(
+                    'User deleted successfully',
+                    'success'
+                );
+
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+
+            }
+        },
+
+        error: function() {
+
+            showToast(
+                'Failed to delete user',
+                'error'
+            );
+        }
+    });
+}
+
+</script>
+
+}
