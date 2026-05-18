@@ -12,16 +12,28 @@
             <p>Manage course content in the system.</p>
         </div>
 
-        <button class="btn btn-primary"
-                onclick="openAddCourseModal()">
+        <div style="display:flex; gap:12px;">
 
-            + Add Course
+    <button class="btn btn-ghost"
+            onclick="toggleCourseManagement()">
 
-        </button>
+        View Course Management
+
+    </button>
+
+    <button class="btn btn-primary"
+            onclick="openAddCourseModal()">
+
+        + Add Course
+
+    </button>
+
+        </div>
     </div>
 
 
-<div style="display:grid; grid-template-columns:3fr 1fr; gap:25px; align-items:start;">
+<div id="courseManagementView"
+     style="display:none; grid-template-columns:3fr 1fr; gap:25px; align-items:start;">
 
     <div class="admin-table-card">
 
@@ -107,6 +119,20 @@
 
 <script>
 
+    function toggleCourseManagement() {
+
+    const view = document.getElementById('courseManagementView');
+
+    if (view.style.display === 'none') {
+
+        view.style.display = 'grid';
+
+    } else {
+
+        view.style.display = 'none';
+    }
+}
+    
     function openAddCourseModal() {
 
         document.getElementById('courseModalTitle')
