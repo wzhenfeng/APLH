@@ -53,7 +53,11 @@ function handleLogin() {
             if (response.success) {
                 closeModal('loginModal');
                 showToast(`Welcome back, ${response.user.name}!`, 'success');
-                location.reload();
+                if (response.user.role === 'admin' || response.user.Role === 'admin') {
+                    location.href = '/Admin';
+                } else {
+                    location.reload();
+                }
             } else {
                 showAlert('loginAlert', 'error', response.message || 'Invalid email or password');
             }
