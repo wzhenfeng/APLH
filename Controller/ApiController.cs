@@ -335,6 +335,13 @@ public async Task<IActionResult> GetCourseMaterials(int courseId)
 
     return Ok(materials);
 }
+
+[HttpDelete("users/{id}")]
+public async Task<IActionResult> DeleteUser(int id)
+{
+    await _service.DeleteUserAsync(id);
+    return Ok(new { success = true });
+}
     }
 
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }

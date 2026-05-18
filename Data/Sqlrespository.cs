@@ -62,7 +62,16 @@ namespace APLH.Data
         public async Task DeleteUserAsync(int id)
         {
             using var connection = CreateConnection();
-            await connection.ExecuteAsync("DELETE FROM users WHERE id = @Id", new { Id = id });
+
+            var sql = @"
+                DELETE FROM users
+                WHERE id = @Id
+                AND role != 'admin'";
+
+            await connection.ExecuteAsync(sql, new
+            {
+                Id = id
+            });
         }
 
         // ── Course operations ────────────────────────────────────────────────────
