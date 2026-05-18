@@ -250,11 +250,18 @@
     const totalStudents = courseValues.reduce((a, b) => a + b, 0);
 
     const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
-        type: 'line',
+
+        type: 'pie',
 
         data: {
 
-            labels: courseNames,
+            labels: courseNames.map((name, index) => {
+
+                const percentage =
+                    ((courseValues[index] / totalStudents) * 100).toFixed(1);
+
+                return `${name} (${percentage}%)`;
+            }),
 
             datasets: [{
 
@@ -262,15 +269,9 @@
 
                 data: courseValues,
 
-                borderColor: '#6bcbff',
+                backgroundColor: courseColors,
 
-                backgroundColor: 'rgba(107, 203, 255, 0.2)',
-
-                tension: 0.4,
-
-                fill: true,
-
-                borderWidth: 3
+                borderWidth: 1
             }]
         },
 
@@ -282,13 +283,6 @@
 
                 legend: {
                     position: 'bottom'
-                }
-            },
-
-            scales: {
-
-                y: {
-                    beginAtZero: true
                 }
             }
         }
