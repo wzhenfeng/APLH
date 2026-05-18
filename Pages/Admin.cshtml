@@ -90,15 +90,86 @@
 
 </div>
 
-<div class="admin-table-card" style="margin-bottom:30px;">
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:25px; align-items:start;">
 
-    <h2>Course Statistics</h2>
+    <div class="admin-table-card">
 
-    <div style="max-width:500px; margin:auto;">
-        <canvas id="courseCountChart"></canvas>
+        <h2>Course Management</h2>
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Emoji</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Level</th>
+                    <th>Price</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var course in Model.Courses)
+                {
+                    <tr>
+
+                        <td>@course.Emoji</td>
+
+                        <td>@course.Title</td>
+
+                        <td>@course.Category</td>
+
+                        <td>@course.Level</td>
+
+                        <td>RM @course.Price</td>
+
+                        <td>@course.Duration minutes</td>
+
+                        <td>
+
+                            <button class="icon-btn edit-btn"
+                                    data-id="@course.Id"
+                                    data-title="@course.Title"
+                                    data-description="@course.Description"
+                                    data-category="@course.Category"
+                                    data-level="@course.Level"
+                                    data-price="@course.Price"
+                                    data-duration="@course.Duration"
+                                    data-emoji="@course.Emoji">
+                                Edit
+                            </button>
+
+                            <button class="icon-btn del"
+                                    onclick="deleteCourse(@course.Id)">
+                                Delete
+                            </button>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="admin-table-card">
+
+        <h2>Course Statistics</h2>
+
+        <div style="padding:20px;">
+            <canvas id="courseCountChart"></canvas>
+        </div>
+
     </div>
 
 </div>
+
 @section Scripts {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
