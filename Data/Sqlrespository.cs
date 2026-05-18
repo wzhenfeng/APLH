@@ -318,7 +318,9 @@ namespace APLH.Data
             {
                 material.CourseId,
                 material.Title,
-                material.Content
+                material.Content,
+                material.ImageUrl,
+                material.VideoUrl
             });
         }
 
