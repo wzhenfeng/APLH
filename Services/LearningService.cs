@@ -125,6 +125,11 @@ namespace APLH.Services
             await _repository.CreateCourseMaterialAsync(material);
         }
 
+        public async Task UpdateCourseMaterialAsync(CourseMaterial material)
+        {
+            await _repository.UpdateCourseMaterialAsync(material);
+        }
+
         public async Task<IEnumerable<CourseMaterial>> GetCourseMaterialsAsync(int courseId)
         {
             return await _repository.GetCourseMaterialsAsync(courseId);

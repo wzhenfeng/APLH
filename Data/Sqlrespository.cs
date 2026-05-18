@@ -346,5 +346,28 @@ namespace APLH.Data
                 CourseId = courseId
             });
         }
+
+        public async Task UpdateCourseMaterialAsync(CourseMaterial material)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                UPDATE course_materials
+                SET
+                    title = @Title,
+                    content = @Content,
+                    image_url = @ImageUrl,
+                    video_url = @VideoUrl
+                WHERE id = @Id";
+
+            await connection.ExecuteAsync(sql, new
+            {
+                material.Id,
+                material.Title,
+                material.Content,
+                material.ImageUrl,
+                material.VideoUrl
+            });
+        }
     }
 }

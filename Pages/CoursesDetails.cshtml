@@ -124,34 +124,29 @@ else
     <div class="modal" style="max-width:750px; max-height:90vh; overflow-y:auto;">
         <h2>Add / Edit <span>Materials</span></h2>
 
-        <div class="form-group">
-            <label>Material Title</label>
-            <input type="text" id="materialTitle" placeholder="e.g. Introduction to HTML">
-        </div>
+        <div id="materialList"></div>
 
-        <div class="form-group">
-            <label>Material Content</label>
-            <textarea id="materialContent" rows="8" placeholder="Type course notes or learning content here..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Image URL</label>
-            <input type="text" id="materialImageUrl" placeholder="Paste image link">
-        </div>
-
-        <div class="form-group">
-            <label>Video URL</label>
-            <input type="text" id="materialVideoUrl" placeholder="Paste YouTube/video link">
-        </div>
+        <button class="btn btn-ghost" onclick="addMaterialForm()">
+            + Add Another Material
+        </button>
 
         <div class="modal-actions">
-            <button class="btn btn-primary" style="flex:1" onclick="saveMaterial()">
-                Save Material
+
+            <button class="btn btn-primary"
+                    style="flex:1"
+                    onclick="saveAllMaterials()">
+
+                Save All Materials
+
             </button>
 
-            <button class="btn btn-ghost" onclick="closeModal('materialModal')">
+            <button class="btn btn-ghost"
+                    onclick="closeModal('materialModal')">
+
                 Cancel
+
             </button>
+
         </div>
     </div>
 </div>

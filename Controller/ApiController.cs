@@ -317,11 +317,17 @@ public async Task<IActionResult> GoogleResponse()
 [HttpPost("materials/save")]
 public async Task<IActionResult> SaveCourseMaterial([FromBody] CourseMaterial material)
 {
-    await _service.CreateCourseMaterialAsync(material);
+    if (material.Id == 0)
+    {
+        await _service.CreateCourseMaterialAsync(material);
+    }
+    else
+    {
+        await _service.UpdateCourseMaterialAsync(material);
+    }
 
     return Ok(new { success = true });
 }
-
 [HttpGet("materials/{courseId}")]
 public async Task<IActionResult> GetCourseMaterials(int courseId)
 {
