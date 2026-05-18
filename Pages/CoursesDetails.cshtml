@@ -378,12 +378,24 @@ else
     }
 
     function saveMaterial() {
+        let videoUrl = $('#materialVideoUrl').val();
+    if (videoUrl.includes("watch?v=")) {
+        videoUrl = videoUrl.replace(
+            "watch?v=",
+            "embed/"
+        );
+    } else if (videoUrl.includes("youtu.be/")) {
+        videoUrl = videoUrl.replace(
+            "https://youtu.be/",
+            "https://www.youtube.com/embed/"
+        );
+    }
     const material = {
     courseId: currentCourseId,
     title: $('#materialTitle').val(),
     content: $('#materialContent').val(),
     imageUrl: $('#materialImageUrl').val(),
-    videoUrl: $('#materialVideoUrl').val()
+    videoUrl: videoUrl
     };
 
     $.ajax({
