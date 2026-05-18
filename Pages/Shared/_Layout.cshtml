@@ -21,7 +21,11 @@
     <nav>
         <div class="nav-logo" onclick="location.href='/'">APLH</div>
         <div class="nav-links">
-            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/">Home</a>
+            @if (!User.IsInRole("admin"))
+            {
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/">Home</a>
+            }
+            
             @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Courses" ? "active" : "")" href="/Courses">Courses</a>
