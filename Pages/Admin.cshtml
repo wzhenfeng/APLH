@@ -228,55 +228,63 @@
 
     const courseNames = [
     @Html.Raw(string.Join(",", Model.Courses.Select(c => $"'{c.Title}'")))
-        ];
+    ];
 
-        const courseValues = [
-            @Html.Raw(string.Join(",", Model.Courses.Select(c => c.Enrolled)))
-        ];
+    const courseValues = [
+        @Html.Raw(string.Join(",", Model.Courses.Select(c => c.Enrolled)))
+    ];
 
-        const courseColors = [
-            '#ff6b6b',
-            '#6bcbff',
-            '#ffd93d',
-            '#4ade80',
-            '#a78bfa',
-            '#fb923c',
-            '#22d3ee',
-            '#f472b6'
-        ];
+    const courseColors = [
+        '#ff6b6b',
+        '#6bcbff',
+        '#ffd93d',
+        '#4ade80',
+        '#a78bfa',
+        '#fb923c',
+        '#22d3ee',
+        '#f472b6'
+    ];
 
-        const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
+    const totalStudents = courseValues.reduce((a, b) => a + b, 0);
 
-            type: 'pie',
+    const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
 
-            data: {
+        type: 'pie',
 
-                labels: courseNames,
+        data: {
 
-                datasets: [{
+            labels: courseNames.map((name, index) => {
 
-                    label: 'Students Enrolled',
+                const percentage =
+                    ((courseValues[index] / totalStudents) * 100).toFixed(1);
 
-                    data: courseValues,
+                return `${name} (${percentage}%)`;
+            }),
 
-                    backgroundColor: courseColors,
+            datasets: [{
 
-                    borderWidth: 1
-                }]
-            },
+                label: 'Students Enrolled',
 
-            options: {
+                data: courseValues,
 
-                responsive: true,
+                backgroundColor: courseColors,
 
-                plugins: {
+                borderWidth: 1
+            }]
+        },
 
-                    legend: {
-                        position: 'bottom'
-                    }
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+                    position: 'bottom'
                 }
             }
-        });
+        }
+    });
 
 </script>
 
