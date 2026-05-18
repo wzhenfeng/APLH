@@ -378,5 +378,26 @@ namespace APLH.Data
                 material.VideoUrl
             });
         }
+
+        //Whatsapp Chat
+        public async Task CreateChatMessageAsync(ChatMessage chatMessage)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                INSERT INTO chat_messages 
+                (user_id, user_name, user_email, message, created_at)
+                VALUES 
+                (@UserId, @UserName, @UserEmail, @Message, @CreatedAt)";
+
+            await connection.ExecuteAsync(sql, new
+            {
+                chatMessage.UserId,
+                chatMessage.UserName,
+                chatMessage.UserEmail,
+                chatMessage.Message,
+                CreatedAt = DateTime.UtcNow.AddHours(8)
+            });
+        }
     }
 }

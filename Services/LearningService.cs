@@ -134,6 +134,11 @@ namespace APLH.Services
         {
             return await _repository.GetCourseMaterialsAsync(courseId);
         }
+
+        public async Task CreateChatMessageAsync(ChatMessage chatMessage)
+        {
+            await _repository.CreateChatMessageAsync(chatMessage);
+        }
         
         public async Task<IEnumerable<QuizScore>> GetUserQuizScoresAsync(int userId)
             => await _repository.GetUserQuizScoresAsync(userId);

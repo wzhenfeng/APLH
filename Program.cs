@@ -21,7 +21,10 @@ SqlMapper.SetTypeMap(
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+
+//Email and Whatsapp
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddHttpClient<WhatsAppService>();
 
 
 // Register services

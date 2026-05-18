@@ -30,6 +30,7 @@
                 {
                     <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Courses" ? "active" : "")" href="/Courses">Courses</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">My Profile</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Chat" ? "active" : "")" href="/Chat">Chat</a>
 
                     @if (User.IsInRole("admin"))
                     {

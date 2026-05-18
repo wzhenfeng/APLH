@@ -1,0 +1,33 @@
+﻿@page
+@model APLH.Pages.ChatModel
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<div class="chat-page">
+    <div class="chat-card">
+        <h1>Chat Support</h1>
+        <p>Send a message to the APLH admin team.</p>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="chat-alert success">@Model.SuccessMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="chat-alert error">@Model.ErrorMessage</div>
+        }
+
+        <form method="post">
+            <div class="form-group">
+                <label>Your Message</label>
+                <textarea asp-for="Message" rows="6" placeholder="Type your message here..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Send Message
+            </button>
+        </form>
+    </div>
+</div>

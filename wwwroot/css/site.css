@@ -251,6 +251,23 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(15,14,23,0.92); b
 .admin-empty { text-align: center; padding: 3rem 2rem; color: var(--text2); }
 .admin-empty .icon { font-size: 3rem; margin-bottom: 1rem; }
 
+/* ===== Chat ===== */
+.chat-page { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+.chat-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+.chat-header { margin-bottom: 24px; }
+.chat-title { font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; margin-bottom: 8px; }
+.chat-description { font-size: 0.95rem; color: var(--text2); line-height: 1.6; }
+.chat-form { display: flex; flex-direction: column; gap: 20px; }
+.chat-group { display: flex; flex-direction: column; gap: 8px; }
+.chat-label { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.chat-textarea { width: 100%; min-height: 180px; resize: vertical; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-family: var(--font-body); font-size: 0.95rem; transition: all 0.2s; }
+.chat-textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,107,107,0.15); }
+.chat-button { width: fit-content; padding: 12px 20px; border: none; border-radius: var(--radius-sm); background: var(--accent); color: white; font-size: 0.9rem; font-weight: 600; font-family: var(--font-body); cursor: pointer; transition: all 0.2s; }
+.chat-button:hover { opacity: 0.9; transform: translateY(-1px); }
+.chat-alert { padding: 14px 16px; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; margin-bottom: 20px; }
+.chat-alert-success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); color: #22c55e; }
+.chat-alert-error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; }
+
 
 /* ===== FOOTER ===== */
 footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text3); font-size: 0.875rem; }
