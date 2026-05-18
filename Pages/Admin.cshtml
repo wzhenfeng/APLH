@@ -226,35 +226,49 @@
         );
     });
 
-    const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
+    const courseNames = [
+    @Html.Raw(string.Join(",", Model.Courses.Select(c => $"'{c.Title}'")))
+        ];
 
-        type: 'doughnut',
+        const courseValues = [
+            @Html.Raw(string.Join(",", Model.Courses.Select(c => c.Enrolled)))
+        ];
 
-        data: {
+        const courseColors = [
+            '#ff6b6b',
+            '#6bcbff',
+            '#ffd93d',
+            '#4ade80',
+            '#a78bfa',
+            '#fb923c',
+            '#22d3ee',
+            '#f472b6'
+        ];
 
-            labels: ['Total Courses'],
-
-            datasets: [{
-
-                label: 'Courses',
-
-                data: [@Model.Courses.Count]
-
-            }]
-        },
-
-        options: {
-
-            responsive: true,
-
-            plugins: {
-
-                legend: {
-                    position: 'bottom'
+        const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
+            type: 'bar',
+            data: {
+                labels: courseNames,
+                datasets: [{
+                    label: 'Students Enrolled',
+                    data: courseValues,
+                    backgroundColor: courseColors
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
 
 </script>
 
