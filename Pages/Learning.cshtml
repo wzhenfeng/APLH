@@ -1,4 +1,69 @@
 ﻿@page
-@model MyApp.Namespace.LearningModel
+@model APLH.Pages.LearningModel
 @{
+    ViewData["Title"] = "Learning";
 }
+
+<div class="course-details-page">
+
+    <div class="course-hero">
+
+        <div class="course-emoji">
+            @Model.Course.Emoji
+        </div>
+
+        <div>
+            <h1>@Model.Course.Title</h1>
+
+            <p>@Model.Course.Description</p>
+        </div>
+
+    </div>
+
+    <div style="margin-top:40px;">
+
+        <h2>Learning Materials</h2>
+
+        @if (Model.Materials.Count > 0)
+        {
+            foreach (var material in Model.Materials)
+            {
+                <div class="material-card"
+                     style="padding:25px;
+                            margin-top:20px;
+                            border:1px solid #2a2a2a;
+                            border-radius:18px;">
+
+                    <h3>@material.Title</h3>
+
+                    <p style="margin-top:15px;
+                              line-height:1.8;
+                              white-space:pre-line;">
+
+                        @material.Content
+
+                    </p>
+
+                </div>
+            }
+        }
+        else
+        {
+            <p>No materials available yet.</p>
+        }
+
+    </div>
+
+    <div style="margin-top:40px; text-align:center;">
+
+        <button class="btn btn-primary"
+                style="padding:16px 32px;"
+                onclick="location.href='/Quiz?courseId=@Model.Course.Id'">
+
+            Start Quiz
+
+        </button>
+
+    </div>
+
+</div>
