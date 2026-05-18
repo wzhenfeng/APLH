@@ -379,22 +379,24 @@ namespace APLH.Data
             });
         }
 
-        //Whatsapp Chat
+        //Chat
         public async Task CreateChatMessageAsync(ChatMessage chatMessage)
         {
             using var connection = CreateConnection();
 
             var sql = @"
-                INSERT INTO chat_messages 
-                (user_id, user_name, user_email, message, created_at)
-                VALUES 
-                (@UserId, @UserName, @UserEmail, @Message, @CreatedAt)";
+                INSERT INTO chat_messages
+                (user_id, user_name, user_email, sender_role, receiver_role, message, created_at)
+                VALUES
+                (@UserId, @UserName, @UserEmail, @SenderRole, @ReceiverRole, @Message, @CreatedAt)";
 
             await connection.ExecuteAsync(sql, new
             {
                 chatMessage.UserId,
                 chatMessage.UserName,
                 chatMessage.UserEmail,
+                chatMessage.SenderRole,
+                chatMessage.ReceiverRole,
                 chatMessage.Message,
                 CreatedAt = DateTime.UtcNow.AddHours(8)
             });
@@ -405,23 +407,47 @@ namespace APLH.Data
             using var connection = CreateConnection();
 
             var sql = @"
-                SELECT 
+                SELECT
                     id,
                     user_id AS UserId,
                     user_name AS UserName,
                     user_email AS UserEmail,
+                    sender_role AS SenderRole,
+                    receiver_role AS ReceiverRole,
                     message,
                     created_at AS CreatedAt
                 FROM chat_messages
                 WHERE user_id = @UserId
                 ORDER BY created_at ASC";
 
-            var messages = await connection.QueryAsync<ChatMessage>(sql, new
+            var result = await connection.QueryAsync<ChatMessage>(sql, new
             {
                 UserId = userId
             });
 
-            return messages.ToList();
+            return result.ToList();
+        }
+
+        public async Task<List<ChatMessage>> GetAllChatMessagesAsync()
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                SELECT
+                    id,
+                    user_id AS UserId,
+                    user_name AS UserName,
+                    user_email AS UserEmail,
+                    sender_role AS SenderRole,
+                    receiver_role AS ReceiverRole,
+                    message,
+                    created_at AS CreatedAt
+                FROM chat_messages
+                ORDER BY created_at ASC";
+
+            var result = await connection.QueryAsync<ChatMessage>(sql);
+
+            return result.ToList();
         }
     }
 }

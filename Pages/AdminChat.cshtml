@@ -1,0 +1,129 @@
+﻿@page
+@model APLH.Pages.AdminChatModel
+@{
+    ViewData["Title"] = "Admin Chat";
+
+    var students = Model.AllMessages
+        .GroupBy(m => m.UserId)
+        .Select(g => g.First())
+        .ToList();
+
+    var selectedUserId = students.FirstOrDefault()?.UserId ?? 0;
+
+    if (Request.Query.ContainsKey("userId"))
+    {
+        int.TryParse(Request.Query["userId"], out selectedUserId);
+    }
+
+    var selectedMessages = Model.AllMessages
+        .Where(m => m.UserId == selectedUserId)
+        .OrderBy(m => m.CreatedAt)
+        .ToList();
+
+    var selectedStudent = students.FirstOrDefault(s => s.UserId == selectedUserId);
+}
+
+<div class="chat-app">
+    <aside class="chat-sidebar">
+        <div class="chat-sidebar-top">
+            <h1>Admin Chats</h1>
+            <div class="chat-actions">
+                <span>✎</span>
+                <span>⋮</span>
+            </div>
+        </div>
+
+        <div class="chat-search">
+            🔍 <span>Student conversations</span>
+        </div>
+
+        <div class="chat-tabs">
+            <button class="active" type="button">All</button>
+            <button type="button">Unread</button>
+            <button type="button">Students</button>
+        </div>
+
+        <div class="chat-list">
+            @foreach (var student in students)
+            {
+                var activeClass = student.UserId == selectedUserId ? "active" : "";
+
+                <a class="chat-contact @activeClass" href="/AdminChat?userId=@student.UserId">
+                    <div class="chat-avatar">👤</div>
+                    <div class="chat-contact-info">
+                        <div>
+                            <strong>@student.UserName</strong>
+                            <span>@student.CreatedAt.ToString("dd/MM")</span>
+                        </div>
+                        <p>@student.UserEmail</p>
+                    </div>
+                </a>
+            }
+        </div>
+
+        <div class="chat-secure">🔒 Admin support chat</div>
+    </aside>
+
+    <section class="chat-window">
+        <div class="chat-window-top">
+            <div class="chat-profile">
+                <div class="chat-avatar purple">👤</div>
+                <div>
+                    <h2>
+                        @(selectedStudent?.UserName ?? "Select Student")
+                        <span>●</span>
+                    </h2>
+                    <p>@(selectedStudent?.UserEmail ?? "No conversation selected")</p>
+                </div>
+            </div>
+
+            <div class="chat-menu">🔍 ⋮</div>
+        </div>
+
+        <div class="chat-body">
+            <div class="chat-date">Today</div>
+
+            @if (selectedMessages.Count == 0)
+            {
+                <div class="chat-encrypt">
+                    Select a student conversation from the left.
+                </div>
+            }
+
+            @foreach (var item in selectedMessages)
+            {
+                if (item.SenderRole == "admin")
+                {
+                    <div class="chat-bubble outgoing">
+                        <p>@item.Message</p>
+                        <span>@item.CreatedAt.ToString("hh:mm tt") ✓✓</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="chat-bubble incoming">
+                        <strong>@item.UserName</strong>
+                        <p>@item.Message</p>
+                        <span>@item.CreatedAt.ToString("hh:mm tt")</span>
+                    </div>
+                }
+            }
+        </div>
+
+        @if (selectedUserId != 0)
+        {
+            <form method="post" class="chat-input-bar">
+                <input type="hidden" asp-for="UserId" value="@selectedUserId" />
+
+                <button type="button">☺</button>
+                <button type="button">📎</button>
+
+                <textarea asp-for="Message"
+                          rows="1"
+                          placeholder="Reply to student"></textarea>
+
+                <button type="submit" class="send-btn">➤</button>
+            </form>
+        }
+    </section>
+</div>

@@ -11,21 +11,16 @@ namespace APLH.Pages
     public class ChatModel : PageModel
     {
         private readonly LearningService _learningService;
-        private readonly WhatsAppService _whatsAppService;
 
-        public ChatModel(LearningService learningService, WhatsAppService whatsAppService)
+        public ChatModel(LearningService learningService)
         {
             _learningService = learningService;
-            _whatsAppService = whatsAppService;
         }
 
         [BindProperty]
         public string Message { get; set; } = "";
 
         public List<ChatMessage> ChatMessages { get; set; } = new();
-
-        public string SuccessMessage { get; set; } = "";
-        public string ErrorMessage { get; set; } = "";
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -47,13 +42,11 @@ namespace APLH.Pages
 
             if (userId == null)
             {
-                ErrorMessage = "User session error. Please login again.";
-                return Page();
+                return RedirectToPage("/Index");
             }
 
             if (string.IsNullOrWhiteSpace(Message))
             {
-                ErrorMessage = "Please enter your message.";
                 ChatMessages = await _learningService.GetChatMessagesByUserIdAsync(userId.Value);
                 return Page();
             }
@@ -66,26 +59,14 @@ namespace APLH.Pages
                 UserId = userId.Value,
                 UserName = userName,
                 UserEmail = userEmail,
+                SenderRole = "student",
+                ReceiverRole = "admin",
                 Message = Message
             };
 
             await _learningService.CreateChatMessageAsync(chatMessage);
 
-            var whatsappText =
-                $"New APLH Chat Message\n\n" +
-                $"From: {userName}\n" +
-                $"Email: {userEmail}\n\n" +
-                $"Message:\n{Message}";
-
-            await _whatsAppService.SendWhatsAppMessageAsync(whatsappText);
-
-            SuccessMessage = "Message sent.";
-
-            Message = "";
-
-            ChatMessages = await _learningService.GetChatMessagesByUserIdAsync(userId.Value);
-
-            return Page();
+            return RedirectToPage("/Chat");
         }
 
         private int? GetCurrentUserId()

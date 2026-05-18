@@ -144,6 +144,11 @@ namespace APLH.Services
         {
             return await _repository.GetChatMessagesByUserIdAsync(userId);
         }
+
+        public async Task<List<ChatMessage>> GetAllChatMessagesAsync()
+        {
+            return await _repository.GetAllChatMessagesAsync();
+        }
         
         public async Task<IEnumerable<QuizScore>> GetUserQuizScoresAsync(int userId)
             => await _repository.GetUserQuizScoresAsync(userId);

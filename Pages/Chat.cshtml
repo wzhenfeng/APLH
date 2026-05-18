@@ -91,26 +91,22 @@
 
             @foreach (var item in Model.ChatMessages)
             {
-                <div class="chat-bubble outgoing">
-                    <p>@item.Message</p>
-                    <span>@item.CreatedAt.ToString("hh:mm tt") ✓✓</span>
-                </div>
+                if (item.SenderRole == "student")
+                {
+                    <div class="chat-bubble outgoing">
+                        <p>@item.Message</p>
+                        <span>@item.CreatedAt.ToString("hh:mm tt") ✓✓</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="chat-bubble incoming">
+                        <strong>APLH Support</strong>
+                        <p>@item.Message</p>
+                        <span>@item.CreatedAt.ToString("hh:mm tt")</span>
+                    </div>
+                }
             }
-
-            @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
-            {
-                <div class="chat-status success">
-                    @Model.SuccessMessage
-                </div>
-            }
-
-            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
-            {
-                <div class="chat-status error">
-                    @Model.ErrorMessage
-                </div>
-            }
-        </div>
 
         <form method="post" class="chat-input-bar">
             <button type="button">☺</button>

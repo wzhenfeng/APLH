@@ -35,6 +35,7 @@
                     @if (User.IsInRole("admin"))
                     {
                         <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin" ? "active" : "")" href="/Admin">Admin</a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/AdminChat" ? "active" : "")" href="/AdminChat">Admin Chat</a>
                         <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/ActivityLogs" ? "active" : "")" href="/ActivityLogs">Activity Logs</a>
                     }
                 }
