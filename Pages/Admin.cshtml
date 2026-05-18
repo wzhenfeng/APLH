@@ -246,25 +246,33 @@
         ];
 
         const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
-            type: 'bar',
+
+            type: 'pie',
+
             data: {
+
                 labels: courseNames,
+
                 datasets: [{
+
                     label: 'Students Enrolled',
+
                     data: courseValues,
-                    backgroundColor: courseColors
+
+                    backgroundColor: courseColors,
+
+                    borderWidth: 1
                 }]
             },
+
             options: {
+
                 responsive: true,
+
                 plugins: {
+
                     legend: {
-                        display: true
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
+                        position: 'bottom'
                     }
                 }
             }
