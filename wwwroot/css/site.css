@@ -17,9 +17,9 @@
   --radius: 16px;
   --radius-sm: 8px;
   --shadow: 0 8px 32px rgba(0,0,0,0.4);
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
+  --font-display: 'Times New Roman';
+  --font-body: 'Times New Roman';
+  --font-mono: 'Times New Roman';
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
