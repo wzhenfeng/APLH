@@ -8,22 +8,30 @@
     <aside class="chat-sidebar">
         <div class="chat-sidebar-top">
             <h1>Chats</h1>
-            <div class="chat-actions"><span>✎</span><span>⋮</span></div>
+            <div class="chat-actions">
+                <span>✎</span>
+                <span>⋮</span>
+            </div>
         </div>
 
-        <div class="chat-search">🔍 <span>Search or start a new chat</span></div>
+        <div class="chat-search">
+            🔍 <span>Search or start a new chat</span>
+        </div>
 
         <div class="chat-tabs">
-            <button class="active">All</button>
-            <button>Unread</button>
-            <button>Favourites</button>
+            <button class="active" type="button">All</button>
+            <button type="button">Unread</button>
+            <button type="button">Favourites</button>
         </div>
 
         <div class="chat-list">
             <div class="chat-contact active">
                 <div class="chat-avatar">💬</div>
                 <div class="chat-contact-info">
-                    <div><strong>APLH Support</strong><span>Now</span></div>
+                    <div>
+                        <strong>APLH Support</strong>
+                        <span>Now</span>
+                    </div>
                     <p>Send your message to admin</p>
                 </div>
                 <small>1</small>
@@ -32,7 +40,10 @@
             <div class="chat-contact">
                 <div class="chat-avatar blue">🔔</div>
                 <div class="chat-contact-info">
-                    <div><strong>System Notifications</strong><span>Yesterday</span></div>
+                    <div>
+                        <strong>System Notifications</strong>
+                        <span>Yesterday</span>
+                    </div>
                     <p>Your learning update will appear here</p>
                 </div>
             </div>
@@ -40,7 +51,10 @@
             <div class="chat-contact">
                 <div class="chat-avatar purple">🎧</div>
                 <div class="chat-contact-info">
-                    <div><strong>Customer Service</strong><span>23/05/2025</span></div>
+                    <div>
+                        <strong>Customer Service</strong>
+                        <span>23/05/2025</span>
+                    </div>
                     <p>We are here to help you</p>
                 </div>
             </div>
@@ -58,12 +72,16 @@
                     <p>Online</p>
                 </div>
             </div>
+
             <div class="chat-menu">🔍 ⋮</div>
         </div>
 
         <div class="chat-body">
             <div class="chat-date">Today</div>
-            <div class="chat-encrypt">🔒 Messages are end-to-end encrypted. No one outside this chat, not even APLH, can read them.</div>
+
+            <div class="chat-encrypt">
+                🔒 Messages are end-to-end encrypted. No one outside this chat, not even APLH, can read them.
+            </div>
 
             <div class="chat-bubble incoming">
                 <strong>APLH Support</strong>
@@ -73,19 +91,15 @@
 
             @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
             {
-                <div class="chat-status success">@Model.SuccessMessage</div>
+                <div class="chat-status success">
+                    @Model.SuccessMessage
+                </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
             {
-                <div class="chat-status error">@Model.ErrorMessage</div>
-            }
-
-            @if (!string.IsNullOrWhiteSpace(Model.Message))
-            {
-                <div class="chat-bubble outgoing preview">
-                    <p>@Model.Message</p>
-                    <span>@DateTime.Now.ToString("hh:mm tt") ✓✓</span>
+                <div class="chat-status error">
+                    @Model.ErrorMessage
                 </div>
             }
         </div>
@@ -93,7 +107,11 @@
         <form method="post" class="chat-input-bar">
             <button type="button">☺</button>
             <button type="button">📎</button>
-            <textarea asp-for="Message" rows="1" placeholder="Type a message"></textarea>
+
+            <textarea asp-for="Message"
+                      rows="1"
+                      placeholder="Type a message"></textarea>
+
             <button type="submit" class="send-btn">➤</button>
         </form>
     </section>
