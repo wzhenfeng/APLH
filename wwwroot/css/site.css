@@ -240,7 +240,7 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(15,14,23,0.92); b
 .quiz-table tr:hover { background: #f9f9f9; }
 
 /* ===== ADMIN PAGE ===== */
-.admin-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.admin-page { max-width: 1500px; margin: 0 auto; padding: 2rem; }
 .admin-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
 .admin-header h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
 .admin-header p { color: var(--text2); font-size: 0.9375rem; }
