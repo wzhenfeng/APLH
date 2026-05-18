@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
 
+[Authorize(Roles = "member")]
+public class ChatModel : PageModel;
+
 namespace APLH.Pages
 {
     [Authorize]
