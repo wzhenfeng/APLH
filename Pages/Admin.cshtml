@@ -12,35 +12,42 @@
             <p>Manage course content in the system.</p>
         </div>
 
-        <div style="display:flex; gap:12px;">
-
-    <button class="btn btn-ghost"
-            onclick="toggleCourseManagement()">
-
-        View Course Management
-
-    </button>
-
-    <button class="btn btn-primary"
-            onclick="openAddCourseModal()">
-
-        + Add Course
-
-    </button>
-
-        </div>
+        <button class="btn btn-primary" onclick="openAddCourseModal()">
+            + Add Course
+        </button>
     </div>
 
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px; align-items:start;">
 
-<div id="courseManagementView"
-     style="display:none; grid-template-columns:3fr 1fr; gap:25px; align-items:start;">
+        <div class="admin-table-card"
+             onclick="openModal('courseManagementModal')"
+             style="cursor:pointer; min-height:320px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
 
-    <div class="admin-table-card">
+            <h2>Course Management</h2>
+            <p style="color:var(--text2); margin-top:10px;">
+                Click here to manage, edit, and delete courses.
+            </p>
 
-        <h2>Course Management</h2>
+        </div>
+
+        <div class="admin-table-card">
+            <h2>Course Statistics</h2>
+
+            <div style="padding:20px;">
+                <canvas id="courseCountChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="courseManagementModal">
+    <div class="modal" style="max-width:1100px; max-height:90vh; overflow-y:auto;">
+
+        <h2>Course <span>Management</span></h2>
 
         <table class="data-table">
-
             <thead>
                 <tr>
                     <th>Emoji</th>
@@ -54,25 +61,16 @@
             </thead>
 
             <tbody>
-
                 @foreach (var course in Model.Courses)
                 {
                     <tr>
-
                         <td>@course.Emoji</td>
-
                         <td>@course.Title</td>
-
                         <td>@course.Category</td>
-
                         <td>@course.Level</td>
-
                         <td>RM @course.Price</td>
-
                         <td>@course.Duration minutes</td>
-
                         <td>
-
                             <button class="icon-btn edit-btn"
                                     data-id="@course.Id"
                                     data-title="@course.Title"
@@ -89,28 +87,19 @@
                                     onclick="deleteCourse(@course.Id)">
                                 Delete
                             </button>
-
                         </td>
-
                     </tr>
                 }
-
             </tbody>
-
         </table>
 
-    </div>
-
-    <div class="admin-table-card">
-
-        <h2>Course Statistics</h2>
-
-        <div style="padding:20px;">
-            <canvas id="courseCountChart"></canvas>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeModal('courseManagementModal')">
+                Close
+            </button>
         </div>
 
     </div>
-
 </div>
 
 @section Scripts {
@@ -118,128 +107,59 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-
-    function toggleCourseManagement() {
-
-    const view = document.getElementById('courseManagementView');
-
-    if (view.style.display === 'none') {
-
-        view.style.display = 'grid';
-
-    } else {
-
-        view.style.display = 'none';
-    }
-}
-    
     function openAddCourseModal() {
-
-        document.getElementById('courseModalTitle')
-            .innerHTML = 'Add <span>Course</span>';
-
+        document.getElementById('courseModalTitle').innerHTML = 'Add <span>Course</span>';
         document.getElementById('courseEditId').value = 0;
-
         document.getElementById('courseTitle').value = '';
-
         document.getElementById('courseDesc').value = '';
-
         document.getElementById('courseCat').value = 'Technology';
-
         document.getElementById('courseLevel').value = 'Beginner';
-
         document.getElementById('coursePrice').value = 0;
-
         document.getElementById('courseDuration').value = 30;
-
         document.getElementById('courseEmoji').value = '📚';
 
         openModal('courseModal');
     }
 
-    function editCourse(
-        id,
-        title,
-        desc,
-        category,
-        level,
-        price,
-        duration,
-        emoji
-    ) {
+    function editCourse(id, title, desc, category, level, price, duration, emoji) {
+        closeModal('courseManagementModal');
 
-        document.getElementById('courseModalTitle')
-            .innerHTML = 'Edit <span>Course</span>';
-
+        document.getElementById('courseModalTitle').innerHTML = 'Edit <span>Course</span>';
         document.getElementById('courseEditId').value = id;
-
         document.getElementById('courseTitle').value = title;
-
         document.getElementById('courseDesc').value = desc;
-
         document.getElementById('courseCat').value = category;
-
         document.getElementById('courseLevel').value = level;
-
         document.getElementById('coursePrice').value = price;
-
         document.getElementById('courseDuration').value = duration;
-
         document.getElementById('courseEmoji').value = emoji;
 
         openModal('courseModal');
     }
 
     function deleteCourse(id) {
-
-        if (
-            !confirm(
-                'Are you sure you want to delete this course?'
-            )
-        ) return;
+        if (!confirm('Are you sure you want to delete this course?')) return;
 
         $.ajax({
-
             url: `/api/api/courses/${id}`,
-
             type: 'DELETE',
-
             success: function(response) {
-
                 if (response.success) {
-
-                    showToast(
-                        'Course deleted successfully',
-                        'success'
-                    );
-
+                    showToast('Course deleted successfully', 'success');
                     setTimeout(() => {
                         location.reload();
                     }, 800);
-
                 } else {
-
-                    showToast(
-                        response.message || 'Delete failed',
-                        'error'
-                    );
-
+                    showToast(response.message || 'Delete failed', 'error');
                 }
             },
-
             error: function() {
-
-                showToast(
-                    'Server error while deleting course',
-                    'error'
-                );
-
+                showToast('Server error while deleting course', 'error');
             }
         });
     }
 
     $(document).on('click', '.edit-btn', function () {
-
         const btn = $(this);
 
         editCourse(
@@ -255,7 +175,7 @@
     });
 
     const courseNames = [
-    @Html.Raw(string.Join(",", Model.Courses.Select(c => $"'{c.Title}'")))
+        @Html.Raw(string.Join(",", Model.Courses.Select(c => $"'{c.Title}'")))
     ];
 
     const courseValues = [
@@ -276,44 +196,31 @@
     const totalStudents = courseValues.reduce((a, b) => a + b, 0);
 
     const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
-
         type: 'pie',
-
         data: {
-
             labels: courseNames.map((name, index) => {
-
-                const percentage =
-                    ((courseValues[index] / totalStudents) * 100).toFixed(1);
+                const percentage = totalStudents === 0
+                    ? 0
+                    : ((courseValues[index] / totalStudents) * 100).toFixed(1);
 
                 return `${name} (${percentage}%)`;
             }),
-
             datasets: [{
-
                 label: 'Students Enrolled',
-
                 data: courseValues,
-
                 backgroundColor: courseColors,
-
                 borderWidth: 1
             }]
         },
-
         options: {
-
             responsive: true,
-
             plugins: {
-
                 legend: {
                     position: 'bottom'
                 }
             }
         }
     });
-
 </script>
 
 }
