@@ -373,52 +373,138 @@ else
         }, 1000);
     }
 
-    function openMaterialModal() {
-    openModal('materialModal');
-    }
+    let materialIndex = 0;
 
-    function saveMaterial() {
-        let videoUrl = $('#materialVideoUrl').val();
-    if (videoUrl.includes("watch?v=")) {
-        videoUrl = videoUrl.replace(
-            "watch?v=",
-            "embed/"
-        );
-    } else if (videoUrl.includes("youtu.be/")) {
-        videoUrl = videoUrl.replace(
-            "https://youtu.be/",
-            "https://www.youtube.com/embed/"
-        );
-    }
-    const material = {
-    courseId: currentCourseId,
-    title: $('#materialTitle').val(),
-    content: $('#materialContent').val(),
-    imageUrl: $('#materialImageUrl').val(),
-    videoUrl: videoUrl
-    };
+function openMaterialModal() {
+    $('#materialList').html('');
+    materialIndex = 0;
+    openModal('materialModal');
 
     $.ajax({
-        url: '/api/api/materials/save',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(material),
-
-        success: function(response) {
-            if (response.success) {
-                showToast('Material saved successfully 🎉', 'success');
-
-                $('#materialTitle').val('');
-                $('#materialContent').val('');
-
-                closeModal('materialModal');
+        url: `/api/api/materials/${currentCourseId}`,
+        type: 'GET',
+        success: function(materials) {
+            if (!materials || materials.length === 0) {
+                addMaterialForm();
+                return;
             }
-        },
 
+            materials.forEach(m => {
+                addExistingMaterialForm(m);
+            });
+        },
         error: function() {
-            showToast('Failed to save material', 'error');
+            showToast('Failed to load materials', 'error');
         }
     });
+}
+
+function addMaterialForm() {
+    materialIndex++;
+
+    $('#materialList').append(`
+        <div class="material-form" style="border:1px solid var(--border); padding:15px; border-radius:12px; margin-bottom:15px;">
+            <h3>Material ${materialIndex}</h3>
+
+            <input type="hidden" class="material-id" value="0">
+
+            <div class="form-group">
+                <label>Material Title</label>
+                <input type="text" class="material-title" placeholder="e.g. Introduction to HTML">
+            </div>
+
+            <div class="form-group">
+                <label>Material Content</label>
+                <textarea class="material-content" rows="8" placeholder="Type course notes here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" class="material-image-url" placeholder="Paste image link">
+            </div>
+
+            <div class="form-group">
+                <label>Video URL</label>
+                <input type="text" class="material-video-url" placeholder="Paste YouTube/video link">
+            </div>
+        </div>
+    `);
+}
+
+function addExistingMaterialForm(m) {
+    materialIndex++;
+
+    $('#materialList').append(`
+        <div class="material-form" style="border:1px solid var(--border); padding:15px; border-radius:12px; margin-bottom:15px;">
+            <h3>Material ${materialIndex}</h3>
+
+            <input type="hidden" class="material-id" value="${m.id}">
+
+            <div class="form-group">
+                <label>Material Title</label>
+                <input type="text" class="material-title" value="${m.title || ''}">
+            </div>
+
+            <div class="form-group">
+                <label>Material Content</label>
+                <textarea class="material-content" rows="8">${m.content || ''}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" class="material-image-url" value="${m.imageUrl || ''}">
+            </div>
+
+            <div class="form-group">
+                <label>Video URL</label>
+                <input type="text" class="material-video-url" value="${m.videoUrl || ''}">
+            </div>
+        </div>
+    `);
+}
+
+    function saveAllMaterials() {
+    const forms = $('.material-form');
+
+    if (forms.length === 0) {
+        showToast('Please add at least one material', 'error');
+        return;
+    }
+
+    forms.each(function () {
+        const form = $(this);
+
+        let videoUrl = form.find('.material-video-url').val();
+
+        if (videoUrl.includes("watch?v=")) {
+            videoUrl = videoUrl.replace("watch?v=", "embed/");
+        } else if (videoUrl.includes("youtu.be/")) {
+            videoUrl = videoUrl.replace("https://youtu.be/", "https://www.youtube.com/embed/");
+        }
+
+        const material = {
+            id: parseInt(form.find('.material-id').val()) || 0,
+            courseId: currentCourseId,
+            title: form.find('.material-title').val(),
+            content: form.find('.material-content').val(),
+            imageUrl: form.find('.material-image-url').val(),
+            videoUrl: videoUrl
+        };
+
+        $.ajax({
+            url: '/api/api/materials/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(material)
+        });
+    });
+
+    showToast('Materials saved successfully 🎉', 'success');
+
+    setTimeout(() => {
+        closeModal('materialModal');
+        location.reload();
+    }, 1000);
 }
 </script>
 }
