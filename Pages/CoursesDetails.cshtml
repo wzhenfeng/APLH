@@ -42,6 +42,12 @@
                     </div>
                     @if (User.IsInRole("admin"))
                         {
+                            <button class="btn btn-ghost"
+                                    style="width:100%; padding:14px; font-size:1rem; margin-bottom:10px;"
+                                    onclick="openMaterialModal()">
+                                Add / Edit Materials
+                            </button>
+                            
                             <button class="btn btn-primary"
                                     style="width:100%; padding:14px; font-size:1rem"
                                     onclick="openQuizQuestionModal()">
@@ -108,6 +114,32 @@ else
             </button>
 
             <button class="btn btn-ghost" onclick="closeModal('quizQuestionModal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="materialModal">
+    <div class="modal" style="max-width:750px; max-height:90vh; overflow-y:auto;">
+        <h2>Add / Edit <span>Materials</span></h2>
+
+        <div class="form-group">
+            <label>Material Title</label>
+            <input type="text" id="materialTitle" placeholder="e.g. Introduction to HTML">
+        </div>
+
+        <div class="form-group">
+            <label>Material Content</label>
+            <textarea id="materialContent" rows="8" placeholder="Type course notes or learning content here..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" style="flex:1" onclick="saveMaterial()">
+                Save Material
+            </button>
+
+            <button class="btn btn-ghost" onclick="closeModal('materialModal')">
                 Cancel
             </button>
         </div>
@@ -330,5 +362,39 @@ else
             location.reload();
         }, 1000);
     }
+
+    function openMaterialModal() {
+    openModal('materialModal');
+    }
+
+    function saveMaterial() {
+    const material = {
+        courseId: currentCourseId,
+        title: $('#materialTitle').val(),
+        content: $('#materialContent').val()
+    };
+
+    $.ajax({
+        url: '/api/api/materials/save',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(material),
+
+        success: function(response) {
+            if (response.success) {
+                showToast('Material saved successfully 🎉', 'success');
+
+                $('#materialTitle').val('');
+                $('#materialContent').val('');
+
+                closeModal('materialModal');
+            }
+        },
+
+        error: function() {
+            showToast('Failed to save material', 'error');
+        }
+    });
+}
 </script>
 }

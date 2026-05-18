@@ -302,5 +302,45 @@ namespace APLH.Data
                 ORDER BY created_at DESC"
             );
         }
+
+        //Course Materials
+        public async Task CreateCourseMaterialAsync(CourseMaterial material)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                INSERT INTO course_materials
+                (course_id, title, content)
+                VALUES
+                (@CourseId, @Title, @Content)";
+
+            await connection.ExecuteAsync(sql, new
+            {
+                material.CourseId,
+                material.Title,
+                material.Content
+            });
+        }
+
+        public async Task<IEnumerable<CourseMaterial>> GetCourseMaterialsAsync(int courseId)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                SELECT
+                    id AS Id,
+                    course_id AS CourseId,
+                    title AS Title,
+                    content AS Content,
+                    created_at AS CreatedAt
+                FROM course_materials
+                WHERE course_id = @CourseId
+                ORDER BY created_at ASC";
+
+            return await connection.QueryAsync<CourseMaterial>(sql, new
+            {
+                CourseId = courseId
+            });
+        }
     }
 }

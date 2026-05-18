@@ -313,6 +313,22 @@ public async Task<IActionResult> GoogleResponse()
 
     return Redirect("/");
 }
+
+[HttpPost("materials/save")]
+public async Task<IActionResult> SaveCourseMaterial([FromBody] CourseMaterial material)
+{
+    await _service.CreateCourseMaterialAsync(material);
+
+    return Ok(new { success = true });
+}
+
+[HttpGet("materials/{courseId}")]
+public async Task<IActionResult> GetCourseMaterials(int courseId)
+{
+    var materials = await _service.GetCourseMaterialsAsync(courseId);
+
+    return Ok(materials);
+}
     }
 
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }

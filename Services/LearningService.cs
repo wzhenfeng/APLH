@@ -119,8 +119,17 @@ namespace APLH.Services
             return await _repository.GetAllActivityLogsAsync();
         }
 
-        
 
+        public async Task CreateCourseMaterialAsync(CourseMaterial material)
+        {
+            await _repository.CreateCourseMaterialAsync(material);
+        }
+
+        public async Task<IEnumerable<CourseMaterial>> GetCourseMaterialsAsync(int courseId)
+        {
+            return await _repository.GetCourseMaterialsAsync(courseId);
+        }
+        
         public async Task<IEnumerable<QuizScore>> GetUserQuizScoresAsync(int userId)
             => await _repository.GetUserQuizScoresAsync(userId);
     }
