@@ -89,7 +89,19 @@
     </div>
 
 </div>
+
+<div class="admin-table-card" style="margin-bottom:30px;">
+
+    <h2>Course Statistics</h2>
+
+    <div style="max-width:500px; margin:auto;">
+        <canvas id="courseCountChart"></canvas>
+    </div>
+
+</div>
 @section Scripts {
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 
@@ -200,19 +212,49 @@
 
     $(document).on('click', '.edit-btn', function () {
 
-    const btn = $(this);
+        const btn = $(this);
 
-    editCourse(
-        btn.data('id'),
-        btn.data('title'),
-        btn.data('description'),
-        btn.data('category'),
-        btn.data('level'),
-        btn.data('price'),
-        btn.data('duration'),
-        btn.data('emoji')
-    );
-});
+        editCourse(
+            btn.data('id'),
+            btn.data('title'),
+            btn.data('description'),
+            btn.data('category'),
+            btn.data('level'),
+            btn.data('price'),
+            btn.data('duration'),
+            btn.data('emoji')
+        );
+    });
+
+    const courseCountChart = new Chart(document.getElementById('courseCountChart'), {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: ['Total Courses'],
+
+            datasets: [{
+
+                label: 'Courses',
+
+                data: [@Model.Courses.Count]
+
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
 
 </script>
 
