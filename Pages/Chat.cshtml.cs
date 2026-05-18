@@ -22,34 +22,48 @@ namespace APLH.Pages
         [BindProperty]
         public string Message { get; set; } = "";
 
+        public List<ChatMessage> ChatMessages { get; set; } = new();
+
         public string SuccessMessage { get; set; } = "";
         public string ErrorMessage { get; set; } = "";
 
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
+            var userId = GetCurrentUserId();
+
+            if (userId == null)
+            {
+                return RedirectToPage("/Index");
+            }
+
+            ChatMessages = await _learningService.GetChatMessagesByUserIdAsync(userId.Value);
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (string.IsNullOrWhiteSpace(Message))
-            {
-                ErrorMessage = "Please enter your message.";
-                return Page();
-            }
+            var userId = GetCurrentUserId();
 
-            var userIdText = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Student";
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
-
-            if (!int.TryParse(userIdText, out int userId))
+            if (userId == null)
             {
                 ErrorMessage = "User session error. Please login again.";
                 return Page();
             }
 
+            if (string.IsNullOrWhiteSpace(Message))
+            {
+                ErrorMessage = "Please enter your message.";
+                ChatMessages = await _learningService.GetChatMessagesByUserIdAsync(userId.Value);
+                return Page();
+            }
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Student";
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+
             var chatMessage = new ChatMessage
             {
-                UserId = userId,
+                UserId = userId.Value,
                 UserName = userName,
                 UserEmail = userEmail,
                 Message = Message
@@ -65,10 +79,25 @@ namespace APLH.Pages
 
             await _whatsAppService.SendWhatsAppMessageAsync(whatsappText);
 
-            SuccessMessage = "Your message has been sent successfully.";
+            SuccessMessage = "Message sent.";
+
             Message = "";
 
+            ChatMessages = await _learningService.GetChatMessagesByUserIdAsync(userId.Value);
+
             return Page();
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var userIdText = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(userIdText, out int userId))
+            {
+                return userId;
+            }
+
+            return null;
         }
     }
 }

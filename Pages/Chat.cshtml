@@ -89,6 +89,14 @@
                 <span>@DateTime.Now.ToString("hh:mm tt")</span>
             </div>
 
+            @foreach (var item in Model.ChatMessages)
+            {
+                <div class="chat-bubble outgoing">
+                    <p>@item.Message</p>
+                    <span>@item.CreatedAt.ToString("hh:mm tt") ✓✓</span>
+                </div>
+            }
+
             @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
             {
                 <div class="chat-status success">

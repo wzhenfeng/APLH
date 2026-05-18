@@ -399,5 +399,29 @@ namespace APLH.Data
                 CreatedAt = DateTime.UtcNow.AddHours(8)
             });
         }
+
+        public async Task<List<ChatMessage>> GetChatMessagesByUserIdAsync(int userId)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                SELECT 
+                    id,
+                    user_id AS UserId,
+                    user_name AS UserName,
+                    user_email AS UserEmail,
+                    message,
+                    created_at AS CreatedAt
+                FROM chat_messages
+                WHERE user_id = @UserId
+                ORDER BY created_at ASC";
+
+            var messages = await connection.QueryAsync<ChatMessage>(sql, new
+            {
+                UserId = userId
+            });
+
+            return messages.ToList();
+        }
     }
 }
