@@ -310,9 +310,9 @@ namespace APLH.Data
 
             var sql = @"
                 INSERT INTO course_materials
-                (course_id, title, content)
+                (course_id, title, content, image_url, video_url)
                 VALUES
-                (@CourseId, @Title, @Content)";
+                (@CourseId, @Title, @Content, @ImageUrl, @VideoUrl)";
 
             await connection.ExecuteAsync(sql, new
             {
@@ -332,6 +332,8 @@ namespace APLH.Data
                     course_id AS CourseId,
                     title AS Title,
                     content AS Content,
+                    image_url AS ImageUrl,
+                    video_url AS VideoUrl,
                     created_at AS CreatedAt
                 FROM course_materials
                 WHERE course_id = @CourseId

@@ -134,6 +134,16 @@ else
             <textarea id="materialContent" rows="8" placeholder="Type course notes or learning content here..."></textarea>
         </div>
 
+        <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" id="materialImageUrl" placeholder="Paste image link">
+        </div>
+
+        <div class="form-group">
+            <label>Video URL</label>
+            <input type="text" id="materialVideoUrl" placeholder="Paste YouTube/video link">
+        </div>
+
         <div class="modal-actions">
             <button class="btn btn-primary" style="flex:1" onclick="saveMaterial()">
                 Save Material
@@ -369,9 +379,11 @@ else
 
     function saveMaterial() {
     const material = {
-        courseId: currentCourseId,
-        title: $('#materialTitle').val(),
-        content: $('#materialContent').val()
+    courseId: currentCourseId,
+    title: $('#materialTitle').val(),
+    content: $('#materialContent').val(),
+    imageUrl: $('#materialImageUrl').val(),
+    videoUrl: $('#materialVideoUrl').val()
     };
 
     $.ajax({
