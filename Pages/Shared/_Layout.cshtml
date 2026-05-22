@@ -26,10 +26,7 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/">Home</a>
             }
 
-            @if (User.Identity?.IsAuthenticated == true && User.IsInRole("member"))
-            {
-                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Chat" ? "active" : "")" href="/Chat">Chat</a>
-            }
+            
             
             @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
@@ -38,7 +35,6 @@
                     @if (User.IsInRole("admin"))
                     {
                         <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin" ? "active" : "")" href="/Admin">Admin</a>
-                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/AdminChat" ? "active" : "")" href="/AdminChat">Admin Chat</a>
                         <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/ActivityLogs" ? "active" : "")" href="/ActivityLogs">Activity Logs</a>
                     }
                 }
@@ -188,6 +184,22 @@
             </div>
         </div>
     </div>
+
+    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("member"))
+            {
+                <a href="/Chat" class="floating-chat-btn">
+                💬
+                <span>Ask me!</span>
+                </a>
+            }
+
+    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("admin"))
+            {
+                <a href="/AdminChat" class="floating-chat-btn">
+                    💬
+                    <span>Ask me!</span>
+                </a>
+            }
 
     
 
