@@ -155,6 +155,8 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .icon-btn:hover { background: var(--bg3); color: var(--text); }
 .icon-btn.del { border-color: rgba(255,68,68,0.4); color: #ff6b6b; }
 .icon-btn.del:hover { background: rgba(255,68,68,0.15); }
+.activity-page {max-width: 1500px; margin: 0 auto; padding: 2rem;}
+.activity-page .admin-header {margin-top: 0;}
 
 /* ===== MODAL ===== */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
