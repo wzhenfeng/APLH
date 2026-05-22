@@ -317,7 +317,8 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(15,14,23,0.92); b
 
 
 /* ===== FOOTER ===== */
-.site-footer {text-align: center; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--text2); font-size: 14px; background: rgba(255,255,255,0.03);}
+.site-footer {text-align: center; padding: 28px 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--text2); font-size: 14px; background: rgba(255,255,255,0.03);}
+.site-footer p {margin: 0;}
 
 /* Utilities */
 .text-accent { color: var(--accent); }
