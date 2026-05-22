@@ -15,14 +15,15 @@ function checkAuth() {
 
 function updateUIForLoggedInUser(user) {
     $('.nav-right').html(`
-        <span class="user-name">${user.Name || ''}</span>
+        <span class="user-name">${user.name || user.Name || 'User'}</span>
+        <a class="nav-link" href="/Profile">My Profile</a>
         <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>
     `);
 
     $('#nav-quiz').show();
     $('#nav-profile').show();
 
-    if (user.Role === 'admin') {
+    if (user.role === 'admin' || user.Role === 'admin') {
         $('#nav-admin').show();
         $('#addCourseBtn').show();
     }

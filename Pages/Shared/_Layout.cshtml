@@ -49,7 +49,7 @@
             @if (isAuthenticated)
             {
                 <span class="user-name">@userName</span>
-                <a class="nav-right @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">My Profile</a>
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">My Profile</a>
                 <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>
             }
             else
