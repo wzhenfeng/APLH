@@ -54,14 +54,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
 
 /* NAV */
-nav { position: sticky; top: 0; z-index: 100; background: rgba(15,14,23,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-.nav-logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-box; background: rgba(15,14,23,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav-left { display: flex; align-items: center; gap: 24px; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; cursor: pointer; margin-right: 20px; }
 .nav-logo span { color: var(--accent); }
-.nav-links { display: flex; gap: 4px; }
-.nav-link { padding: 8px 14px; border-radius: var(--radius-sm); color: var(--text2); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; background: none; font-family: var(--font-body); }
+.nav-link { padding: 8px 14px; border-radius: var(--radius-sm); color: var(--text2); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; background: none; font-family: var(--font-body); text-decoration: none; }
 .nav-link:hover { background: var(--bg3); color: var(--text); }
 .nav-link.active { background: var(--bg3); color: var(--text); }
-.nav-right { display: flex; gap: 8px; align-items: center; }
+.user-name { color: var(--text); font-size: 0.875rem; font-weight: 500; }
 .btn { padding: 8px 18px; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; font-family: var(--font-body); }
 .btn-ghost { background: none; border: 1px solid var(--border2); color: var(--text); }
 .btn-ghost:hover { background: var(--bg3); }
