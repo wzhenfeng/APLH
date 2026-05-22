@@ -19,44 +19,57 @@
 </head>
 <body>
     <nav>
+        <div class="nav-left">
+
         <div class="nav-logo" onclick="location.href='/'">APLH</div>
-        <div class="nav-links">
-            @if (!User.IsInRole("admin"))
-            {
-                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/">Home</a>
-            }
 
-            @if (User.Identity?.IsAuthenticated == true && User.IsInRole("member"))
-            {
-                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Chat" ? "active" : "")" href="/Chat">Chat</a>
-            }
-            
-            @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Courses" ? "active" : "")" href="/Courses">Courses</a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">My Profile</a>
+        @if (!User.IsInRole("admin"))
+        {
+            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")" href="/">Home</a>
+        }
 
-                    @if (User.IsInRole("admin"))
-                    {
-                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin" ? "active" : "")" href="/Admin">Admin</a>
-                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/AdminChat" ? "active" : "")" href="/AdminChat">Admin Chat</a>
-                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/ActivityLogs" ? "active" : "")" href="/ActivityLogs">Activity Logs</a>
-                    }
-                }
-            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/About" ? "active" : "")" href="/About">About</a>
-            
+        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("member"))
+        {
+            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Chat" ? "active" : "")" href="/Chat">Chat</a>
+        }
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Courses" ? "active" : "")" href="/Courses">Courses</a>
+
+            @if (User.IsInRole("admin"))
+            {
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin" ? "active" : "")" href="/Admin">Admin</a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/AdminChat" ? "active" : "")" href="/AdminChat">Admin Chat</a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/ActivityLogs" ? "active" : "")" href="/ActivityLogs">Activity Logs</a>
+            }
+        }
+
+        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/About" ? "active" : "")" href="/About">About</a>
+
         </div>
+
         <div class="nav-right">
-            @if (isAuthenticated)
-            {
-                <span class="user-name">@userName</span>
-                <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>
-            }
-            else
-            {
-                <button class="btn btn-ghost btn-sm" onclick="openLoginModal()">Log In</button>
-                <button class="btn btn-primary btn-sm" onclick="openRegisterModal()">Get Started</button>
-            }
+
+        @if (isAuthenticated)
+        {
+            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">
+                My Profile
+            </a>
+
+            <span class="user-name">@userName</span>
+
+            <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>
+        }
+        else
+        {
+            <button class="btn btn-ghost btn-sm" onclick="openLoginModal()">Log In</button>
+
+            <button class="btn btn-primary btn-sm" onclick="openRegisterModal()">Get Started</button>
+        }
+
         </div>
     </nav>
 
