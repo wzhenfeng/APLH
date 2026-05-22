@@ -34,7 +34,6 @@
             @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Courses" ? "active" : "")" href="/Courses">Courses</a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">My Profile</a>
 
                     @if (User.IsInRole("admin"))
                     {
@@ -50,6 +49,7 @@
             @if (isAuthenticated)
             {
                 <span class="user-name">@userName</span>
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Profile" ? "active" : "")" href="/Profile">My Profile</a>
                 <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>
             }
             else
