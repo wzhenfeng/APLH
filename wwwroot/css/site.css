@@ -281,7 +281,7 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .chat-contact-info span, .chat-contact-info p { font-size: 0.88rem; color: var(--text2); }
 .chat-contact small { background: var(--purple); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 .chat-secure { color: var(--text3); text-align: center; font-size: 0.9rem; padding-top: 16px; }
-.chat-window { display: grid; grid-template-rows: 82px 1fr 76px; min-width: 0; }
+.chat-window { display: grid; grid-template-rows: 82px minmax(0, 1fr) 76px; min-width: 0; min-height: 0;}
 .chat-window-top { background: rgba(26,24,41,0.95); border-bottom: 1px solid var(--border); padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
 .chat-profile { display: flex; align-items: center; gap: 14px; }
 .chat-profile h2 { font-size: 1.2rem; font-weight: 800; }
