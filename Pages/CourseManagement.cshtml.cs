@@ -1,16 +1,16 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
-using APLH.Services;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using APLH.Models;
+using APLH.Services;
 
 namespace APLH.Pages
 {
     [Authorize(Roles = "admin")]
-    public class AdminModel : PageModel
+    public class CourseManagementModel : PageModel
     {
         private readonly LearningService _service;
 
-        public AdminModel(LearningService service)
+        public CourseManagementModel(LearningService service)
         {
             _service = service;
         }
