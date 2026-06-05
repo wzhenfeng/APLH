@@ -54,6 +54,8 @@
 
     let selectedAnswer = null;
 
+    let userAnswers = [];
+
     function loadQuizQuestions() {
 
         // Get course ID from URL parameter if provided
@@ -174,6 +176,7 @@
         }
 
         if (
+            userAnswers[currentQuestion] = selectedAnswer;
             selectedAnswer ===
             questions[currentQuestion].correctAnswer
         ) {
@@ -194,34 +197,43 @@
     }
 
     function showResult() {
+    $('#quizArea').hide();
+    $('#quizResult').show();
+    $('#quizProgress').css('width', '100%');
 
-        $('#quizArea').hide();
+    const percentage = Math.round((score / questions.length) * 100);
 
-        $('#quizResult').show();
+    $('#finalScore').text(`${score}/${questions.length}`);
+    $('#resultMessage').text(`You scored ${percentage}%`);
 
-        $('#quizProgress').css(
-            'width',
-            '100%'
-        );
+    let reviewHtml = `<div class="quiz-review"><h2>Quiz Review</h2>`;
 
-        const percentage = Math.round(
-            (score / questions.length) * 100
-        );
+    questions.forEach((q, index) => {
+        const userAnswer = userAnswers[index];
+        const correctAnswer = q.correctAnswer;
 
-        $('#finalScore').text(
-            `${score}/${questions.length}`
-        );
+        reviewHtml += `
+            <div class="review-card">
+                <h4>Question ${index + 1}: ${q.question}</h4>
 
-        $('#resultMessage').text(
-            `You scored ${percentage}%`
-        );
+                <p><strong>Your Answer:</strong> ${q.options[userAnswer]}</p>
+                <p><strong>Correct Answer:</strong> ${q.options[correctAnswer]}</p>
 
-        saveQuizScore(
-            score,
-            questions.length,
-            percentage
-        );
-    }
+                ${
+                    userAnswer === correctAnswer
+                    ? `<p class="correct">✅ Correct</p>`
+                    : `<p class="wrong">❌ Wrong</p>`
+                }
+            </div>
+        `;
+    });
+
+    reviewHtml += `</div>`;
+
+    $('#quizResult').append(reviewHtml);
+
+    saveQuizScore(score, questions.length, percentage);
+}
 
     function saveQuizScore(
         score,
@@ -258,6 +270,9 @@
         $('#quizResult').hide();
 
         $('#quizArea').show();
+
+        userAnswers = [];
+            $('.quiz-review').remove();
 
         loadQuestion();
     }

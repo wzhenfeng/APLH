@@ -209,7 +209,7 @@ namespace APLH.Controllers
                 return Unauthorized();
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-            await _service.SaveQuizScoreAsync(userId, request.Score, request.Total);
+            await _service.SaveQuizScoreAsync(userId, request.CourseId, request.Score, request.Total);
             return Ok(new { success = true });
         }
 
@@ -347,5 +347,5 @@ public async Task<IActionResult> DeleteUser(int id)
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class RegisterRequest { public string Name { get; set; } = string.Empty; public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class EnrollRequest { public int CourseId { get; set; } }
-    public class QuizScoreRequest { public int Score { get; set; } public int Total { get; set; } }
+    public class QuizScoreRequest { public int Score { get; set; } public int Total { get; set; } public int CourseId { get; set; }}
 }

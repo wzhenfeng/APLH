@@ -79,11 +79,12 @@ namespace APLH.Services
         public async Task DeleteQuizQuestionAsync(int id)
             => await _repository.DeleteQuizQuestionAsync(id);
 
-        public async Task SaveQuizScoreAsync(int userId, int score, int total)
+        public async Task SaveQuizScoreAsync(int userId, int courseId, int score, int total)
         {
             var quizScore = new QuizScore
             {
                 UserId = userId,
+                CourseId = courseId,
                 Score = score,
                 TotalQuestions = total
             };
