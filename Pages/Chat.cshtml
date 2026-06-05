@@ -91,6 +91,7 @@
             <button type="button">📎</button>
 
             <textarea asp-for="Message"
+                    id="messageInput"
                     rows="1"
                     placeholder="Type a message"></textarea>
 
@@ -98,3 +99,25 @@
         </form>
     </section>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const textarea = document.getElementById("messageInput");
+    const form = textarea.closest("form");
+
+    textarea.addEventListener("keydown", function (e) {
+
+        // Press Enter to send
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+
+            // Don't send empty messages
+            if (textarea.value.trim() !== "") {
+                form.submit();
+            }
+        }
+    });
+
+});
+</script>
