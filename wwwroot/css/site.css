@@ -134,6 +134,11 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .quiz-score { font-family: var(--font-display); font-size: 4rem; font-weight: 900; }
 .result-msg { font-size: 1.25rem; font-weight: 600; margin: 0.5rem 0 1rem; }
 
+/* ===== QUIZ Review ===== */
+.correct-option {background: #14532d !important; border: 2px solid #22c55e !important; color: white !important;}
+.wrong-option {background: #7f1d1d !important;border: 2px solid #ef4444 !important;color: white !important;}
+.option {pointer-events: none;}
+
 /* ===== ADMIN DASHBOARD ===== */
 .admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 64px); }
 .admin-sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.5rem 1rem; }

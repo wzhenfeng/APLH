@@ -186,42 +186,78 @@
     }
 
     function showResult() {
-    $('#quizArea').hide();
-    $('#quizResult').show();
-    $('#quizProgress').css('width', '100%');
+        $('#quizArea').hide();
+        $('#quizResult').show();
+        $('#quizProgress').css('width', '100%');
 
-    const percentage = Math.round((score / questions.length) * 100);
+        const percentage = Math.round((score / questions.length) * 100);
 
-    $('#finalScore').text(`${score}/${questions.length}`);
-    $('#resultMessage').text(`You scored ${percentage}%`);
+        $('#finalScore').text(`${score}/${questions.length}`);
+        $('#resultMessage').text(`You scored ${percentage}%`);
 
-    let reviewHtml = `<div class="quiz-review"><h2>Quiz Review</h2>`;
+        $('#quizResult').html(`
+            <h1 id="finalScore">${score}/${questions.length}</h1>
+            <h3 id="resultMessage">You scored ${percentage}%</h3>
+
+            <button onclick="showReview()" class="btn-primary">Review Quiz</button>
+            <button onclick="restartQuiz()" class="btn-primary">Try Again</button>
+        `);
+
+        saveQuizScore(score, questions.length, percentage);
+    }
+
+    function showReview() {
+    $('#quizResult').hide();
+    $('#quizArea').show();
+
+    let reviewHtml = '';
 
     questions.forEach((q, index) => {
         const userAnswer = userAnswers[index];
         const correctAnswer = q.correctAnswer;
 
         reviewHtml += `
-            <div class="review-card">
-                <h4>Question ${index + 1}: ${q.question}</h4>
+            <div class="quiz-question">
+                <h3>Question ${index + 1} of ${questions.length}</h3>
+
+                <h2>${q.question}</h2>
+
+                <div class="options">
+        `;
+
+        q.options.forEach((option, optionIndex) => {
+
+            let optionClass = '';
+
+            if (optionIndex === correctAnswer) {
+                optionClass = 'correct-option';
+            }
+
+            if (optionIndex === userAnswer && userAnswer !== correctAnswer) {
+                optionClass = 'wrong-option';
+            }
+
+            reviewHtml += `
+                <div class="option ${optionClass}">
+                    ${option}
+                </div>
+            `;
+        });
+
+        reviewHtml += `
+                </div>
 
                 <p><strong>Your Answer:</strong> ${q.options[userAnswer]}</p>
                 <p><strong>Correct Answer:</strong> ${q.options[correctAnswer]}</p>
-
-                ${
-                    userAnswer === correctAnswer
-                    ? `<p class="correct">✅ Correct</p>`
-                    : `<p class="wrong">❌ Wrong</p>`
-                }
             </div>
         `;
     });
 
-    reviewHtml += `</div>`;
+    reviewHtml += `
+        <button onclick="restartQuiz()" class="btn-primary">Try Again</button>
+    `;
 
-    $('#quizResult').append(reviewHtml);
-
-    saveQuizScore(score, questions.length, percentage);
+    $('#quizArea').html(reviewHtml);
 }
 
     function saveQuizScore(score, totalQuestions, percentage) {
