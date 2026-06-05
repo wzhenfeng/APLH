@@ -252,12 +252,13 @@ namespace APLH.Data
         {
             using var connection = CreateConnection();
             var percentage = (decimal)score.Score / score.TotalQuestions * 100;
-            var sql = @"INSERT INTO quiz_scores (user_id, score, total_questions, percentage, quiz_date)
-                        VALUES (@UserId, @Score, @TotalQuestions, @Percentage, @QuizDate)";
+            var sql = @"INSERT INTO quiz_scores (user_id, course_id, score, total_questions, percentage, quiz_date)
+                        VALUES (@UserId, @CourseId, @Score, @TotalQuestions, @Percentage, @QuizDate)";
 
             await connection.ExecuteAsync(sql, new
             {
                 score.UserId,
+                score.CourseId,
                 score.Score,
                 score.TotalQuestions,
                 Percentage = percentage,
