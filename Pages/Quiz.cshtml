@@ -166,33 +166,22 @@
     function submitAnswer() {
 
         if (selectedAnswer === null) {
-
-            showToast(
-                'Please select an answer first',
-                'error'
-            );
-
+            showToast('Please select an answer first', 'error');
             return;
         }
 
-        if (
-            userAnswers[currentQuestion] = selectedAnswer;
-            selectedAnswer ===
-            questions[currentQuestion].correctAnswer
-        ) {
+        userAnswers[currentQuestion] = selectedAnswer;
+
+        if (selectedAnswer === questions[currentQuestion].correctAnswer) {
             score++;
         }
 
         currentQuestion++;
 
         if (currentQuestion < questions.length) {
-
             loadQuestion();
-
         } else {
-
             showResult();
-
         }
     }
 
@@ -235,28 +224,20 @@
     saveQuizScore(score, questions.length, percentage);
 }
 
-    function saveQuizScore(
-        score,
-        totalQuestions,
-        percentage
-    ) {
+    function saveQuizScore(score, totalQuestions, percentage) {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
 
         $.ajax({
-
-            url: '/api/api/quiz/score',
-
+            url: '/api/api/quiz/save',
             type: 'POST',
-
             contentType: 'application/json',
-
             data: JSON.stringify({
-
+                courseId: parseInt(courseId),
                 score: score,
-
-                totalQuestions: totalQuestions,
-
+                total: totalQuestions,
                 percentage: percentage
-
             })
         });
     }
