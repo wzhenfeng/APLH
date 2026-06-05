@@ -188,77 +188,75 @@
     function showResult() {
         $('#quizArea').hide();
         $('#quizResult').show();
-        $('#quizProgress').css('width', '100%');
 
         const percentage = Math.round((score / questions.length) * 100);
 
-        $('#finalScore').text(`${score}/${questions.length}`);
-        $('#resultMessage').text(`You scored ${percentage}%`);
-
         $('#quizResult').html(`
-            <h1 id="finalScore">${score}/${questions.length}</h1>
-            <h3 id="resultMessage">You scored ${percentage}%</h3>
+            <div class="quiz-result-card">
+                <h1>${score}/${questions.length}</h1>
+                <h3>You scored ${percentage}%</h3>
 
-            <button onclick="showReview()" class="btn-primary">Review Quiz</button>
-            <button onclick="restartQuiz()" class="btn-primary">Try Again</button>
+                <div class="result-buttons">
+                    <button onclick="showReview()" class="finish-btn">Review Quiz</button>
+                    <button onclick="restartQuiz()" class="finish-btn">Try Again</button>
+                </div>
+            </div>
         `);
 
         saveQuizScore(score, questions.length, percentage);
     }
 
     function showReview() {
-    $('#quizResult').hide();
-    $('#quizArea').show();
+        $('#quizResult').hide();
+        $('#quizArea').show();
 
-    let reviewHtml = '';
+        let reviewHtml = '';
 
-    questions.forEach((q, index) => {
-        const userAnswer = userAnswers[index];
-        const correctAnswer = q.correctAnswer;
-
-        reviewHtml += `
-            <div class="quiz-question">
-                <h3>Question ${index + 1} of ${questions.length}</h3>
-
-                <h2>${q.question}</h2>
-
-                <div class="options">
-        `;
-
-        q.options.forEach((option, optionIndex) => {
-
-            let optionClass = '';
-
-            if (optionIndex === correctAnswer) {
-                optionClass = 'correct-option';
-            }
-
-            if (optionIndex === userAnswer && userAnswer !== correctAnswer) {
-                optionClass = 'wrong-option';
-            }
+        questions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const correctAnswer = q.correctAnswer;
 
             reviewHtml += `
-                <div class="option ${optionClass}">
-                    ${option}
+                <div class="quiz-card">
+                    <h3>Question ${index + 1} of ${questions.length}</h3>
+                    <h2>${q.question}</h2>
+
+                    <div class="options">
+            `;
+
+            q.options.forEach((option, optionIndex) => {
+                let optionClass = '';
+
+                if (optionIndex === correctAnswer) {
+                    optionClass = 'correct-option';
+                }
+
+                if (optionIndex === userAnswer && userAnswer !== correctAnswer) {
+                    optionClass = 'wrong-option';
+                }
+
+                reviewHtml += `
+                    <div class="option ${optionClass}">
+                        ${option}
+                    </div>
+                `;
+            });
+
+            reviewHtml += `
+                    </div>
+
+                    <div class="review-answer">
+                        <p><strong>Your Answer:</strong> ${q.options[userAnswer]}</p>
+                        <p><strong>Correct Answer:</strong> ${q.options[correctAnswer]}</p>
+                    </div>
+
+                    <button onclick="restartQuiz()" class="finish-btn">Try Again</button>
                 </div>
             `;
         });
 
-        reviewHtml += `
-                </div>
-
-                <p><strong>Your Answer:</strong> ${q.options[userAnswer]}</p>
-                <p><strong>Correct Answer:</strong> ${q.options[correctAnswer]}</p>
-            </div>
-        `;
-    });
-
-    reviewHtml += `
-        <button onclick="restartQuiz()" class="btn-primary">Try Again</button>
-    `;
-
-    $('#quizArea').html(reviewHtml);
-}
+        $('#quizArea').html(reviewHtml);
+    }
 
     function saveQuizScore(score, totalQuestions, percentage) {
 
