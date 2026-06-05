@@ -8,5 +8,6 @@ namespace APLH.Models
         public int TotalQuestions { get; set; }
         public decimal Percentage { get; set; }
         public DateTime QuizDate { get; set; }
+        public int CourseId { get; set; }
     }
 }
