@@ -361,6 +361,20 @@ function saveQuizQuestion() {
     });
 }
 
+//Click on Blank area to close modals
+$(document).ready(function () {
+
+    $('.modal-overlay').on('click', function (e) {
+
+        // Only close when clicking the overlay itself
+        if ($(e.target).hasClass('modal-overlay')) {
+            $(this).removeClass('open');
+        }
+
+    });
+
+});
+
 // Initialize
 $(document).ready(function() {
     checkAuth();
