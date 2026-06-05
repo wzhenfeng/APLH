@@ -244,15 +244,8 @@
 
             reviewHtml += `
                     </div>
-
-                    <div class="review-answer">
-                        <p><strong>Your Answer:</strong> ${q.options[userAnswer]}</p>
-                        <p><strong>Correct Answer:</strong> ${q.options[correctAnswer]}</p>
-                    </div>
-
                     <button onclick="restartQuiz()" class="finish-btn">Try Again</button>
-                </div>
-            `;
+                    </div>`;
         });
 
         $('#quizArea').html(reviewHtml);
