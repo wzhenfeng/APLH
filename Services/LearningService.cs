@@ -153,10 +153,5 @@ namespace APLH.Services
         
         public async Task<IEnumerable<QuizScore>> GetUserQuizScoresAsync(int userId)
             => await _repository.GetUserQuizScoresAsync(userId);
-
-        public async Task UpdateUserNameAsync(int id, string name)
-        {
-            await _repository.UpdateUserNameAsync(id, name);
-        }
     }
 }
