@@ -342,10 +342,22 @@ public async Task<IActionResult> DeleteUser(int id)
     await _service.DeleteUserAsync(id);
     return Ok(new { success = true });
 }
+
+[HttpPut("users/{id}/name")]
+public async Task<IActionResult> UpdateUserName(
+    int id,
+    [FromBody] UpdateUserRequest request)
+{
+    await _service.UpdateUserNameAsync(id, request.Name);
+
+    return Ok();
+}
     }
 
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class RegisterRequest { public string Name { get; set; } = string.Empty; public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class EnrollRequest { public int CourseId { get; set; } }
     public class QuizScoreRequest { public int Score { get; set; } public int Total { get; set; } public int CourseId { get; set; }}
+    public class UpdateUserRequest{public string Name { get; set; } = "";}
 }
+

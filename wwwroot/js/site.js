@@ -361,6 +361,37 @@ function saveQuizQuestion() {
     });
 }
 
+function editUser(id, name) {
+
+    $('#editUserId').val(id);
+    $('#editUserName').val(name);
+
+    openModal('editUserModal');
+}
+
+function saveUserName() {
+
+    const id = $('#editUserId').val();
+    const name = $('#editUserName').val();
+
+    $.ajax({
+        url: `/api/api/users/${id}/name`,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            name: name
+        }),
+
+        success: function () {
+            location.reload();
+        },
+
+        error: function () {
+            alert('Failed to update user');
+        }
+    });
+}
+
 //Click on Blank area to close modals
 $(document).ready(function () {
 

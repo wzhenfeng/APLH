@@ -47,17 +47,15 @@
                         <td>@user.Joined.ToString("dd MMM yyyy")</td>
 
                         <td>
+                            <button class="edit-btn"
+                                    onclick="editUser(@user.Id, '@user.Name')">
+                                Edit
+                            </button>
 
-                            @if (user.Role != "admin")
-                            {
-                                <button class="icon-btn del"
-                                        onclick="deleteUser(@user.Id)">
-
-                                    Delete
-
-                                </button>
-                            }
-
+                            <button class="delete-btn"
+                                    onclick="deleteUser(@user.Id)">
+                                Delete
+                            </button>
                         </td>
 
                     </tr>
@@ -66,6 +64,35 @@
             </tbody>
 
         </table>
+
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="editUserModal">
+
+    <div class="modal-content">
+
+        <h3>Edit User Name</h3>
+
+        <input type="hidden" id="editUserId">
+
+        <input type="text"
+               id="editUserName"
+               class="form-control"
+               placeholder="Enter new name">
+
+        <div style="margin-top:20px;">
+            <button onclick="saveUserName()"
+                    class="btn-primary">
+                Save
+            </button>
+
+            <button onclick="closeModal('editUserModal')"
+                    class="btn-secondary">
+                Cancel
+            </button>
+        </div>
 
     </div>
 

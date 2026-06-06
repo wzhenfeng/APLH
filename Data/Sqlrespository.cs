@@ -450,5 +450,21 @@ namespace APLH.Data
 
             return result.ToList();
         }
+
+        public async Task UpdateUserNameAsync(int id, string name)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                UPDATE users
+                SET name = @Name
+                WHERE id = @Id";
+
+            await connection.ExecuteAsync(sql, new
+            {
+                Id = id,
+                Name = name
+            });
+        }
     }
 }
