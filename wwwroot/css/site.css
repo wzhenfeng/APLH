@@ -256,14 +256,14 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .chapter-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text2); font-weight: 600; padding: 10px 8px 6px; }
 .chapter-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; }
 .chapter-nav-item:hover { background: var(--surface2); }
-.chapter-nav-item.active { background: var(--surface2); border: 1px solid var(--border); }
+.chapter-nav-item.active {background: rgba(107,203,255,0.12);border: 1px solid rgba(107,203,255,0.25);}
 .chapter-nav-item.active .nav-dot { background: var(--accent3); }
 .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bg3); flex-shrink: 0; }
 .nav-item-title { font-size: 13px; color: var(--text2); line-height: 1.4; }
 .chapter-nav-item.active .nav-item-title { color: var(--text); font-weight: 500; }
 .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-.sidebar-quiz-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--accent3); }
-.sidebar-quiz-btn:hover { background: var(--bg3); }
+.sidebar-quiz-btn {background: var(--surface);border: 1px solid var(--border);color: var(--text);}
+.sidebar-quiz-btn:hover {background: var(--bg3);}
 .learning-main { flex: 1; min-width: 0; }
 .course-hero { display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
 .course-emoji { font-size: 48px; flex-shrink: 0; }
