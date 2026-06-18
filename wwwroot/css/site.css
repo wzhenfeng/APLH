@@ -257,7 +257,7 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .chapter-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; }
 .chapter-nav-item:hover { background: var(--surface2); }
 .chapter-nav-item.active {background: rgba(107,203,255,0.12);border: 1px solid rgba(107,203,255,0.25);}
-.chapter-nav-item.active .nav-dot { background: var(--accent3); }
+.chapter-nav-item.active .nav-dot { background: #ff5252; }
 .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bg3); flex-shrink: 0; }
 .nav-item-title { font-size: 13px; color: var(--text2); line-height: 1.4; }
 .chapter-nav-item.active .nav-item-title { color: var(--text); font-weight: 500; }
