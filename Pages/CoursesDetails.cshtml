@@ -403,6 +403,17 @@ function addMaterialForm() {
 
             <input type="hidden" class="material-id" value="0">
 
+            <div style="display:flex;gap:12px;">
+                <div class="form-group" style="flex:0 0 120px;">
+                    <label>Chapter No.</label>
+                    <input type="number" class="material-chapter-order" min="1" value="1" placeholder="1">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Chapter Title</label>
+                    <input type="text" class="material-chapter-title" placeholder="e.g. Getting Started">
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Material Title</label>
                 <input type="text" class="material-title" placeholder="e.g. Introduction to HTML">
@@ -434,6 +445,17 @@ function addExistingMaterialForm(m) {
             <h3>Material ${materialIndex}</h3>
 
             <input type="hidden" class="material-id" value="${m.id}">
+
+            <div style="display:flex;gap:12px;">
+                <div class="form-group" style="flex:0 0 120px;">
+                    <label>Chapter No.</label>
+                    <input type="number" class="material-chapter-order" min="1" value="${m.chapterOrder || 1}" placeholder="1">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Chapter Title</label>
+                    <input type="text" class="material-chapter-title" value="${m.chapterTitle || ''}" placeholder="e.g. Getting Started">
+                </div>
+            </div>
 
             <div class="form-group">
                 <label>Material Title</label>
@@ -480,6 +502,8 @@ function addExistingMaterialForm(m) {
         const material = {
             id: parseInt(form.find('.material-id').val()) || 0,
             courseId: currentCourseId,
+            chapterOrder: parseInt(form.find('.material-chapter-order').val()) || 1,
+            chapterTitle: form.find('.material-chapter-title').val() || '',
             title: form.find('.material-title').val(),
             content: form.find('.material-content').val(),
             imageUrl: form.find('.material-image-url').val(),

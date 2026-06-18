@@ -320,9 +320,9 @@ namespace APLH.Data
 
             var sql = @"
                 INSERT INTO course_materials
-                (course_id, title, content, image_url, video_url)
+                (course_id, title, content, image_url, video_url, chapter_order, chapter_title)
                 VALUES
-                (@CourseId, @Title, @Content, @ImageUrl, @VideoUrl)";
+                (@CourseId, @Title, @Content, @ImageUrl, @VideoUrl, @ChapterOrder, @ChapterTitle)";
 
             await connection.ExecuteAsync(sql, new
             {
@@ -330,7 +330,9 @@ namespace APLH.Data
                 material.Title,
                 material.Content,
                 material.ImageUrl,
-                material.VideoUrl
+                material.VideoUrl,
+                material.ChapterOrder,
+                material.ChapterTitle
             });
         }
 
@@ -346,10 +348,12 @@ namespace APLH.Data
                     content AS Content,
                     image_url AS ImageUrl,
                     video_url AS VideoUrl,
-                    created_at AS CreatedAt
+                    created_at AS CreatedAt,
+                    chapter_order AS ChapterOrder,
+                    chapter_title AS ChapterTitle
                 FROM course_materials
                 WHERE course_id = @CourseId
-                ORDER BY created_at ASC";
+                ORDER BY chapter_order ASC, created_at ASC";
 
             return await connection.QueryAsync<CourseMaterial>(sql, new
             {
@@ -367,7 +371,9 @@ namespace APLH.Data
                     title = @Title,
                     content = @Content,
                     image_url = @ImageUrl,
-                    video_url = @VideoUrl
+                    video_url = @VideoUrl,
+                    chapter_order = @ChapterOrder,
+                    chapter_title = @ChapterTitle
                 WHERE id = @Id";
 
             await connection.ExecuteAsync(sql, new
@@ -376,7 +382,9 @@ namespace APLH.Data
                 material.Title,
                 material.Content,
                 material.ImageUrl,
-                material.VideoUrl
+                material.VideoUrl,
+                material.ChapterOrder,
+                material.ChapterTitle
             });
         }
 

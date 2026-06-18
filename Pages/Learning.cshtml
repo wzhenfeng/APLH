@@ -1,88 +1,465 @@
 ﻿@page
 @model APLH.Pages.LearningModel
 @{
-    ViewData["Title"] = "Learning";
+    ViewData["Title"] = "Learning - " + Model.Course.Title;
 }
 
-<div class="course-details-page">
+<style>
+    .learning-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
-    <div class="course-hero">
+    /* Sidebar */
+    .chapter-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 18px;
+        padding: 20px;
+        position: sticky;
+        top: 24px;
+        max-height: calc(100vh - 48px);
+        overflow-y: auto;
+    }
 
-        <div class="course-emoji">
-            @Model.Course.Emoji
-        </div>
+    .sidebar-course-title {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-        <div>
-            <h1>@Model.Course.Title</h1>
+    .chapter-group {
+        margin-bottom: 8px;
+    }
 
-            <p>@Model.Course.Description</p>
-        </div>
+    .chapter-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #555;
+        font-weight: 600;
+        padding: 10px 8px 6px;
+    }
 
-    </div>
+    .chapter-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 2px;
+    }
 
-    <div style="margin-top:40px;">
+    .chapter-nav-item:hover {
+        background: #1a1a1a;
+    }
 
-        <h2>Learning Materials</h2>
+    .chapter-nav-item.active {
+        background: #1e3a2f;
+        border: 1px solid #2d5a42;
+    }
 
-        @if (Model.Materials.Count > 0)
+    .chapter-nav-item.active .nav-dot {
+        background: #4ade80;
+    }
+
+    .nav-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #333;
+        flex-shrink: 0;
+    }
+
+    .nav-item-title {
+        font-size: 13px;
+        color: #ccc;
+        line-height: 1.4;
+    }
+
+    .chapter-nav-item.active .nav-item-title {
+        color: #fff;
+        font-weight: 500;
+    }
+
+    .sidebar-divider {
+        border: none;
+        border-top: 1px solid #1e1e1e;
+        margin: 16px 0;
+    }
+
+    .sidebar-quiz-btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        background: #1a2e1a;
+        border: 1px solid #2d5a42;
+        color: #4ade80;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .sidebar-quiz-btn:hover {
+        background: #22392a;
+    }
+
+    /* Main content */
+    .learning-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .course-hero {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 24px;
+    }
+
+    .course-emoji {
+        font-size: 48px;
+        flex-shrink: 0;
+    }
+
+    .progress-bar-wrap {
+        margin-top: 12px;
+    }
+
+    .progress-bar-bg {
+        background: #1e1e1e;
+        border-radius: 999px;
+        height: 6px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        background: #4ade80;
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.4s ease;
+    }
+
+    .progress-label {
+        font-size: 12px;
+        color: #888;
+        margin-top: 6px;
+    }
+
+    /* Chapter header */
+    .chapter-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .chapter-badge {
+        background: #1e3a2f;
+        border: 1px solid #2d5a42;
+        color: #4ade80;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .chapter-title-heading {
+        font-size: 22px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    /* Material card */
+    .material-card {
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 20px;
+    }
+
+    .material-card h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+
+    .material-card p {
+        line-height: 1.8;
+        color: #ccc;
+        white-space: pre-line;
+    }
+
+    /* Navigation buttons */
+    .chapter-nav-btns {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 28px;
+        gap: 12px;
+    }
+
+    .nav-btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #2a2a2a;
+        background: #111;
+        color: #ccc;
+    }
+
+    .nav-btn:hover {
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    .nav-btn:disabled {
+        opacity: 0.3;
+        cursor: default;
+    }
+
+    .nav-btn.primary {
+        background: #166534;
+        border-color: #15803d;
+        color: #fff;
+    }
+
+    .nav-btn.primary:hover {
+        background: #15803d;
+    }
+
+    .chapter-counter {
+        font-size: 13px;
+        color: #666;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    @@media (max-width: 768px) {
+        .learning-layout {
+            flex-direction: column;
+        }
+        .chapter-sidebar {
+            width: 100%;
+            position: static;
+            max-height: none;
+        }
+    }
+</style>
+
+@{
+    // Group materials by chapter
+    var chapters = Model.Materials
+        .GroupBy(m => new { m.ChapterOrder, m.ChapterTitle })
+        .OrderBy(g => g.Key.ChapterOrder)
+        .ToList();
+    int totalChapters = chapters.Count;
+}
+
+<div class="learning-layout">
+
+    <!-- Sidebar -->
+    <aside class="chapter-sidebar">
+        <div class="sidebar-course-title">@Model.Course.Emoji @Model.Course.Title</div>
+
+        @if (chapters.Any())
         {
-            foreach (var material in Model.Materials)
+            int chIdx = 0;
+            foreach (var chapter in chapters)
             {
-                <div class="material-card"
-                    style="padding:25px;
-                            margin-top:20px;
-                            border:1px solid #2a2a2a;
-                            border-radius:18px;">
-
-                    <h3>@material.Title</h3>
-
-                    <p style="margin-top:15px;
-                            line-height:1.8;
-                            white-space:pre-line;">
-
-                        @material.Content
-
-                    </p>
-
-                    @if (!string.IsNullOrEmpty(material.ImageUrl))
+                chIdx++;
+                <div class="chapter-group">
+                    <div class="chapter-label">Chapter @chIdx</div>
+                    @foreach (var mat in chapter)
                     {
-                        <img src="@material.ImageUrl"
-                            style="max-width:100%;
-                                    border-radius:12px;
-                                    margin-top:15px;">
+                        <div class="chapter-nav-item @(chIdx == 1 ? "active" : "")"
+                             data-chapter="@chIdx"
+                             onclick="goToChapter(@chIdx)">
+                            <div class="nav-dot"></div>
+                            <div class="nav-item-title">@mat.Title</div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p style="color:#555;font-size:13px;">No chapters yet.</p>
+        }
+
+        @if (totalChapters > 0)
+        {
+            <hr class="sidebar-divider" />
+            <button class="sidebar-quiz-btn"
+                    onclick="location.href='/Quiz?courseId=@Model.Course.Id'">
+                🧠 Take Quiz
+            </button>
+        }
+    </aside>
+
+    <!-- Main content -->
+    <main class="learning-main">
+
+        <!-- Course hero -->
+        <div class="course-hero">
+            <div class="course-emoji">@Model.Course.Emoji</div>
+            <div style="flex:1">
+                <h1 style="font-size:22px;font-weight:700;">@Model.Course.Title</h1>
+                <p style="color:#888;margin-top:6px;font-size:14px;">@Model.Course.Description</p>
+                @if (totalChapters > 0)
+                {
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+                        </div>
+                        <div class="progress-label" id="progressLabel">Chapter 1 of @totalChapters</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Chapter sections -->
+        @if (chapters.Any())
+        {
+            int ci = 0;
+            foreach (var chapter in chapters)
+            {
+                ci++;
+                string chapterTitle = string.IsNullOrWhiteSpace(chapter.Key.ChapterTitle)
+                    ? $"Chapter {ci}"
+                    : chapter.Key.ChapterTitle;
+
+                <div class="chapter-section" id="chapter-@ci" style="display:@(ci == 1 ? "block" : "none")">
+
+                    <div class="chapter-header">
+                        <span class="chapter-badge">Chapter @ci</span>
+                        <h2 class="chapter-title-heading">@chapterTitle</h2>
+                    </div>
+
+                    @foreach (var mat in chapter)
+                    {
+                        <div class="material-card">
+                            <h3>@mat.Title</h3>
+                            <p>@mat.Content</p>
+
+                            @if (!string.IsNullOrEmpty(mat.ImageUrl))
+                            {
+                                <img src="@mat.ImageUrl"
+                                     style="max-width:100%;border-radius:12px;margin-top:15px;" />
+                            }
+
+                            @if (!string.IsNullOrEmpty(mat.VideoUrl))
+                            {
+                                <iframe width="100%"
+                                        height="360"
+                                        src="@mat.VideoUrl"
+                                        style="border-radius:12px;margin-top:15px;border:none;"
+                                        allowfullscreen>
+                                </iframe>
+                            }
+                        </div>
                     }
 
-                    @if (!string.IsNullOrEmpty(material.VideoUrl))
-                    {
-                        <iframe width="100%"
-                                height="360"
-                                src="@material.VideoUrl"
-                                style="border-radius:12px;
-                                    margin-top:15px;"
-                                allowfullscreen>
-                        </iframe>
-                    }
+                    <!-- Prev / Next buttons -->
+                    <div class="chapter-nav-btns">
+                        <button class="nav-btn"
+                                onclick="goToChapter(@(ci - 1))"
+                                @(ci == 1 ? "disabled" : "")>
+                            ← Previous
+                        </button>
+
+                        <span class="chapter-counter">@ci / @totalChapters</span>
+
+                        @if (ci < totalChapters)
+                        {
+                            <button class="nav-btn primary" onclick="goToChapter(@(ci + 1))">
+                                Next →
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="nav-btn primary"
+                                    onclick="location.href='/Quiz?courseId=@Model.Course.Id'">
+                                🧠 Take Quiz
+                            </button>
+                        }
+                    </div>
 
                 </div>
             }
         }
         else
         {
-            <p>No materials available yet.</p>
+            <div class="empty-state">
+                <p style="font-size:48px;">📭</p>
+                <p style="margin-top:12px;">No learning materials available yet.</p>
+            </div>
         }
 
-    </div>
-
-    <div style="margin-top:40px; text-align:center;">
-
-        <button class="btn btn-primary"
-                style="padding:16px 32px;"
-                onclick="location.href='/Quiz?courseId=@Model.Course.Id'">
-
-            Start Quiz
-
-        </button>
-
-    </div>
+    </main>
 
 </div>
+
+@section Scripts {
+<script>
+    const totalChapters = @totalChapters;
+
+    function goToChapter(num) {
+        if (num < 1 || num > totalChapters) return;
+
+        // Hide all chapters
+        document.querySelectorAll('.chapter-section').forEach(el => el.style.display = 'none');
+
+        // Show target
+        const target = document.getElementById('chapter-' + num);
+        if (target) {
+            target.style.display = 'block';
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Update sidebar active state
+        document.querySelectorAll('.chapter-nav-item').forEach(el => {
+            el.classList.toggle('active', parseInt(el.dataset.chapter) === num);
+        });
+
+        // Update progress bar
+        const pct = Math.round((num / totalChapters) * 100);
+        const fill = document.getElementById('progressFill');
+        const label = document.getElementById('progressLabel');
+        if (fill) fill.style.width = pct + '%';
+        if (label) label.textContent = 'Chapter ' + num + ' of ' + totalChapters;
+    }
+
+    // Init
+    goToChapter(1);
+</script>
+}
