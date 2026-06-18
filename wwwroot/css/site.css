@@ -248,6 +248,46 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .sidebar-price.free { color: var(--green); }
 .sidebar-includes { margin-top: 1.25rem; display: grid; gap: 8px; font-size: 0.875rem; color: var(--text2); }
 
+/* ===== Chapter ===== */
+.learning-layout { display: flex; gap: 24px; align-items: flex-start; max-width: 1200px; margin: 0 auto; }
+.chapter-sidebar { width: 280px; flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; }
+.sidebar-course-title { font-size: 13px; color: var(--text2); margin-bottom: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.chapter-group { margin-bottom: 8px; }
+.chapter-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text2); font-weight: 600; padding: 10px 8px 6px; }
+.chapter-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; }
+.chapter-nav-item:hover { background: var(--surface2); }
+.chapter-nav-item.active { background: var(--surface2); border: 1px solid var(--border); }
+.chapter-nav-item.active .nav-dot { background: var(--accent3); }
+.nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bg3); flex-shrink: 0; }
+.nav-item-title { font-size: 13px; color: var(--text2); line-height: 1.4; }
+.chapter-nav-item.active .nav-item-title { color: var(--text); font-weight: 500; }
+.sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.sidebar-quiz-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--accent3); }
+.sidebar-quiz-btn:hover { background: var(--bg3); }
+.learning-main { flex: 1; min-width: 0; }
+.course-hero { display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
+.course-emoji { font-size: 48px; flex-shrink: 0; }
+.progress-bar-wrap { margin-top: 12px; }
+.progress-bar-bg { background: var(--bg3); border-radius: 100px; height: 6px; width: 100%; overflow: hidden; }
+.progress-bar-fill { background: var(--accent3); height: 100%; border-radius: 100px; transition: width 0.4s ease; }
+.progress-label { font-size: 12px; color: var(--text2); margin-top: 6px; }
+.chapter-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.chapter-badge { background: var(--surface2); border: 1px solid var(--border); color: var(--accent3); }
+.chapter-title-heading { font-size: 22px; font-weight: 600; color: var(--text); }
+.material-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+.material-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 14px; }
+.material-card p { line-height: 1.8; color: var(--text2); white-space: pre-line; }
+.chapter-nav-btns { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; gap: 12px; }
+.nav-btn { padding: 12px 24px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); background: var(--surface); color: var(--text2); }
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.nav-btn.primary { background: var(--accent3); border-color: var(--accent3); color: #fff; }
+.nav-btn.primary:hover { opacity: 0.9; }
+.chapter-counter { font-size: 13px; color: var(--text2); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
+@media (max-width: 768px) { .learning-layout { flex-direction: column; } .chapter-sidebar { width: 100%; position: static; max-height: none; } }
+
+
 /* ===== PROFILE PAGE ===== */
 .profile-container { max-width: 1100px; margin: 40px auto; padding: 20px; }
 .profile-header { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; padding: 40px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
