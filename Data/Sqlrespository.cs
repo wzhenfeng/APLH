@@ -207,7 +207,7 @@ namespace APLH.Data
         {
             using var connection = CreateConnection();
             return await connection.QueryAsync<QuizQuestion>(
-                "SELECT * FROM quiz_questions WHERE course_id = @CourseId ORDER BY id",
+                "SELECT * FROM quiz_questions WHERE course_id = @CourseId ORDER BY chapter_order ASC, id ASC",
                 new { CourseId = courseId });
         }
 
