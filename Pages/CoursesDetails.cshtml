@@ -205,6 +205,17 @@ else
             <div class="quiz-question-form" style="border:1px solid var(--border);padding:15px;border-radius:12px;margin-bottom:15px;">
                 <h3>Question ${questionIndex}</h3>
 
+                <div style="display:flex;gap:12px;">
+                    <div class="form-group" style="flex:0 0 120px;">
+                        <label>Chapter No.</label>
+                        <input type="number" class="q-chapter-order" min="1" value="1" placeholder="1">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Chapter Title</label>
+                        <input type="text" class="q-chapter-title" placeholder="e.g. Introduction">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Question</label>
                     <input type="text" class="q-question" placeholder="Enter question">
@@ -257,6 +268,17 @@ else
                 <h3>Question ${questionIndex}</h3>
 
                 <input type="hidden" class="q-id" value="${q.id}">
+
+                <div style="display:flex;gap:12px;">
+                    <div class="form-group" style="flex:0 0 120px;">
+                        <label>Chapter No.</label>
+                        <input type="number" class="q-chapter-order" min="1" value="${q.chapterOrder || 1}" placeholder="1">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Chapter Title</label>
+                        <input type="text" class="q-chapter-title" value="${q.chapterTitle || ''}" placeholder="e.g. Introduction">
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label>Question</label>
@@ -343,6 +365,8 @@ else
 
             const question = {
                 id: parseInt(form.find('.q-id').val()) || 0,
+                chapterOrder: parseInt(form.find('.q-chapter-order').val()) || 1,
+                chapterTitle: form.find('.q-chapter-title').val() || '',
                 question: form.find('.q-question').val(),
                 optionA: form.find('.q-option-a').val(),
                 optionB: form.find('.q-option-b').val(),

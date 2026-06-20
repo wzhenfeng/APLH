@@ -4,290 +4,377 @@
     ViewData["Title"] = "Quiz";
 }
 
-<div class="page-header">
-    <h1>Quiz Challenge</h1>
-    <p>Test your knowledge and improve your skills.</p>
-</div>
-
-<div class="quiz-container">
-
-    <div class="progress-bar-outer">
-        <div class="progress-bar-inner"
-             id="quizProgress"
-             style="width:0%">
-        </div>
+<div id="quizRoot">
+    <!-- Filled by JS -->
+    <div class="empty-state">
+        <div style="font-size:40px;">⏳</div>
+        <p style="margin-top:12px;">Loading quiz...</p>
     </div>
-
-    <div id="quizArea"></div>
-
-    <div id="quizResult"
-         class="quiz-result"
-         style="display:none;">
-
-        <div class="quiz-score"
-             id="finalScore">
-        </div>
-
-        <div class="result-msg"
-             id="resultMessage">
-        </div>
-
-        <button class="btn btn-primary btn-lg"
-                onclick="restartQuiz()">
-
-            Try Again
-
-        </button>
-    </div>
-
 </div>
 
 @section Scripts {
-
 <script>
+const urlParams = new URLSearchParams(window.location.search);
+const courseId   = urlParams.get('courseId');
+const apiUrl     = courseId ? `/api/api/quiz/questions/${courseId}` : '/api/api/quiz/questions';
 
-    let questions = [];
+let chapters      = [];   // [{order, title, questions:[]}]
+let chapterIndex  = 0;    // current chapter (0-based)
+let questionIndex = 0;    // question within chapter
+let answered      = false;
+let chapterScores = [];   // [{name, score, total}]
+let totalScore    = 0;
+let totalQuestions = 0;
 
-    let currentQuestion = 0;
-
-    let score = 0;
-
-    let selectedAnswer = null;
-
-    let userAnswers = [];
-
-    function loadQuizQuestions() {
-
-        // Get course ID from URL parameter if provided
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseId = urlParams.get('courseId');
-        
-        const url = courseId 
-            ? `/api/api/quiz/questions/${courseId}`
-            : '/api/api/quiz/questions';
-
-        $.ajax({
-
-            url: url,
-
-            type: 'GET',
-
-            success: function(data) {
-
-                questions = data;
-
-                if (questions.length === 0) {
-
-                    $('#quizArea').html(`
-                        <div class="empty-state">
-                            <div class="icon">❓</div>
-                            <p>No quiz questions available for this course.</p>
-                        </div>
-                    `);
-
-                    return;
-                }
-
-                loadQuestion();
-            }
-        });
-    }
-
-    function loadQuestion() {
-
-        selectedAnswer = null;
-
-        const q = questions[currentQuestion];
-
-        $('#quizProgress').css(
-            'width',
-            `${(currentQuestion / questions.length) * 100}%`
-        );
-
-        $('#quizArea').html(`
-
-            <div class="quiz-card">
-
-                <div class="quiz-q">
-
-                    Question ${currentQuestion + 1}
-                    of ${questions.length}
-
-                    <br><br>
-
-                    ${q.question}
-
-                </div>
-
-                <div class="quiz-options">
-
-                    ${q.options.map((option, index) => `
-
-                        <div class="quiz-option"
-                             onclick="selectAnswer(${index})">
-
-                            ${option}
-
-                        </div>
-
-                    `).join('')}
-
-                </div>
-
-                <div style="margin-top:25px;text-align:right;">
-
-                    <button class="btn btn-primary"
-                            onclick="submitAnswer()">
-
-                        ${currentQuestion + 1 === questions.length
-                            ? 'Finish Quiz'
-                            : 'Next Question'}
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        `);
-    }
-
-    function selectAnswer(index) {
-
-        selectedAnswer = index;
-
-        $('.quiz-option').removeClass('selected');
-
-        $('.quiz-option')
-            .eq(index)
-            .addClass('selected');
-    }
-
-    function submitAnswer() {
-
-        if (selectedAnswer === null) {
-            showToast('Please select an answer first', 'error');
+/* ── Boot ── */
+$.ajax({
+    url: apiUrl,
+    type: 'GET',
+    success(data) {
+        if (!data || data.length === 0) {
+            $('#quizRoot').html(`
+                <div class="empty-state">
+                    <div style="font-size:48px;">❓</div>
+                    <p style="margin-top:12px;">No quiz questions available for this course.</p>
+                </div>`);
             return;
         }
 
-        userAnswers[currentQuestion] = selectedAnswer;
+        // Group into chapters by chapterOrder + chapterTitle
+        const map = new Map();
+        data.forEach(q => {
+            const key = q.chapterOrder ?? 1;
+            if (!map.has(key)) {
+                map.set(key, {
+                    order: key,
+                    title: q.chapterTitle || `Chapter ${key}`,
+                    questions: []
+                });
+            }
+            map.get(key).questions.push(q);
+        });
 
-        if (selectedAnswer === questions[currentQuestion].correctAnswer) {
-            score++;
-        }
+        chapters = [...map.values()].sort((a, b) => a.order - b.order);
+        totalQuestions = data.length;
 
-        currentQuestion++;
-
-        if (currentQuestion < questions.length) {
-            loadQuestion();
-        } else {
-            showResult();
-        }
+        renderShell();
+        renderQuestion();
+    },
+    error() {
+        $('#quizRoot').html(`<div class="empty-state"><p>Failed to load quiz.</p></div>`);
     }
+});
 
-    function showResult() {
-        $('#quizArea').hide();
-        $('#quizResult').show();
-
-        const percentage = Math.round((score / questions.length) * 100);
-
-        $('#quizResult').html(`
-            <div class="quiz-result-card">
-                <h1>${score}/${questions.length}</h1>
-                <h3>You scored ${percentage}%</h3>
-
-                <div class="result-buttons">
-                    <button onclick="showReview()" class="finish-btn">Review Quiz</button>
-                    <button onclick="restartQuiz()" class="finish-btn">Try Again</button>
-                </div>
+/* ── Shell (sidebar + main area) ── */
+function renderShell() {
+    const sidebarTabs = chapters.map((ch, i) => `
+        <div class="chapter-tab ${i === 0 ? 'active' : ''}" id="tab-${i}" onclick="jumpToChapter(${i})">
+            <div class="tab-dot"></div>
+            <div class="tab-info">
+                <div class="tab-name">${ch.title}</div>
+                <div class="tab-count">${ch.questions.length} question${ch.questions.length !== 1 ? 's' : ''}</div>
             </div>
-        `);
+        </div>`).join('');
 
-        saveQuizScore(score, questions.length, percentage);
+    $('#quizRoot').html(`
+        <div class="quiz-layout">
+            <aside class="quiz-sidebar">
+                <div class="sidebar-label">Quiz Chapters</div>
+                ${sidebarTabs}
+                <hr class="sidebar-divider">
+                <div class="sidebar-score-box" id="sidebarScore">
+                    Score so far: <strong>0 / 0</strong>
+                </div>
+            </aside>
+            <main class="quiz-main" id="quizMain"></main>
+        </div>`);
+}
+
+/* ── Render current question ── */
+function renderQuestion() {
+    const ch = chapters[chapterIndex];
+    const q  = ch.questions[questionIndex];
+    const chTotal  = ch.questions.length;
+    const pct = Math.round((questionIndex / chTotal) * 100);
+    const letters = ['A','B','C','D'];
+
+    const optionsHtml = q.options.map((opt, i) => `
+        <div class="q-option" id="opt-${i}" onclick="selectAnswer(${i})">
+            <div class="q-option-letter">${letters[i]}</div>
+            ${opt}
+        </div>`).join('');
+
+    $('#quizMain').html(`
+        <div class="quiz-chapter-header">
+            <span class="quiz-chapter-badge">Chapter ${ch.order}</span>
+            <h2 class="quiz-chapter-title">${ch.title}</h2>
+        </div>
+
+        <div class="quiz-progress-wrap">
+            <div class="quiz-progress-bg">
+                <div class="quiz-progress-fill" id="qProgressFill" style="width:${pct}%"></div>
+            </div>
+            <div class="quiz-progress-label" id="qProgressLabel">
+                Question ${questionIndex + 1} of ${chTotal}
+            </div>
+        </div>
+
+        <div class="q-card">
+            <div class="q-number">Question ${questionIndex + 1} of ${chTotal}</div>
+            <div class="q-text">${q.question}</div>
+            <div class="q-options">${optionsHtml}</div>
+        </div>
+
+        <div class="quiz-nav">
+            <button class="qnav-btn" onclick="prevQuestion()" ${questionIndex === 0 ? 'disabled' : ''}>← Previous</button>
+            <span class="q-counter">${questionIndex + 1} / ${chTotal}</span>
+            <button class="qnav-btn primary" id="nextBtn" onclick="submitAnswer()">
+                ${questionIndex + 1 === chTotal ? 'Finish Chapter' : 'Next →'}
+            </button>
+        </div>`);
+
+    answered = false;
+    updateSidebarScore();
+}
+
+/* ── Answer selection ── */
+let selectedAnswer = null;
+
+function selectAnswer(idx) {
+    if (answered) return;
+    selectedAnswer = idx;
+    $('.q-option').removeClass('selected');
+    $(`#opt-${idx}`).addClass('selected');
+}
+
+function submitAnswer() {
+    if (selectedAnswer === null) {
+        showToast('Please select an answer first', 'error');
+        return;
     }
 
-    function showReview() {
-        $('#quizResult').hide();
-        $('#quizArea').show();
+    if (answered) { advanceQuestion(); return; }
 
-        let reviewHtml = '';
+    answered = true;
+    const ch = chapters[chapterIndex];
+    const q  = ch.questions[questionIndex];
 
-        questions.forEach((q, index) => {
-            const userAnswer = userAnswers[index];
-            const correctAnswer = q.correctAnswer;
+    // Store answer on question object
+    q._userAnswer = selectedAnswer;
+    if (selectedAnswer === q.correctAnswer) {
+        totalScore++;
+        if (!ch._score) ch._score = 0;
+        ch._score++;
+    }
+    if (!ch._answered) ch._answered = 0;
+    ch._answered++;
 
-            reviewHtml += `
-                <div class="quiz-card">
-                    <h3>Question ${index + 1} of ${questions.length}</h3>
-                    <h2>${q.question}</h2>
+    // Show correct/wrong highlighting
+    for (let i = 0; i < 4; i++) {
+        if (i === q.correctAnswer) $(`#opt-${i}`).addClass('correct');
+        else if (i === selectedAnswer) $(`#opt-${i}`).addClass('wrong');
+    }
 
-                    <div class="options">
-            `;
+    updateSidebarScore();
 
-            q.options.forEach((option, optionIndex) => {
-                let optionClass = '';
+    // Delay then advance
+    setTimeout(advanceQuestion, 900);
+}
 
-                if (optionIndex === correctAnswer) {
-                    optionClass = 'correct-option';
+function advanceQuestion() {
+    const ch = chapters[chapterIndex];
+    if (questionIndex + 1 < ch.questions.length) {
+        questionIndex++;
+        selectedAnswer = null;
+        renderQuestion();
+    } else {
+        showChapterResult();
+    }
+}
+
+function prevQuestion() {
+    if (questionIndex > 0) {
+        questionIndex--;
+        selectedAnswer = null;
+        answered = false;
+        renderQuestion();
+    }
+}
+
+/* ── Chapter result ── */
+function showChapterResult() {
+    const ch = chapters[chapterIndex];
+    const score = ch._score || 0;
+    const total = ch.questions.length;
+    const pct   = Math.round((score / total) * 100);
+    const isLast = chapterIndex === chapters.length - 1;
+
+    chapterScores.push({ name: ch.title, score, total });
+    markTabDone(chapterIndex);
+
+    const msg = pct >= 80 ? '🎉 Excellent work!' : pct >= 60 ? '👍 Good effort!' : '💪 Keep practising!';
+
+    $('#quizMain').html(`
+        <div class="chapter-result-card">
+            <div class="chapter-result-score">${score}/${total}</div>
+            <div class="chapter-result-sub">You scored ${pct}% on <strong>${ch.title}</strong></div>
+            <p style="color:#555;margin-bottom:28px;">${msg}</p>
+            <div class="chapter-result-btns">
+                <button class="qnav-btn" onclick="retryChapter()">↺ Retry Chapter</button>
+                <button class="qnav-btn" onclick="reviewChapter()">👁 Review Answers</button>
+                ${isLast
+                    ? `<button class="qnav-btn primary" onclick="showFinalResult()">See Final Score 🏆</button>`
+                    : `<button class="qnav-btn primary" onclick="nextChapter()">Next Chapter →</button>`
                 }
+            </div>
+        </div>`);
+}
 
-                if (optionIndex === userAnswer && userAnswer !== correctAnswer) {
-                    optionClass = 'wrong-option';
-                }
+/* ── Chapter review ── */
+function reviewChapter() {
+    const ch = chapters[chapterIndex];
+    const letters = ['A','B','C','D'];
+    let html = `
+        <div class="quiz-chapter-header">
+            <span class="quiz-chapter-badge">Review</span>
+            <h2 class="quiz-chapter-title">${ch.title}</h2>
+        </div>`;
 
-                reviewHtml += `
-                    <div class="option ${optionClass}">
-                        ${option}
-                    </div>
-                `;
-            });
+    ch.questions.forEach((q, i) => {
+        const ua = q._userAnswer;
+        const ca = q.correctAnswer;
+        const optHtml = q.options.map((opt, oi) => {
+            let cls = '';
+            if (oi === ca) cls = 'correct';
+            else if (oi === ua && ua !== ca) cls = 'wrong';
+            return `<div class="q-option ${cls}" style="cursor:default;">
+                        <div class="q-option-letter">${letters[oi]}</div>
+                        ${opt}
+                    </div>`;
+        }).join('');
 
-            
-        });
-
-        $('#quizArea').html(reviewHtml);
-    }
-
-    function saveQuizScore(score, totalQuestions, percentage) {
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseId = urlParams.get('courseId');
-
-        $.ajax({
-            url: '/api/api/quiz/save',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                courseId: parseInt(courseId),
-                score: score,
-                total: totalQuestions,
-                percentage: percentage
-            })
-        });
-    }
-
-    function restartQuiz() {
-
-        currentQuestion = 0;
-
-        score = 0;
-
-        $('#quizResult').hide();
-
-        $('#quizArea').show();
-
-        userAnswers = [];
-            $('.quiz-review').remove();
-
-        loadQuestion();
-    }
-
-    $(document).ready(function () {
-
-        loadQuizQuestions();
-
+        html += `
+            <div class="q-card">
+                <div class="q-number">Question ${i + 1}</div>
+                <div class="q-text">${q.question}</div>
+                <div class="q-options">${optHtml}</div>
+            </div>`;
     });
 
-</script>
+    html += `<div class="quiz-nav">
+                <button class="qnav-btn primary" onclick="showChapterResult()">Back to Results</button>
+             </div>`;
 
+    $('#quizMain').html(html);
+}
+
+/* ── Retry chapter ── */
+function retryChapter() {
+    const ch = chapters[chapterIndex];
+    ch._score = 0;
+    ch._answered = 0;
+    ch.questions.forEach(q => delete q._userAnswer);
+    questionIndex = 0;
+    selectedAnswer = null;
+    answered = false;
+    renderQuestion();
+}
+
+/* ── Next chapter ── */
+function nextChapter() {
+    chapterIndex++;
+    questionIndex = 0;
+    selectedAnswer = null;
+    answered = false;
+    updateSidebarActive();
+    renderQuestion();
+}
+
+/* ── Jump to chapter from sidebar ── */
+function jumpToChapter(idx) {
+    chapterIndex = idx;
+    questionIndex = 0;
+    selectedAnswer = null;
+    answered = false;
+    updateSidebarActive();
+    renderQuestion();
+}
+
+/* ── Final result ── */
+function showFinalResult() {
+    saveQuizScore();
+
+    const pct = Math.round((totalScore / totalQuestions) * 100);
+    const trophy = pct >= 80 ? '🏆' : pct >= 60 ? '🥈' : '📚';
+    const msg = pct >= 80 ? 'Outstanding!' : pct >= 60 ? 'Good job!' : 'Keep learning!';
+
+    const breakdownHtml = chapterScores.map(cs => `
+        <div class="chapter-score-row">
+            <div class="chapter-score-name">${cs.name}</div>
+            <div class="chapter-score-val">${cs.score}/${cs.total} (${Math.round(cs.score/cs.total*100)}%)</div>
+        </div>`).join('');
+
+    $('#quizMain').html(`
+        <div class="final-result-card">
+            <div class="final-trophy">${trophy}</div>
+            <div class="final-score">${totalScore}/${totalQuestions}</div>
+            <div class="final-sub">You scored ${pct}% — ${msg}</div>
+
+            <div class="chapter-scores-grid">${breakdownHtml}</div>
+
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <button class="qnav-btn" onclick="restartAll()">↺ Retake Quiz</button>
+                ${courseId ? `<a href="/Learning?courseId=${courseId}" class="qnav-btn primary">← Back to Course</a>` : ''}
+            </div>
+        </div>`);
+}
+
+/* ── Restart everything ── */
+function restartAll() {
+    chapterIndex = 0;
+    questionIndex = 0;
+    selectedAnswer = null;
+    answered = false;
+    totalScore = 0;
+    chapterScores = [];
+    chapters.forEach(ch => {
+        ch._score = 0;
+        ch._answered = 0;
+        ch.questions.forEach(q => delete q._userAnswer);
+    });
+    $('.chapter-tab').removeClass('done');
+    updateSidebarActive();
+    renderQuestion();
+}
+
+/* ── Sidebar helpers ── */
+function updateSidebarActive() {
+    $('.chapter-tab').removeClass('active');
+    $(`#tab-${chapterIndex}`).addClass('active');
+}
+
+function markTabDone(idx) {
+    $(`#tab-${idx}`).addClass('done').removeClass('active');
+}
+
+function updateSidebarScore() {
+    $('#sidebarScore').html(`Score so far: <strong>${totalScore} / ${totalQuestions}</strong>`);
+}
+
+/* ── Save score ── */
+function saveQuizScore() {
+    if (!courseId) return;
+    $.ajax({
+        url: '/api/api/quiz/save',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            courseId: parseInt(courseId),
+            score: totalScore,
+            total: totalQuestions,
+            percentage: Math.round((totalScore / totalQuestions) * 100)
+        })
+    });
+}
+</script>
 }
