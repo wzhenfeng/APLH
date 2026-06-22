@@ -437,6 +437,14 @@ namespace APLH.Data
             return result.ToList();
         }
 
+        public async Task DeleteCourseMaterialAsync(int id)
+        {
+            using var connection = CreateConnection();
+            await connection.ExecuteAsync(
+                "DELETE FROM course_materials WHERE id = @Id",
+                new { Id = id });
+        }
+
         public async Task<List<ChatMessage>> GetAllChatMessagesAsync()
         {
             using var connection = CreateConnection();

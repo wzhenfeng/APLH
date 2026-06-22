@@ -336,6 +336,13 @@ public async Task<IActionResult> GetCourseMaterials(int courseId)
     return Ok(materials);
 }
 
+[HttpDelete("materials/{id}")]
+public async Task<IActionResult> DeleteCourseMaterial(int id)
+{
+    await _service.DeleteCourseMaterialAsync(id);
+    return Ok(new { success = true });
+}
+
 [HttpDelete("users/{id}")]
 public async Task<IActionResult> DeleteUser(int id)
 {

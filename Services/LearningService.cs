@@ -131,6 +131,9 @@ namespace APLH.Services
             await _repository.UpdateCourseMaterialAsync(material);
         }
 
+        public async Task DeleteCourseMaterialAsync(int id)
+            => await _repository.DeleteCourseMaterialAsync(id);
+
         public async Task<IEnumerable<CourseMaterial>> GetCourseMaterialsAsync(int courseId)
         {
             return await _repository.GetCourseMaterialsAsync(courseId);
