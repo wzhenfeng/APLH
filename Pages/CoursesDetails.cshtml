@@ -100,22 +100,67 @@ else
 
 <div class="modal-overlay" id="quizQuestionModal">
     <div class="modal" style="max-width:700px;">
-        <h2>Add <span>Quiz Questions</span></h2>
+        <h2>Manage <span>Quiz Questions</span></h2>
 
-        <div id="quizQuestionList"></div>
+        <!-- STAGE 1: pick a chapter -->
+        <div id="quizChapterStage">
+            <div class="form-group">
+                <label>Select Chapter</label>
+                <select id="quizChapterSelect">
+                    <option value="">-- Select a chapter --</option>
+                </select>
+            </div>
 
-        <button class="btn btn-ghost" onclick="addQuestionForm()">
-            + Add Another Question
-        </button>
+            <div id="newChapterFields" style="display:none;">
+                <div style="display:flex;gap:12px;">
+                    <div class="form-group" style="flex:0 0 120px;">
+                        <label>Chapter No.</label>
+                        <input type="number" id="newChapterOrder" min="1" value="1">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Chapter Title</label>
+                        <input type="text" id="newChapterTitle" placeholder="e.g. Introduction">
+                    </div>
+                </div>
+            </div>
 
-        <div class="modal-actions">
-            <button class="btn btn-primary" style="flex:1" onclick="saveAllQuizQuestions()">
-                Save All Questions
+            <p id="quizNoChapterHint" style="display:none; font-size:0.8125rem; color:var(--text3); margin-top:-0.5rem;">
+                This course has no chapters yet. Add materials first, or create a new chapter above.
+            </p>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" style="flex:1" onclick="proceedToQuizQuestions()">
+                    Next →
+                </button>
+
+                <button class="btn btn-ghost" onclick="closeModal('quizQuestionModal')">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- STAGE 2: edit questions inside the selected chapter -->
+        <div id="quizQuestionsStage" style="display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
+                <button class="btn btn-ghost btn-sm" onclick="backToChapterStage()">← Back</button>
+                <span class="quiz-chapter-badge" id="quizChapterBadge"></span>
+            </div>
+
+            <div id="quizQuestionList"></div>
+
+            <button class="btn btn-ghost" onclick="addQuestionForm()">
+                + Add Another Question
             </button>
 
-            <button class="btn btn-ghost" onclick="closeModal('quizQuestionModal')">
-                Cancel
-            </button>
+            <div class="modal-actions">
+                <button class="btn btn-primary" style="flex:1" onclick="saveAllQuizQuestions()">
+                    Save All Questions
+                </button>
+
+                <button class="btn btn-ghost" onclick="closeModal('quizQuestionModal')">
+                    Cancel
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -154,6 +199,8 @@ else
 @section Scripts {
 <script>
     let questionIndex = 0;
+    let allQuizQuestionsCache = [];
+    let selectedChapter = null;
     const currentCourseId = @Model.Course.Id;
 
     function enrollCourse(courseId) {
@@ -177,25 +224,115 @@ else
     function openQuizQuestionModal() {
         $('#quizQuestionList').html('');
         questionIndex = 0;
+        selectedChapter = null;
+
+        $('#newChapterFields').hide();
+        $('#newChapterOrder').val(1);
+        $('#newChapterTitle').val('');
+        $('#quizQuestionsStage').hide();
+        $('#quizChapterStage').show();
+        $('#quizChapterSelect').html('<option value="">Loading chapters...</option>');
+        $('#quizNoChapterHint').hide();
+
         openModal('quizQuestionModal');
 
-        $.ajax({
-            url: `/api/api/quiz/questions?courseId=${currentCourseId}`,
-            type: 'GET',
-            success: function(questions) {
-                if (!questions || questions.length === 0) {
-                    addQuestionForm();
-                    return;
-                }
+        $.when(
+            $.ajax({ url: `/api/api/materials/${currentCourseId}`, type: 'GET' }),
+            $.ajax({ url: `/api/api/quiz/questions?courseId=${currentCourseId}`, type: 'GET' })
+        ).done(function (materialsResp, quizResp) {
+            const materials = materialsResp[0] || [];
+            const questions = quizResp[0] || [];
 
-                questions.forEach(q => {
-                    addExistingQuestionForm(q);
-                });
-            },
-            error: function() {
-                showToast('Failed to load quiz questions', 'error');
-            }
+            allQuizQuestionsCache = questions;
+
+            // Build a unique list of chapters from materials + any chapters quiz questions already use
+            const chapterMap = new Map();
+
+            materials.forEach(m => {
+                const order = m.chapterOrder || 1;
+                if (!chapterMap.has(order)) {
+                    chapterMap.set(order, m.chapterTitle || `Chapter ${order}`);
+                }
+            });
+
+            questions.forEach(q => {
+                const order = q.chapterOrder || 1;
+                if (!chapterMap.has(order)) {
+                    chapterMap.set(order, q.chapterTitle || `Chapter ${order}`);
+                }
+            });
+
+            const sortedChapters = [...chapterMap.entries()]
+                .map(([order, title]) => ({ order, title }))
+                .sort((a, b) => a.order - b.order);
+
+            let optionsHtml = '<option value="">-- Select a chapter --</option>';
+            sortedChapters.forEach(ch => {
+                const safeTitle = (ch.title || '').replace(/"/g, '&quot;');
+                optionsHtml += `<option value="${ch.order}" data-title="${safeTitle}">Chapter ${ch.order}: ${ch.title}</option>`;
+            });
+            optionsHtml += '<option value="__new__">+ Create New Chapter</option>';
+
+            $('#quizChapterSelect').html(optionsHtml);
+            $('#quizNoChapterHint').toggle(sortedChapters.length === 0);
+
+            const nextOrder = sortedChapters.length
+                ? Math.max(...sortedChapters.map(c => c.order)) + 1
+                : 1;
+            $('#newChapterOrder').val(nextOrder);
+        }).fail(function () {
+            showToast('Failed to load chapters', 'error');
+            $('#quizChapterSelect').html('<option value="__new__">+ Create New Chapter</option>');
         });
+    }
+
+    $(document).on('change', '#quizChapterSelect', function () {
+        $('#newChapterFields').toggle($(this).val() === '__new__');
+    });
+
+    function proceedToQuizQuestions() {
+        const val = $('#quizChapterSelect').val();
+
+        if (!val) {
+            showToast('Please select a chapter', 'error');
+            return;
+        }
+
+        if (val === '__new__') {
+            const order = parseInt($('#newChapterOrder').val());
+            const title = $('#newChapterTitle').val().trim();
+
+            if (!order || !title) {
+                showToast('Please enter the chapter number and title', 'error');
+                return;
+            }
+
+            selectedChapter = { order, title };
+        } else {
+            const title = $('#quizChapterSelect option:selected').data('title') || `Chapter ${val}`;
+            selectedChapter = { order: parseInt(val), title: title };
+        }
+
+        $('#quizChapterBadge').text(`Chapter ${selectedChapter.order}: ${selectedChapter.title}`);
+
+        $('#quizQuestionList').html('');
+        questionIndex = 0;
+
+        const existing = allQuizQuestionsCache.filter(q => (q.chapterOrder || 1) === selectedChapter.order);
+
+        if (existing.length === 0) {
+            addQuestionForm();
+        } else {
+            existing.forEach(q => addExistingQuestionForm(q));
+        }
+
+        $('#quizChapterStage').hide();
+        $('#quizQuestionsStage').show();
+    }
+
+    function backToChapterStage() {
+        $('#quizQuestionsStage').hide();
+        $('#quizChapterStage').show();
     }
 
     function addQuestionForm() {
@@ -204,17 +341,6 @@ else
         $('#quizQuestionList').append(`
             <div class="quiz-question-form" style="border:1px solid var(--border);padding:15px;border-radius:12px;margin-bottom:15px;">
                 <h3>Question ${questionIndex}</h3>
-
-                <div style="display:flex;gap:12px;">
-                    <div class="form-group" style="flex:0 0 120px;">
-                        <label>Chapter No.</label>
-                        <input type="number" class="q-chapter-order" min="1" value="1" placeholder="1">
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label>Chapter Title</label>
-                        <input type="text" class="q-chapter-title" placeholder="e.g. Introduction">
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label>Question</label>
@@ -268,17 +394,6 @@ else
                 <h3>Question ${questionIndex}</h3>
 
                 <input type="hidden" class="q-id" value="${q.id}">
-
-                <div style="display:flex;gap:12px;">
-                    <div class="form-group" style="flex:0 0 120px;">
-                        <label>Chapter No.</label>
-                        <input type="number" class="q-chapter-order" min="1" value="${q.chapterOrder || 1}" placeholder="1">
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label>Chapter Title</label>
-                        <input type="text" class="q-chapter-title" value="${q.chapterTitle || ''}" placeholder="e.g. Introduction">
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label>Question</label>
@@ -360,13 +475,18 @@ else
             return;
         }
 
+        if (!selectedChapter) {
+            showToast('No chapter selected', 'error');
+            return;
+        }
+
         forms.each(function () {
             const form = $(this);
 
             const question = {
                 id: parseInt(form.find('.q-id').val()) || 0,
-                chapterOrder: parseInt(form.find('.q-chapter-order').val()) || 1,
-                chapterTitle: form.find('.q-chapter-title').val() || '',
+                chapterOrder: selectedChapter.order,
+                chapterTitle: selectedChapter.title,
                 question: form.find('.q-question').val(),
                 optionA: form.find('.q-option-a').val(),
                 optionB: form.find('.q-option-b').val(),
