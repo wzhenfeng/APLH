@@ -14,6 +14,9 @@ namespace APLH.Controllers
         private readonly LearningService _service;
         private readonly EmailService _emailService;
 
+        // In-memory OTP store: email -> (otp, expiry)
+        private static readonly Dictionary<string, (string Otp, DateTime Expiry)> _otpStore = new();
+
         public ApiController(LearningService service, EmailService emailService)
         {
             _service = service;
@@ -342,10 +345,62 @@ public async Task<IActionResult> DeleteUser(int id)
     await _service.DeleteUserAsync(id);
     return Ok(new { success = true });
 }
+        // ── Forgot Password ──────────────────────────────────────────────────────
+
+        [HttpPost("auth/forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var user = await _service.GetUserByEmailAsync(request.Email);
+            if (user == null)
+                return Ok(new { success = false, message = "No account found with that email address." });
+
+            var otp = new Random().Next(100000, 999999).ToString();
+            _otpStore[request.Email.ToLower()] = (otp, DateTime.UtcNow.AddMinutes(10));
+
+            await _emailService.SendOtpEmailAsync(request.Email, otp);
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("auth/verify-otp")]
+        public IActionResult VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            var key = request.Email.ToLower();
+            if (!_otpStore.TryGetValue(key, out var entry))
+                return Ok(new { success = false, message = "OTP not found. Please request a new one." });
+
+            if (DateTime.UtcNow > entry.Expiry)
+            {
+                _otpStore.Remove(key);
+                return Ok(new { success = false, message = "OTP has expired. Please request a new one." });
+            }
+
+            if (entry.Otp != request.Otp)
+                return Ok(new { success = false, message = "Invalid OTP. Please try again." });
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("auth/reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var key = request.Email.ToLower();
+            if (!_otpStore.TryGetValue(key, out var entry))
+                return Ok(new { success = false, message = "Session expired. Please restart the process." });
+
+            if (DateTime.UtcNow > entry.Expiry || entry.Otp != request.Otp)
+                return Ok(new { success = false, message = "Invalid or expired OTP." });
+
+            await _service.UpdatePasswordAsync(request.Email, request.NewPassword);
+            _otpStore.Remove(key);
+            return Ok(new { success = true });
+        }
     }
 
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class RegisterRequest { public string Name { get; set; } = string.Empty; public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class EnrollRequest { public int CourseId { get; set; } }
-    public class QuizScoreRequest { public int Score { get; set; } public int Total { get; set; } public int CourseId { get; set; }}
+    public class QuizScoreRequest { public int Score { get; set; } public int Total { get; set; } public int CourseId { get; set; } }
+    public class ForgotPasswordRequest { public string Email { get; set; } = string.Empty; }
+    public class VerifyOtpRequest { public string Email { get; set; } = string.Empty; public string Otp { get; set; } = string.Empty; }
+    public class ResetPasswordRequest { public string Email { get; set; } = string.Empty; public string Otp { get; set; } = string.Empty; public string NewPassword { get; set; } = string.Empty; }
 }

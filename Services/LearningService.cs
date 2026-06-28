@@ -153,5 +153,11 @@ namespace APLH.Services
         
         public async Task<IEnumerable<QuizScore>> GetUserQuizScoresAsync(int userId)
             => await _repository.GetUserQuizScoresAsync(userId);
+
+        public async Task UpdatePasswordAsync(string email, string newPassword)
+        {
+            var hashed = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _repository.UpdatePasswordAsync(email, hashed);
+        }
     }
 }

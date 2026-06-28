@@ -408,3 +408,124 @@ $(document).on('keypress', function(e) {
         }
     }
 });
+
+// ── Forgot Password ──────────────────────────────────────────────────────────
+
+function openForgotPasswordModal() {
+    closeModal('loginModal');
+    $('#forgotEmail').val('');
+    $('#forgotAlert').hide();
+    $('#forgotPasswordModal').addClass('active');
+}
+
+function handleForgotPassword() {
+    const email = $('#forgotEmail').val().trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showAlert('forgotAlert', 'error', 'Please enter a valid email address.');
+        return;
+    }
+
+    const btn = $('#forgotPasswordModal .btn-primary');
+    btn.prop('disabled', true).text('Sending…');
+
+    $.ajax({
+        url: '/api/api/auth/forgot-password',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email }),
+        success: function (response) {
+            btn.prop('disabled', false).text('Send OTP');
+            if (response.success) {
+                // store email for subsequent steps
+                window._fpEmail = email;
+                closeModal('forgotPasswordModal');
+                $('#otpCode').val('');
+                $('#otpAlert').hide();
+                $('#otpModal').addClass('active');
+                showToast('OTP sent! Check your inbox.', 'success');
+            } else {
+                showAlert('forgotAlert', 'error', response.message || 'Something went wrong.');
+            }
+        },
+        error: function () {
+            btn.prop('disabled', false).text('Send OTP');
+            showAlert('forgotAlert', 'error', 'Network error. Please try again.');
+        }
+    });
+}
+
+function handleVerifyOtp() {
+    const otp = $('#otpCode').val().trim();
+    if (!otp || otp.length !== 6) {
+        showAlert('otpAlert', 'error', 'Please enter the 6-digit OTP.');
+        return;
+    }
+
+    const btn = $('#otpModal .btn-primary');
+    btn.prop('disabled', true).text('Verifying…');
+
+    $.ajax({
+        url: '/api/api/auth/verify-otp',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email: window._fpEmail, otp }),
+        success: function (response) {
+            btn.prop('disabled', false).text('Verify OTP');
+            if (response.success) {
+                // store otp to pass with reset
+                window._fpOtp = otp;
+                closeModal('otpModal');
+                $('#resetNewPassword').val('');
+                $('#resetConfirmPassword').val('');
+                $('#resetAlert').hide();
+                $('#resetPasswordModal').addClass('active');
+            } else {
+                showAlert('otpAlert', 'error', response.message || 'Invalid OTP.');
+            }
+        },
+        error: function () {
+            btn.prop('disabled', false).text('Verify OTP');
+            showAlert('otpAlert', 'error', 'Network error. Please try again.');
+        }
+    });
+}
+
+function handleResetPassword() {
+    const newPassword = $('#resetNewPassword').val();
+    const confirmPassword = $('#resetConfirmPassword').val();
+
+    if (!newPassword || newPassword.length < 6) {
+        showAlert('resetAlert', 'error', 'Password must be at least 6 characters.');
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        showAlert('resetAlert', 'error', 'Passwords do not match.');
+        return;
+    }
+
+    const btn = $('#resetPasswordModal .btn-primary');
+    btn.prop('disabled', true).text('Resetting…');
+
+    $.ajax({
+        url: '/api/api/auth/reset-password',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email: window._fpEmail, otp: window._fpOtp, newPassword }),
+        success: function (response) {
+            btn.prop('disabled', false).text('Reset Password');
+            if (response.success) {
+                closeModal('resetPasswordModal');
+                window._fpEmail = null;
+                window._fpOtp = null;
+                showToast('Password reset successfully! Please log in.', 'success');
+                setTimeout(() => openLoginModal(), 1500);
+            } else {
+                showAlert('resetAlert', 'error', response.message || 'Reset failed. Please try again.');
+            }
+        },
+        error: function () {
+            btn.prop('disabled', false).text('Reset Password');
+            showAlert('resetAlert', 'error', 'Network error. Please try again.');
+        }
+    });
+}

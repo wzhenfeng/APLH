@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("APLH")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d62b96fe2d4aa4af00b04f0d95ce617bdc18c73a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6f9bc9a5aac7b6a05cda08c278e267559a7958a8")]
 [assembly: System.Reflection.AssemblyProductAttribute("APLH")]
 [assembly: System.Reflection.AssemblyTitleAttribute("APLH")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

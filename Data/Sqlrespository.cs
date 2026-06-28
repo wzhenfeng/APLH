@@ -59,6 +59,14 @@ namespace APLH.Data
             return await connection.QueryAsync<User>("SELECT * FROM users ORDER BY id");
         }
 
+        public async Task UpdatePasswordAsync(string email, string hashedPassword)
+        {
+            using var connection = CreateConnection();
+            await connection.ExecuteAsync(
+                "UPDATE users SET password = @Password WHERE email = @Email",
+                new { Password = hashedPassword, Email = email });
+        }
+
         public async Task DeleteUserAsync(int id)
         {
             using var connection = CreateConnection();
