@@ -90,13 +90,10 @@ function handleRegister() {
     success: function(response) {
         if (response.success) {
             closeModal('registerModal');
-            showToast(
-                'You have successfully registered your account',
-                'success'
-            );
+            showToast('Account created! Please log in.', 'success');
             setTimeout(() => {
                 openLoginModal();
-            }, 1500);
+            }, 1000);
         } else {
             showAlert(
                 'regAlert',

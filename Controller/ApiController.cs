@@ -55,21 +55,10 @@ namespace APLH.Controllers
             try
             {
                 var user = await _service.RegisterUserAsync(request.Name, request.Email, request.Password);
-                await _emailService.SendEmailAsync(request.Email, request.Name);
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Name),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role)
-                };
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
                 await _service.CreateActivityLogAsync(user.Id, "Registered a new account");
+
+                // Send welcome email — don't let email failure block registration
+                try { await _emailService.SendEmailAsync(request.Email, request.Name); } catch { }
 
                 return Ok(new { success = true });
             }
@@ -77,9 +66,6 @@ namespace APLH.Controllers
             {
                 return Ok(new { success = false, message = ex.Message });
             }
-            {
-        
-}
         }
 
         [HttpPost("auth/logout")]
