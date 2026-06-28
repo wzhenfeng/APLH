@@ -64,7 +64,7 @@ namespace APLH.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new { success = false, message = ex.Message });
+                return Ok(new { success = false, message = "Registration succeeded but email failed.", error = ex.Message });
             }
         }
 
