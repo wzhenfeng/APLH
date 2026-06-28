@@ -58,9 +58,11 @@ namespace APLH.Controllers
                 await _service.CreateActivityLogAsync(user.Id, "Registered a new account");
 
                 // Send welcome email — don't let email failure block registration
-                try { await _emailService.SendEmailAsync(request.Email, request.Name); } catch { }
+                string emailError = "";
+                try { await _emailService.SendEmailAsync(request.Email, request.Name); }
+                catch (Exception emailEx) { emailError = emailEx.Message; }
 
-                return Ok(new { success = true });
+                return Ok(new { success = true, emailError });
             }
             catch (Exception ex)
             {

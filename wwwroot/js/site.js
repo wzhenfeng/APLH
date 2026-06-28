@@ -91,6 +91,9 @@ function handleRegister() {
         if (response.success) {
             closeModal('registerModal');
             showToast('Account created! Please log in.', 'success');
+            if (response.emailError) {
+                console.warn('Welcome email failed:', response.emailError);
+            }
             setTimeout(() => {
                 openLoginModal();
             }, 1000);
@@ -442,6 +445,7 @@ function handleForgotPassword() {
                 showToast('OTP sent! Check your inbox.', 'success');
             } else {
                 showAlert('forgotAlert', 'error', response.message || 'Something went wrong.');
+                console.error('Forgot password error:', response.message);
             }
         },
         error: function () {
