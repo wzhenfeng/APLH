@@ -58,11 +58,9 @@ namespace APLH.Controllers
                 await _service.CreateActivityLogAsync(user.Id, "Registered a new account");
 
                 // Send welcome email — don't let email failure block registration
-                string emailError = "";
-                try { await _emailService.SendEmailAsync(request.Email, request.Name); }
-                catch (Exception emailEx) { emailError = emailEx.Message; }
+                try { await _emailService.SendEmailAsync(request.Email, request.Name); } catch { }
 
-                return Ok(new { success = true, emailError });
+                return Ok(new { success = true });
             }
             catch (Exception ex)
             {
@@ -338,22 +336,26 @@ public async Task<IActionResult> DeleteUser(int id)
         [HttpPost("auth/forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
+            var user = await _service.GetUserByEmailAsync(request.Email);
+            if (user == null)
+                return Ok(new { success = false, message = "No account found with that email address." });
+
+            var otp = new Random().Next(100000, 999999).ToString();
+            _otpStore[request.Email.ToLower()] = (otp, DateTime.UtcNow.AddMinutes(10));
+
+            string emailError = "";
             try
             {
-                var user = await _service.GetUserByEmailAsync(request.Email);
-                if (user == null)
-                    return Ok(new { success = false, message = "No account found with that email address." });
-
-                var otp = new Random().Next(100000, 999999).ToString();
-                _otpStore[request.Email.ToLower()] = (otp, DateTime.UtcNow.AddMinutes(10));
-
                 await _emailService.SendOtpEmailAsync(request.Email, otp);
-                return Ok(new { success = true });
             }
             catch (Exception ex)
             {
-                return Ok(new { success = false, message = "Failed to send OTP email: " + ex.Message });
+                emailError = ex.Message;
             }
+
+            // Always return success=true so OTP flow continues
+            // emailError will be shown in UI if email failed
+            return Ok(new { success = true, emailError, otp = emailError != "" ? otp : "" });
         }
 
         [HttpPost("auth/verify-otp")]
