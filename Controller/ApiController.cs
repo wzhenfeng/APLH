@@ -350,15 +350,22 @@ public async Task<IActionResult> DeleteUser(int id)
         [HttpPost("auth/forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            var user = await _service.GetUserByEmailAsync(request.Email);
-            if (user == null)
-                return Ok(new { success = false, message = "No account found with that email address." });
+            try
+            {
+                var user = await _service.GetUserByEmailAsync(request.Email);
+                if (user == null)
+                    return Ok(new { success = false, message = "No account found with that email address." });
 
-            var otp = new Random().Next(100000, 999999).ToString();
-            _otpStore[request.Email.ToLower()] = (otp, DateTime.UtcNow.AddMinutes(10));
+                var otp = new Random().Next(100000, 999999).ToString();
+                _otpStore[request.Email.ToLower()] = (otp, DateTime.UtcNow.AddMinutes(10));
 
-            await _emailService.SendOtpEmailAsync(request.Email, otp);
-            return Ok(new { success = true });
+                await _emailService.SendOtpEmailAsync(request.Email, otp);
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, message = "Failed to send OTP email: " + ex.Message });
+            }
         }
 
         [HttpPost("auth/verify-otp")]

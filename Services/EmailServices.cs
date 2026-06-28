@@ -24,7 +24,7 @@ namespace APLH.Services
             };
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync("zhenfeng.2570@gmail.com", "czsv nbax havh gfvp");
+            await smtp.AuthenticateAsync("zhenfeng.2570@gmail.com", "ckyf tztk jblf ecmr");
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }
