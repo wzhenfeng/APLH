@@ -1,91 +1,81 @@
-using MailKit.Net.Smtp;
-using MailKit.Security;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
-using MimeKit;
 
 namespace APLH.Services
 {
     public class EmailService
     {
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
-        public EmailService(IConfiguration configuration)
+        // Brevo's transactional email API. Plain HTTPS (port 443) — not blocked
+        // by hosts (like Render's free tier) that block outbound SMTP ports.
+        private const string BrevoApiUrl = "https://api.brevo.com/v3/smtp/email";
+
+        public EmailService(IConfiguration configuration, HttpClient httpClient)
         {
             _configuration = configuration;
+            _httpClient = httpClient;
         }
 
         public async Task SendEmailAsync(string toEmail, string name)
         {
-            var email = new MimeMessage();
-            email.From.Add(new MailboxAddress(
-                "APLH",
-                _configuration["EmailSettings:Email"]));
-
-            email.To.Add(new MailboxAddress(name, toEmail));
-
-            email.Subject = "Welcome to APLH!";
-
-            email.Body = new TextPart("html")
-            {
-                Text = $@"
+            var html = $@"
                 <h2>Welcome to APLH, {name}!</h2>
                 <p>Your APLH account has been successfully created.</p>
                 <p>Now you can login to your account and start learning with us!</p>
                 <br>
-                <p>Thank you for joining APLH!</p>"
-            };
+                <p>Thank you for joining APLH!</p>";
 
-            using var smtp = new SmtpClient();
-
-            await smtp.ConnectAsync(
-                _configuration["EmailSettings:Host"],
-                int.Parse(_configuration["EmailSettings:Port"]),
-                SecureSocketOptions.StartTls);
-
-            await smtp.AuthenticateAsync(
-                _configuration["EmailSettings:Email"],
-                _configuration["EmailSettings:Password"]);
-
-            await smtp.SendAsync(email);
-
-            await smtp.DisconnectAsync(true);
+            await SendViaBrevoAsync(toEmail, name, "Welcome to APLH!", html);
         }
 
         public async Task SendOtpEmailAsync(string toEmail, string otp)
         {
-            var email = new MimeMessage();
-
-            email.From.Add(new MailboxAddress(
-                "APLH",
-                _configuration["EmailSettings:Email"]));
-
-            email.To.Add(new MailboxAddress(toEmail, toEmail));
-
-            email.Subject = "APLH Password Reset OTP";
-
-            email.Body = new TextPart("html")
-            {
-                Text = $@"
+            var html = $@"
                 <h2>Password Reset Request</h2>
                 <p>You requested to reset your password.</p>
                 <h1>{otp}</h1>
-                <p>This OTP is valid for 10 minutes.</p>"
+                <p>This OTP is valid for 10 minutes.</p>";
+
+            await SendViaBrevoAsync(toEmail, toEmail, "APLH Password Reset OTP", html);
+        }
+
+        private async Task SendViaBrevoAsync(string toEmail, string toName, string subject, string htmlContent)
+        {
+            var apiKey = _configuration["EmailSettings:BrevoApiKey"];
+            var senderEmail = _configuration["EmailSettings:SenderEmail"];
+            var senderName = _configuration["EmailSettings:SenderName"] ?? "APLH";
+
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new InvalidOperationException("EmailSettings:BrevoApiKey is not configured.");
+            if (string.IsNullOrWhiteSpace(senderEmail))
+                throw new InvalidOperationException("EmailSettings:SenderEmail is not configured.");
+
+            var payload = new
+            {
+                sender = new { name = senderName, email = senderEmail },
+                to = new[] { new { email = toEmail, name = toName } },
+                subject,
+                htmlContent
             };
 
-            using var smtp = new SmtpClient();
+            using var request = new HttpRequestMessage(HttpMethod.Post, BrevoApiUrl)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Add("api-key", apiKey);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            await smtp.ConnectAsync(
-                _configuration["EmailSettings:Host"],
-                int.Parse(_configuration["EmailSettings:Port"]),
-                SecureSocketOptions.StartTls);
+            var response = await _httpClient.SendAsync(request);
 
-            await smtp.AuthenticateAsync(
-                _configuration["EmailSettings:Email"],
-                _configuration["EmailSettings:Password"]);
-
-            await smtp.SendAsync(email);
-
-            await smtp.DisconnectAsync(true);
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Brevo API error ({(int)response.StatusCode}): {body}");
+            }
         }
     }
 }

@@ -24,8 +24,8 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSignalR();
 
-//Email
-builder.Services.AddScoped<EmailService>();
+//Email (Brevo HTTPS API client — see Services/EmailServices.cs)
+builder.Services.AddHttpClient<EmailService>();
 
 
 // Register services
