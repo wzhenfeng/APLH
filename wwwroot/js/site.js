@@ -415,7 +415,7 @@ function openForgotPasswordModal() {
     closeModal('loginModal');
     $('#forgotEmail').val('');
     $('#forgotAlert').hide();
-    $('#forgotPasswordModal').addClass('active');
+    $('#forgotPasswordModal').addClass('open');
 }
 
 function handleForgotPassword() {
@@ -441,7 +441,7 @@ function handleForgotPassword() {
                 closeModal('forgotPasswordModal');
                 $('#otpCode').val('');
                 $('#otpAlert').hide();
-                $('#otpModal').addClass('active');
+                $('#otpModal').addClass('open');
                 showToast('OTP sent! Check your inbox.', 'success');
             } else {
                 showAlert('forgotAlert', 'error', response.message || 'Something went wrong.');
@@ -478,7 +478,7 @@ function handleVerifyOtp() {
                 $('#resetNewPassword').val('');
                 $('#resetConfirmPassword').val('');
                 $('#resetAlert').hide();
-                $('#resetPasswordModal').addClass('active');
+                $('#resetPasswordModal').addClass('open');
             } else {
                 showAlert('otpAlert', 'error', response.message || 'Invalid OTP.');
             }
