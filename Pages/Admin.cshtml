@@ -43,10 +43,10 @@
             </div>
         </div>
 
-        <div class="admin-table-card">
+        <div class="admin-table-card" style="display:flex; flex-direction:column;">
             <h2>User Growth</h2>
 
-            <div style="padding:20px; max-width:450px; margin:auto;">
+            <div style="padding:20px; max-width:450px; height:450px; margin:auto; width:100%;">
                 <canvas id="userGrowthChart"></canvas>
             </div>
         </div>
@@ -119,6 +119,7 @@
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false
