@@ -43,6 +43,14 @@
             </div>
         </div>
 
+        <div class="admin-table-card" style="grid-column: 1 / -1;">
+            <h2>User Growth</h2>
+
+            <div style="padding:20px; margin:auto;">
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -81,6 +89,47 @@
             plugins: {
                 legend: {
                     position: 'bottom'
+                }
+            }
+        }
+    });
+
+    const userGrowthLabels = [
+        @Html.Raw(string.Join(",", Model.UserGrowthLabels.Select(l => $"'{l}'")))
+    ];
+
+    const userGrowthCounts = [
+        @Html.Raw(string.Join(",", Model.UserGrowthCounts))
+    ];
+
+    new Chart(document.getElementById('userGrowthChart'), {
+        type: 'line',
+        data: {
+            labels: userGrowthLabels,
+            datasets: [{
+                label: 'New Users',
+                data: userGrowthCounts,
+                fill: true,
+                tension: 0.3,
+                borderColor: '#8B5CF6',
+                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                pointBackgroundColor: '#8B5CF6',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
                 }
             }
         }
