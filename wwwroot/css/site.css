@@ -452,11 +452,12 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2
   --login-blue-accent: #2f7fc4;
 }
 
-#loginModal .modal.login-modal {
+.modal.login-modal {
   display: flex;
   padding: 0;
   max-width: 860px;
   overflow: hidden;
+  max-height: 90vh;
 }
 
 .login-left {
@@ -487,6 +488,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2
   padding: 2.25rem 2rem;
   display: flex;
   flex-direction: column;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 .login-people-icon { display: flex; justify-content: center; margin-bottom: 1.25rem; }
 
@@ -520,6 +523,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 2
 .divider-text { text-align: center; color: var(--text2); font-size: 0.75rem; margin: 1rem 0; }
 
 @media (max-width: 640px) {
-  #loginModal .modal.login-modal { flex-direction: column; max-height: 90vh; overflow-y: auto; }
+  .modal.login-modal { flex-direction: column; max-height: 90vh; overflow-y: auto; }
+  .login-right { max-height: none; overflow-y: visible; }
   .login-left { padding: 1.75rem 1.5rem 1rem; }
 }
