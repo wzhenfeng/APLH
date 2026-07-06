@@ -16,5 +16,6 @@
             "password": "admin123",
             "connectionTimeout": 30
         }
-    ]
+    ],
+    "git.ignoreLimitWarning": true
 }
