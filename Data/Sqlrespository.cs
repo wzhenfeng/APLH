@@ -229,11 +229,48 @@ namespace APLH.Data
         public async Task<QuizQuestion> CreateQuizQuestionAsync(QuizQuestion question)
         {
             using var connection = CreateConnection();
-            var sql = @"INSERT INTO quiz_questions (question, option_a, option_b, option_c, option_d, correct_answer, course_id)
-            VALUES (@Question, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectAnswer, @CourseId)
+
+            if (question.Id > 0)
+            {
+                // Update existing question in place instead of inserting a duplicate row
+                var updateSql = @"UPDATE quiz_questions SET
+                    question = @Question,
+                    option_a = @OptionA,
+                    option_b = @OptionB,
+                    option_c = @OptionC,
+                    option_d = @OptionD,
+                    correct_answer = @CorrectAnswer,
+                    course_id = @CourseId,
+                    chapter_order = @ChapterOrder,
+                    chapter_title = @ChapterTitle
+                    WHERE id = @Id";
+
+                var rows = await connection.ExecuteAsync(updateSql, new
+                {
+                    question.Id,
+                    question.Question,
+                    OptionA = question.OptionA,
+                    OptionB = question.OptionB,
+                    OptionC = question.OptionC,
+                    OptionD = question.OptionD,
+                    question.CorrectAnswer,
+                    question.CourseId,
+                    question.ChapterOrder,
+                    question.ChapterTitle
+                });
+
+                if (rows > 0)
+                {
+                    return question;
+                }
+                // If no row matched (e.g. stale/invalid id), fall through and insert a new one
+            }
+
+            var insertSql = @"INSERT INTO quiz_questions (question, option_a, option_b, option_c, option_d, correct_answer, course_id, chapter_order, chapter_title)
+            VALUES (@Question, @OptionA, @OptionB, @OptionC, @OptionD, @CorrectAnswer, @CourseId, @ChapterOrder, @ChapterTitle)
             RETURNING id;";
 
-            var id = await connection.ExecuteScalarAsync<int>(sql, new
+            var id = await connection.ExecuteScalarAsync<int>(insertSql, new
             {
                 question.Question,
                 OptionA = question.OptionA,
@@ -241,7 +278,9 @@ namespace APLH.Data
                 OptionC = question.OptionC,
                 OptionD = question.OptionD,
                 question.CorrectAnswer,
-                question.CourseId
+                question.CourseId,
+                question.ChapterOrder,
+                question.ChapterTitle
             });
 
             question.Id = id;
