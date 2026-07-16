@@ -42,6 +42,9 @@
                         <td>RM @course.Price</td>
                         <td>@course.Duration minutes</td>
                         <td>
+                            <a class="icon-btn view-btn" href="/CoursesDetails?id=@course.Id">
+                                View
+                            </a>
                             <button class="icon-btn edit-btn"
                                     data-id="@course.Id"
                                     data-title="@course.Title"
