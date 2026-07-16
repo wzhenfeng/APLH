@@ -252,18 +252,29 @@ function showCoursesLoginMessage() {
     }, 1000);
 }
 
-// Add a new category option to the course category dropdown (Admin)
-function addNewCategory(e) {
+// Open the "Add Category" popup (Admin)
+function openCategoryModal(e) {
     if (e) e.preventDefault();
 
-    const newCat = prompt('Enter new category name:');
-    if (!newCat) return;
+    $('#newCategoryName').val('');
+    $('#newCategoryErr').removeClass('show');
 
-    const trimmed = newCat.trim();
+    openModal('categoryModal');
+
+    // Focus the input once the modal is visible
+    setTimeout(() => $('#newCategoryName').trigger('focus'), 100);
+}
+
+// Confirm/save the new category from the popup and add it to the course category dropdown (Admin)
+function confirmAddCategory() {
+    const input = $('#newCategoryName');
+    const trimmed = (input.val() || '').trim();
+
     if (!trimmed) {
-        showToast('Category name cannot be empty', 'error');
+        $('#newCategoryErr').addClass('show');
         return;
     }
+    $('#newCategoryErr').removeClass('show');
 
     const select = $('#courseCat');
 
@@ -274,12 +285,14 @@ function addNewCategory(e) {
 
     if (exists) {
         select.val(trimmed);
+        closeModal('categoryModal');
         showToast('Category already exists — selected it', 'info');
         return;
     }
 
     select.append(`<option value="${trimmed}">${trimmed}</option>`);
     select.val(trimmed);
+    closeModal('categoryModal');
     showToast(`Category "${trimmed}" added`, 'success');
 }
 
@@ -425,6 +438,15 @@ $(document).on('keypress', function(e) {
             $('#registerModal').hasClass('active')
         ) {
             handleRegister();
+            return;
+        }
+        // categoryModal is checked before courseModal since it can be
+        // open as a popup on top of courseModal
+        if (
+            $('#categoryModal').hasClass('open') ||
+            $('#categoryModal').hasClass('active')
+        ) {
+            confirmAddCategory();
             return;
         }
         if (

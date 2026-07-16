@@ -307,7 +307,7 @@
                 <div class="form-group">
                     <label>
                         Category
-                        <a href="#" id="addCategoryLink" onclick="addNewCategory(event)" style="float:right; font-weight:normal; font-size:0.8em; color:var(--accent3); text-decoration:none;">+ Add category</a>
+                        <a href="#" id="addCategoryLink" onclick="openCategoryModal(event)" style="float:right; font-weight:normal; font-size:0.8em; color:var(--accent3); text-decoration:none;">+ Add category</a>
                     </label>
                     <select id="courseCat">
                         <option value="Technology">Technology</option>
@@ -342,6 +342,21 @@
             <div class="modal-actions">
                 <button class="btn btn-primary" style="flex:1" onclick="saveCourse()">Save Course</button>
                 <button class="btn btn-ghost" onclick="closeModal('courseModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal" style="max-width:400px">
+            <h2>Add <span>Category</span></h2>
+            <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" id="newCategoryName" placeholder="e.g. Marketing">
+                <div class="form-error" id="newCategoryErr">Category name is required.</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" style="flex:1" onclick="confirmAddCategory()">Add Category</button>
+                <button class="btn btn-ghost" onclick="closeModal('categoryModal')">Cancel</button>
             </div>
         </div>
     </div>
