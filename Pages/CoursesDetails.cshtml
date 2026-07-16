@@ -24,7 +24,16 @@
                 <span>👥 @Model.Course.Enrolled.ToLocaleString() students</span>
             </div>
             <div class="curriculum">
-                <div class="curriculum-header">📋 Course Curriculum</div>
+                <div class="curriculum-header" style="display:flex; align-items:center; justify-content:space-between;">
+                    <span>📋 Course Curriculum</span>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a href="#" style="font-size:0.8125rem; font-weight:600; color:var(--accent3); text-decoration:none;"
+                        onclick="openMaterialModal(); return false;">
+                            + Add Chapter
+                        </a>
+                    }
+                </div>
                 @for (int i = 1; i <= 6; i++)
                 {
                     <div class="curriculum-item">
