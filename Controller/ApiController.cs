@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System.Linq;
 using APLH.Services;
 using APLH.Models;
 
@@ -323,6 +324,38 @@ public async Task<IActionResult> GetCourseMaterials(int courseId)
     var materials = await _service.GetCourseMaterialsAsync(courseId);
 
     return Ok(materials);
+}
+
+[HttpGet("chapters/{courseId}")]
+public async Task<IActionResult> GetCourseChapters(int courseId)
+{
+    var chapters = await _service.GetCourseChaptersAsync(courseId);
+    return Ok(chapters);
+}
+
+[HttpPost("chapters/save")]
+public async Task<IActionResult> SaveCourseChapter([FromBody] CourseChapter chapter)
+{
+    var existing = await _service.GetCourseChaptersAsync(chapter.CourseId);
+    if (existing.Any(c => c.ChapterOrder == chapter.ChapterOrder))
+    {
+        return Conflict(new { success = false, message = $"Chapter {chapter.ChapterOrder} already exists for this course." });
+    }
+
+    var created = await _service.CreateCourseChapterAsync(chapter);
+
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+    await _service.CreateActivityLogAsync(userId,
+        $"Added chapter '{chapter.ChapterTitle}' to course ID {chapter.CourseId}");
+
+    return Ok(new { success = true, chapter = created });
+}
+
+[HttpDelete("chapters/{id}")]
+public async Task<IActionResult> DeleteCourseChapter(int id)
+{
+    await _service.DeleteCourseChapterAsync(id);
+    return Ok(new { success = true });
 }
 
 [HttpDelete("users/{id}")]

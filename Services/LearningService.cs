@@ -136,6 +136,16 @@ namespace APLH.Services
             return await _repository.GetCourseMaterialsAsync(courseId);
         }
 
+        // Chapter operations
+        public async Task<CourseChapter> CreateCourseChapterAsync(CourseChapter chapter)
+            => await _repository.CreateCourseChapterAsync(chapter);
+
+        public async Task<IEnumerable<CourseChapter>> GetCourseChaptersAsync(int courseId)
+            => await _repository.GetCourseChaptersAsync(courseId);
+
+        public async Task DeleteCourseChapterAsync(int id)
+            => await _repository.DeleteCourseChapterAsync(id);
+
         public async Task CreateChatMessageAsync(ChatMessage chatMessage)
         {
             await _repository.CreateChatMessageAsync(chatMessage);

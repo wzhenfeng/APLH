@@ -3,6 +3,8 @@ using APLH.Services;
 using APLH.Models;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 
 namespace APLH.Pages
@@ -19,6 +21,7 @@ namespace APLH.Pages
 
         public Course? Course { get; set; }
         public bool IsEnrolled { get; set; }
+        public List<CourseChapter> Chapters { get; set; } = new();
 
         public async Task OnGetAsync(int id)
         {
@@ -28,6 +31,11 @@ namespace APLH.Pages
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
                 IsEnrolled = await _service.IsUserEnrolledAsync(userId, id);
+            }
+
+            if (Course != null)
+            {
+                Chapters = (await _service.GetCourseChaptersAsync(id)).ToList();
             }
         }
 

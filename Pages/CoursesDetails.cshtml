@@ -29,17 +29,34 @@
                     @if (User.IsInRole("admin"))
                     {
                         <a href="#" style="font-size:0.8125rem; font-weight:600; color:var(--accent3); text-decoration:none;"
-                        onclick="openMaterialModal(); return false;">
+                           onclick="openChapterModal(); return false;">
                             + Add Chapter
                         </a>
                     }
                 </div>
-                @for (int i = 1; i <= 6; i++)
+                @if (Model.Chapters.Count == 0)
                 {
                     <div class="curriculum-item">
-                        <span>Module @i: @Model.GetModuleName(i)</span>
-                        <span style="color:var(--text3)">@(Model.Course.Duration / 6 + (i == 1 ? 2 : 0)) minutes</span>
+                        <span style="color:var(--text3)">No chapters added yet.</span>
                     </div>
+                }
+                else
+                {
+                    @foreach (var chapter in Model.Chapters)
+                    {
+                        <div class="curriculum-item">
+                            <span>Chapter @chapter.ChapterOrder: @chapter.ChapterTitle</span>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <a href="#" class="edit-chapter-material-link"
+                                   data-order="@chapter.ChapterOrder"
+                                   data-title="@chapter.ChapterTitle"
+                                   style="font-size:0.8125rem; color:var(--accent3); text-decoration:none;">
+                                    Edit material
+                                </a>
+                            }
+                        </div>
+                    }
                 }
             </div>
         </div>
@@ -120,21 +137,8 @@ else
                 </select>
             </div>
 
-            <div id="newChapterFields" style="display:none;">
-                <div style="display:flex;gap:12px;">
-                    <div class="form-group" style="flex:0 0 120px;">
-                        <label>Chapter No.</label>
-                        <input type="number" id="newChapterOrder" min="1" value="1">
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label>Chapter Title</label>
-                        <input type="text" id="newChapterTitle" placeholder="e.g. Introduction">
-                    </div>
-                </div>
-            </div>
-
             <p id="quizNoChapterHint" style="display:none; font-size:0.8125rem; color:var(--text3); margin-top:-0.5rem;">
-                This course has no chapters yet. Add materials first, or create a new chapter above.
+                This course has no chapters yet. Close this and use "+ Add Chapter" in the Course Curriculum section first.
             </p>
 
             <div class="modal-actions">
@@ -174,33 +178,79 @@ else
     </div>
 </div>
 
+<div class="modal-overlay" id="chapterModal">
+    <div class="modal" style="max-width:500px;">
+        <h2>Add <span>Chapter</span></h2>
+
+        <div style="display:flex;gap:12px;">
+            <div class="form-group" style="flex:0 0 120px;">
+                <label>Chapter No.</label>
+                <input type="number" id="chapterOrderInput" min="1" value="1">
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label>Chapter Title</label>
+                <input type="text" id="chapterTitleInput" placeholder="e.g. Introduction">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" style="flex:1" onclick="saveChapter()">
+                Save Chapter
+            </button>
+
+            <button class="btn btn-ghost" onclick="closeModal('chapterModal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="materialModal">
     <div class="modal" style="max-width:750px; max-height:90vh; overflow-y:auto;">
         <h2>Add / Edit <span>Materials</span></h2>
 
-        <div id="materialList"></div>
+        <!-- STAGE 1: pick a chapter -->
+        <div id="materialChapterStage">
+            <div class="form-group">
+                <label>Select Chapter</label>
+                <select id="materialChapterSelect">
+                    <option value="">-- Select a chapter --</option>
+                </select>
+            </div>
 
-        <button class="btn btn-ghost" onclick="addMaterialForm()">
-            + Add Another Material
-        </button>
+            <p id="materialNoChapterHint" style="display:none; font-size:0.8125rem; color:var(--text3); margin-top:-0.5rem;">
+                This course has no chapters yet. Close this and use "+ Add Chapter" in the Course Curriculum section first.
+            </p>
 
-        <div class="modal-actions">
+            <div class="modal-actions">
+                <button class="btn btn-primary" style="flex:1" onclick="proceedToMaterialForm()">
+                    Next →
+                </button>
 
-            <button class="btn btn-primary"
-                    style="flex:1"
-                    onclick="saveAllMaterials()">
+                <button class="btn btn-ghost" onclick="closeModal('materialModal')">
+                    Cancel
+                </button>
+            </div>
+        </div>
 
-                Save All Materials
+        <!-- STAGE 2: edit the single material for the selected chapter -->
+        <div id="materialFormStage" style="display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
+                <button class="btn btn-ghost btn-sm" onclick="backToMaterialChapterStage()">← Back</button>
+                <span class="quiz-chapter-badge" id="materialChapterBadge"></span>
+            </div>
 
-            </button>
+            <div id="materialFormContainer"></div>
 
-            <button class="btn btn-ghost"
-                    onclick="closeModal('materialModal')">
+            <div class="modal-actions">
+                <button class="btn btn-primary" style="flex:1" onclick="saveChapterMaterial()">
+                    Save Material
+                </button>
 
-                Cancel
-
-            </button>
-
+                <button class="btn btn-ghost" onclick="closeModal('materialModal')">
+                    Cancel
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -230,14 +280,30 @@ else
         });
     }
 
+    let allChaptersCache = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Chapters, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
+
+    function loadChapters() {
+        return $.ajax({ url: `/api/api/chapters/${currentCourseId}`, type: 'GET' })
+            .then(function (chapters) {
+                allChaptersCache = (chapters || []).sort((a, b) => a.chapterOrder - b.chapterOrder);
+                return allChaptersCache;
+            });
+    }
+
+    function chapterOptionsHtml(chapters) {
+        let optionsHtml = '<option value="">-- Select a chapter --</option>';
+        chapters.forEach(ch => {
+            const safeTitle = (ch.chapterTitle || '').replace(/"/g, '&quot;');
+            optionsHtml += `<option value="${ch.chapterOrder}" data-title="${safeTitle}">Chapter ${ch.chapterOrder}: ${ch.chapterTitle}</option>`;
+        });
+        return optionsHtml;
+    }
+
     function openQuizQuestionModal() {
         $('#quizQuestionList').html('');
         questionIndex = 0;
         selectedChapter = null;
 
-        $('#newChapterFields').hide();
-        $('#newChapterOrder').val(1);
-        $('#newChapterTitle').val('');
         $('#quizQuestionsStage').hide();
         $('#quizChapterStage').show();
         $('#quizChapterSelect').html('<option value="">Loading chapters...</option>');
@@ -246,58 +312,21 @@ else
         openModal('quizQuestionModal');
 
         $.when(
-            $.ajax({ url: `/api/api/materials/${currentCourseId}`, type: 'GET' }),
+            loadChapters(),
             $.ajax({ url: `/api/api/quiz/questions?courseId=${currentCourseId}`, type: 'GET' })
-        ).done(function (materialsResp, quizResp) {
-            const materials = materialsResp[0] || [];
+        ).done(function (chaptersResult, quizResp) {
+            const chapters = chaptersResult[0] || allChaptersCache;
             const questions = quizResp[0] || [];
 
             allQuizQuestionsCache = questions;
 
-            // Build a unique list of chapters from materials + any chapters quiz questions already use
-            const chapterMap = new Map();
-
-            materials.forEach(m => {
-                const order = m.chapterOrder || 1;
-                if (!chapterMap.has(order)) {
-                    chapterMap.set(order, m.chapterTitle || `Chapter ${order}`);
-                }
-            });
-
-            questions.forEach(q => {
-                const order = q.chapterOrder || 1;
-                if (!chapterMap.has(order)) {
-                    chapterMap.set(order, q.chapterTitle || `Chapter ${order}`);
-                }
-            });
-
-            const sortedChapters = [...chapterMap.entries()]
-                .map(([order, title]) => ({ order, title }))
-                .sort((a, b) => a.order - b.order);
-
-            let optionsHtml = '<option value="">-- Select a chapter --</option>';
-            sortedChapters.forEach(ch => {
-                const safeTitle = (ch.title || '').replace(/"/g, '&quot;');
-                optionsHtml += `<option value="${ch.order}" data-title="${safeTitle}">Chapter ${ch.order}: ${ch.title}</option>`;
-            });
-            optionsHtml += '<option value="__new__">+ Create New Chapter</option>';
-
-            $('#quizChapterSelect').html(optionsHtml);
-            $('#quizNoChapterHint').toggle(sortedChapters.length === 0);
-
-            const nextOrder = sortedChapters.length
-                ? Math.max(...sortedChapters.map(c => c.order)) + 1
-                : 1;
-            $('#newChapterOrder').val(nextOrder);
+            $('#quizChapterSelect').html(chapterOptionsHtml(chapters));
+            $('#quizNoChapterHint').toggle(chapters.length === 0);
         }).fail(function () {
             showToast('Failed to load chapters', 'error');
-            $('#quizChapterSelect').html('<option value="__new__">+ Create New Chapter</option>');
+            $('#quizChapterSelect').html('<option value="">-- Select a chapter --</option>');
         });
     }
-
-    $(document).on('change', '#quizChapterSelect', function () {
-        $('#newChapterFields').toggle($(this).val() === '__new__');
-    });
 
     function proceedToQuizQuestions() {
         const val = $('#quizChapterSelect').val();
@@ -307,20 +336,8 @@ else
             return;
         }
 
-        if (val === '__new__') {
-            const order = parseInt($('#newChapterOrder').val());
-            const title = $('#newChapterTitle').val().trim();
-
-            if (!order || !title) {
-                showToast('Please enter the chapter number and title', 'error');
-                return;
-            }
-
-            selectedChapter = { order, title };
-        } else {
-            const title = $('#quizChapterSelect option:selected').data('title') || `Chapter ${val}`;
-            selectedChapter = { order: parseInt(val), title: title };
-        }
+        const title = $('#quizChapterSelect option:selected').data('title') || `Chapter ${val}`;
+        selectedChapter = { order: parseInt(val), title: title };
 
         $('#quizChapterBadge').text(`Chapter ${selectedChapter.order}: ${selectedChapter.title}`);
 
@@ -521,130 +538,147 @@ else
         }, 1000);
     }
 
-    let materialIndex = 0;
-
-function openMaterialModal() {
-    $('#materialList').html('');
-    materialIndex = 0;
-    openModal('materialModal');
-
-    $.ajax({
-        url: `/api/api/materials/${currentCourseId}`,
-        type: 'GET',
-        success: function(materials) {
-            if (!materials || materials.length === 0) {
-                addMaterialForm();
-                return;
-            }
-
-            materials.forEach(m => {
-                addExistingMaterialForm(m);
-            });
-        },
-        error: function() {
-            showToast('Failed to load materials', 'error');
-        }
-    });
-}
-
-function addMaterialForm() {
-    materialIndex++;
-
-    $('#materialList').append(`
-        <div class="material-form" style="border:1px solid var(--border); padding:15px; border-radius:12px; margin-bottom:15px;">
-            <h3>Material ${materialIndex}</h3>
-
-            <input type="hidden" class="material-id" value="0">
-
-            <div style="display:flex;gap:12px;">
-                <div class="form-group" style="flex:0 0 120px;">
-                    <label>Chapter No.</label>
-                    <input type="number" class="material-chapter-order" min="1" value="1" placeholder="1">
-                </div>
-                <div class="form-group" style="flex:1;">
-                    <label>Chapter Title</label>
-                    <input type="text" class="material-chapter-title" placeholder="e.g. Getting Started">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Material Title</label>
-                <input type="text" class="material-title" placeholder="e.g. Introduction to HTML">
-            </div>
-
-            <div class="form-group">
-                <label>Material Content</label>
-                <textarea class="material-content" rows="8" placeholder="Type course notes here..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" class="material-image-url" placeholder="Paste image link">
-            </div>
-
-            <div class="form-group">
-                <label>Video URL</label>
-                <input type="text" class="material-video-url" placeholder="Paste YouTube/video link">
-            </div>
-        </div>
-    `);
-}
-
-function addExistingMaterialForm(m) {
-    materialIndex++;
-
-    $('#materialList').append(`
-        <div class="material-form" style="border:1px solid var(--border); padding:15px; border-radius:12px; margin-bottom:15px;">
-            <h3>Material ${materialIndex}</h3>
-
-            <input type="hidden" class="material-id" value="${m.id}">
-
-            <div style="display:flex;gap:12px;">
-                <div class="form-group" style="flex:0 0 120px;">
-                    <label>Chapter No.</label>
-                    <input type="number" class="material-chapter-order" min="1" value="${m.chapterOrder || 1}" placeholder="1">
-                </div>
-                <div class="form-group" style="flex:1;">
-                    <label>Chapter Title</label>
-                    <input type="text" class="material-chapter-title" value="${m.chapterTitle || ''}" placeholder="e.g. Getting Started">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Material Title</label>
-                <input type="text" class="material-title" value="${m.title || ''}">
-            </div>
-
-            <div class="form-group">
-                <label>Material Content</label>
-                <textarea class="material-content" rows="8">${m.content || ''}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" class="material-image-url" value="${m.imageUrl || ''}">
-            </div>
-
-            <div class="form-group">
-                <label>Video URL</label>
-                <input type="text" class="material-video-url" value="${m.videoUrl || ''}">
-            </div>
-        </div>
-    `);
-}
-
-    function saveAllMaterials() {
-    const forms = $('.material-form');
-
-    if (forms.length === 0) {
-        showToast('Please add at least one material', 'error');
-        return;
+    // ---- Add Chapter modal ----
+    function openChapterModal() {
+        $('#chapterOrderInput').val((allChaptersCache.length
+            ? Math.max(...allChaptersCache.map(c => c.chapterOrder)) + 1
+            : 1));
+        $('#chapterTitleInput').val('');
+        openModal('chapterModal');
     }
 
-    forms.each(function () {
-        const form = $(this);
+    function saveChapter() {
+        const order = parseInt($('#chapterOrderInput').val());
+        const title = $('#chapterTitleInput').val().trim();
 
-        let videoUrl = form.find('.material-video-url').val();
+        if (!order || !title) {
+            showToast('Please enter the chapter number and title', 'error');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/api/chapters/save',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ courseId: currentCourseId, chapterOrder: order, chapterTitle: title }),
+            success: function(response) {
+                if (response.success) {
+                    showToast('Chapter added 🎉', 'success');
+                    setTimeout(() => {
+                        closeModal('chapterModal');
+                        location.reload();
+                    }, 800);
+                } else {
+                    showToast(response.message || 'Failed to add chapter', 'error');
+                }
+            },
+            error: function(xhr) {
+                const msg = xhr.responseJSON?.message || 'Failed to add chapter';
+                showToast(msg, 'error');
+            }
+        });
+    }
+
+    // ---- Add / Edit Materials modal (chapter-first, one material per chapter) ----
+    let selectedMaterialChapter = null;
+    let allMaterialsCache = [];
+
+    function openMaterialModal() {
+        selectedMaterialChapter = null;
+        $('#materialFormStage').hide();
+        $('#materialChapterStage').show();
+        $('#materialChapterSelect').html('<option value="">Loading chapters...</option>');
+        $('#materialNoChapterHint').hide();
+
+        openModal('materialModal');
+
+        $.when(
+            loadChapters(),
+            $.ajax({ url: `/api/api/materials/${currentCourseId}`, type: 'GET' })
+        ).done(function (chaptersResult, materialsResp) {
+            const chapters = chaptersResult[0] || allChaptersCache;
+            allMaterialsCache = materialsResp[0] || [];
+
+            $('#materialChapterSelect').html(chapterOptionsHtml(chapters));
+            $('#materialNoChapterHint').toggle(chapters.length === 0);
+        }).fail(function () {
+            showToast('Failed to load chapters', 'error');
+            $('#materialChapterSelect').html('<option value="">-- Select a chapter --</option>');
+        });
+    }
+
+    // Jump straight into stage 2 for a specific chapter (used by "Edit material" links on the curriculum list)
+    function openMaterialModalForChapter(order, title) {
+        selectedMaterialChapter = { order: parseInt(order), title: title };
+        openModal('materialModal');
+
+        $.ajax({ url: `/api/api/materials/${currentCourseId}`, type: 'GET' })
+            .done(function (materials) {
+                allMaterialsCache = materials || [];
+                showMaterialFormStage();
+            })
+            .fail(function () {
+                showToast('Failed to load materials', 'error');
+            });
+    }
+
+    function proceedToMaterialForm() {
+        const val = $('#materialChapterSelect').val();
+
+        if (!val) {
+            showToast('Please select a chapter', 'error');
+            return;
+        }
+
+        const title = $('#materialChapterSelect option:selected').data('title') || `Chapter ${val}`;
+        selectedMaterialChapter = { order: parseInt(val), title: title };
+
+        showMaterialFormStage();
+    }
+
+    function showMaterialFormStage() {
+        $('#materialChapterBadge').text(`Chapter ${selectedMaterialChapter.order}: ${selectedMaterialChapter.title}`);
+
+        const existing = allMaterialsCache.find(m => (m.chapterOrder || 1) === selectedMaterialChapter.order);
+        renderMaterialForm(existing);
+
+        $('#materialChapterStage').hide();
+        $('#materialFormStage').show();
+    }
+
+    function backToMaterialChapterStage() {
+        $('#materialFormStage').hide();
+        $('#materialChapterStage').show();
+    }
+
+    function renderMaterialForm(m) {
+        $('#materialFormContainer').html(`
+            <input type="hidden" id="materialId" value="${m ? m.id : 0}">
+
+            <div class="form-group">
+                <label>Material Title</label>
+                <input type="text" id="materialTitle" value="${m ? (m.title || '') : ''}" placeholder="e.g. Introduction to HTML">
+            </div>
+
+            <div class="form-group">
+                <label>Material Content</label>
+                <textarea id="materialContent" rows="8" placeholder="Type course notes here...">${m ? (m.content || '') : ''}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" id="materialImageUrl" value="${m ? (m.imageUrl || '') : ''}" placeholder="Paste image link">
+            </div>
+
+            <div class="form-group">
+                <label>Video URL</label>
+                <input type="text" id="materialVideoUrl" value="${m ? (m.videoUrl || '') : ''}" placeholder="Paste YouTube/video link">
+            </div>
+        `);
+    }
+
+    function saveChapterMaterial() {
+        let videoUrl = $('#materialVideoUrl').val() || '';
 
         if (videoUrl.includes("watch?v=")) {
             videoUrl = videoUrl.replace("watch?v=", "embed/");
@@ -653,13 +687,13 @@ function addExistingMaterialForm(m) {
         }
 
         const material = {
-            id: parseInt(form.find('.material-id').val()) || 0,
+            id: parseInt($('#materialId').val()) || 0,
             courseId: currentCourseId,
-            chapterOrder: parseInt(form.find('.material-chapter-order').val()) || 1,
-            chapterTitle: form.find('.material-chapter-title').val() || '',
-            title: form.find('.material-title').val(),
-            content: form.find('.material-content').val(),
-            imageUrl: form.find('.material-image-url').val(),
+            chapterOrder: selectedMaterialChapter.order,
+            chapterTitle: selectedMaterialChapter.title,
+            title: $('#materialTitle').val(),
+            content: $('#materialContent').val(),
+            imageUrl: $('#materialImageUrl').val(),
             videoUrl: videoUrl
         };
 
@@ -667,16 +701,23 @@ function addExistingMaterialForm(m) {
             url: '/api/api/materials/save',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(material)
+            data: JSON.stringify(material),
+            success: function() {
+                showToast('Material saved successfully 🎉', 'success');
+                setTimeout(() => {
+                    closeModal('materialModal');
+                    location.reload();
+                }, 800);
+            },
+            error: function() {
+                showToast('Failed to save material', 'error');
+            }
         });
+    }
+
+    $(document).on('click', '.edit-chapter-material-link', function () {
+        const btn = $(this);
+        openMaterialModalForChapter(btn.data('order'), btn.data('title'));
     });
-
-    showToast('Materials saved successfully 🎉', 'success');
-
-    setTimeout(() => {
-        closeModal('materialModal');
-        location.reload();
-    }, 1000);
-}
 </script>
 }

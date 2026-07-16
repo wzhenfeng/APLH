@@ -435,6 +435,63 @@ namespace APLH.Data
             });
         }
 
+        //Course Chapters
+        public async Task<CourseChapter> CreateCourseChapterAsync(CourseChapter chapter)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                INSERT INTO course_chapters
+                (course_id, chapter_order, chapter_title)
+                VALUES
+                (@CourseId, @ChapterOrder, @ChapterTitle)
+                RETURNING
+                    id AS Id,
+                    course_id AS CourseId,
+                    chapter_order AS ChapterOrder,
+                    chapter_title AS ChapterTitle,
+                    created_at AS CreatedAt";
+
+            var created = await connection.QuerySingleAsync<CourseChapter>(sql, new
+            {
+                chapter.CourseId,
+                chapter.ChapterOrder,
+                chapter.ChapterTitle
+            });
+
+            return created;
+        }
+
+        public async Task<IEnumerable<CourseChapter>> GetCourseChaptersAsync(int courseId)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"
+                SELECT
+                    id AS Id,
+                    course_id AS CourseId,
+                    chapter_order AS ChapterOrder,
+                    chapter_title AS ChapterTitle,
+                    created_at AS CreatedAt
+                FROM course_chapters
+                WHERE course_id = @CourseId
+                ORDER BY chapter_order ASC";
+
+            return await connection.QueryAsync<CourseChapter>(sql, new
+            {
+                CourseId = courseId
+            });
+        }
+
+        public async Task DeleteCourseChapterAsync(int id)
+        {
+            using var connection = CreateConnection();
+
+            var sql = @"DELETE FROM course_chapters WHERE id = @Id";
+
+            await connection.ExecuteAsync(sql, new { Id = id });
+        }
+
         //Chat
         public async Task CreateChatMessageAsync(ChatMessage chatMessage)
         {
