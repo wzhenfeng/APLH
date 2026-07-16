@@ -252,6 +252,37 @@ function showCoursesLoginMessage() {
     }, 1000);
 }
 
+// Add a new category option to the course category dropdown (Admin)
+function addNewCategory(e) {
+    if (e) e.preventDefault();
+
+    const newCat = prompt('Enter new category name:');
+    if (!newCat) return;
+
+    const trimmed = newCat.trim();
+    if (!trimmed) {
+        showToast('Category name cannot be empty', 'error');
+        return;
+    }
+
+    const select = $('#courseCat');
+
+    // Avoid duplicate options (case-insensitive)
+    const exists = select.find('option').filter(function () {
+        return $(this).val().toLowerCase() === trimmed.toLowerCase();
+    }).length > 0;
+
+    if (exists) {
+        select.val(trimmed);
+        showToast('Category already exists — selected it', 'info');
+        return;
+    }
+
+    select.append(`<option value="${trimmed}">${trimmed}</option>`);
+    select.val(trimmed);
+    showToast(`Category "${trimmed}" added`, 'success');
+}
+
 //Save course button(Admin)
 function saveCourse() {
 

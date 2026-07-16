@@ -305,7 +305,10 @@
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
                 <div class="form-group">
-                    <label>Category</label>
+                    <label>
+                        Category
+                        <a href="#" id="addCategoryLink" onclick="addNewCategory(event)" style="float:right; font-weight:normal; font-size:0.8em; color:var(--accent3); text-decoration:none;">+ Add category</a>
+                    </label>
                     <select id="courseCat">
                         <option value="Technology">Technology</option>
                         <option value="Design">Design</option>
@@ -362,7 +365,7 @@
     
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/site.js" asp - append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
