@@ -104,6 +104,13 @@ namespace APLH.Data
                 "SELECT * FROM courses WHERE category = @Category", new { Category = category });
         }
 
+        public async Task<IEnumerable<string>> GetDistinctCategoriesAsync()
+        {
+            using var connection = CreateConnection();
+            return await connection.QueryAsync<string>(
+                "SELECT DISTINCT category FROM courses ORDER BY category");
+        }
+
         public async Task<IEnumerable<Course>> SearchCoursesAsync(string searchTerm)
         {
             using var connection = CreateConnection();

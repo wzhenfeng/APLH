@@ -55,6 +55,7 @@ namespace APLH.Services
         public async Task UpdateCourseAsync(Course course) => await _repository.UpdateCourseAsync(course);
         public async Task DeleteCourseAsync(int id) => await _repository.DeleteCourseAsync(id);
         public async Task<IEnumerable<Course>> SearchCoursesAsync(string search) => await _repository.SearchCoursesAsync(search);
+        public async Task<IEnumerable<string>> GetDistinctCategoriesAsync() => await _repository.GetDistinctCategoriesAsync();
 
         // Enrollment operations
         public async Task<bool> IsUserEnrolledAsync(int userId, int courseId)

@@ -107,6 +107,21 @@ namespace APLH.Controllers
             return Ok(courses);
         }
 
+        [HttpGet("courses/categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var defaults = new[] { "Technology", "Design", "Business", "Science" };
+            var fromDb = await _service.GetDistinctCategoriesAsync();
+
+            var merged = defaults
+                .Concat(fromDb)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(c => c);
+
+            return Ok(merged);
+        }
+
         [HttpGet("courses/{id}")]
         public async Task<IActionResult> GetCourse(int id)
         {

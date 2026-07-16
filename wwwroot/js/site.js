@@ -252,6 +252,33 @@ function showCoursesLoginMessage() {
     }, 1000);
 }
 
+// Populate the course category dropdown from the database
+// (the original 4 defaults + any custom categories currently in use by a course)
+function loadCourseCategories(selectedValue) {
+    return $.ajax({
+        url: '/api/api/courses/categories',
+        type: 'GET'
+    }).done(function (categories) {
+        const select = $('#courseCat');
+        const current = selectedValue || select.val();
+
+        select.empty();
+        (categories || []).forEach(function (cat) {
+            const safe = $('<div>').text(cat).html(); // basic HTML-escape
+            select.append(`<option value="${safe}">${safe}</option>`);
+        });
+
+        if (current && select.find(`option[value="${current}"]`).length) {
+            select.val(current);
+        } else if (select.find('option').length) {
+            select.val(select.find('option').first().val());
+        }
+    }).fail(function () {
+        // If the request fails, leave whatever options are already in the dropdown
+        if (selectedValue) $('#courseCat').val(selectedValue);
+    });
+}
+
 // Open the "Add Category" popup (Admin)
 function openCategoryModal(e) {
     if (e) e.preventDefault();

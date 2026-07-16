@@ -76,13 +76,14 @@
         document.getElementById('courseEditId').value = 0;
         document.getElementById('courseTitle').value = '';
         document.getElementById('courseDesc').value = '';
-        document.getElementById('courseCat').value = 'Technology';
         document.getElementById('courseLevel').value = 'Beginner';
         document.getElementById('coursePrice').value = 0;
         document.getElementById('courseDuration').value = 30;
         document.getElementById('courseEmoji').value = '📚';
 
-        openModal('courseModal');
+        loadCourseCategories('Technology').always(function () {
+            openModal('courseModal');
+        });
     }
 
     function editCourse(id, title, desc, category, level, price, duration, emoji) {
@@ -90,13 +91,14 @@
         document.getElementById('courseEditId').value = id;
         document.getElementById('courseTitle').value = title;
         document.getElementById('courseDesc').value = desc;
-        document.getElementById('courseCat').value = category;
         document.getElementById('courseLevel').value = level;
         document.getElementById('coursePrice').value = price;
         document.getElementById('courseDuration').value = duration;
         document.getElementById('courseEmoji').value = emoji;
 
-        openModal('courseModal');
+        loadCourseCategories(category).always(function () {
+            openModal('courseModal');
+        });
     }
 
     $(document).on('click', '.edit-btn', function () {

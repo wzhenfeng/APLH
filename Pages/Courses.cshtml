@@ -50,12 +50,13 @@
             $('#courseEditId').val('');
             $('#courseTitle').val('');
             $('#courseDesc').val('');
-            $('#courseCat').val('Technology');
             $('#courseLevel').val('Beginner');
             $('#coursePrice').val(0);
             $('#courseDuration').val(8);
             $('#courseEmoji').val('📚');
-            openModal('courseModal');
+            loadCourseCategories('Technology').always(function () {
+                openModal('courseModal');
+            });
         }
     </script>
 }
