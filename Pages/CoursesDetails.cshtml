@@ -284,9 +284,8 @@ else
 
     function loadChapters() {
         return $.ajax({ url: `/api/api/chapters/${currentCourseId}`, type: 'GET' })
-            .then(function (chapters) {
-                allChaptersCache = (chapters || []).sort((a, b) => a.chapterOrder - b.chapterOrder);
-                return allChaptersCache;
+            .done(function (chapters) {
+                allChaptersCache = (chapters || []).slice().sort((a, b) => a.chapterOrder - b.chapterOrder);
             });
     }
 
@@ -315,7 +314,7 @@ else
             loadChapters(),
             $.ajax({ url: `/api/api/quiz/questions?courseId=${currentCourseId}`, type: 'GET' })
         ).done(function (chaptersResult, quizResp) {
-            const chapters = chaptersResult[0] || allChaptersCache;
+            const chapters = allChaptersCache;
             const questions = quizResp[0] || [];
 
             allQuizQuestionsCache = questions;
@@ -596,7 +595,7 @@ else
             loadChapters(),
             $.ajax({ url: `/api/api/materials/${currentCourseId}`, type: 'GET' })
         ).done(function (chaptersResult, materialsResp) {
-            const chapters = chaptersResult[0] || allChaptersCache;
+            const chapters = allChaptersCache;
             allMaterialsCache = materialsResp[0] || [];
 
             $('#materialChapterSelect').html(chapterOptionsHtml(chapters));
