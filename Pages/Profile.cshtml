@@ -52,16 +52,6 @@
                     <div class="course-item">
                         <h4>@course.Title</h4>
                         <p>@course.Description</p>
-
-                        @if (quizScore != null)
-                        {
-                            <p><strong>Quiz Score:</strong> @quizScore.Score / @quizScore.TotalQuestions</p>
-                            <p><strong>Percentage:</strong> @quizScore.Percentage%</p>
-                        }
-                        else
-                        {
-                            <p><strong>Quiz Score:</strong> Not attempted yet</p>
-                        }
                     </div>
                 }
             }
