@@ -8,15 +8,21 @@ using APLH.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Dapper to map snake_case to PascalCase
-SqlMapper.SetTypeMap(
-    typeof(APLH.Models.QuizQuestion),
-    new CustomPropertyTypeMap(
-        typeof(APLH.Models.QuizQuestion),
-        (type, columnName) => type.GetProperties().FirstOrDefault(prop =>
-            prop.Name.Equals(columnName.Replace("_", ""), StringComparison.OrdinalIgnoreCase))
-    )
-);
+// Configure Dapper to map snake_case DB columns to PascalCase C# properties
+// for every model, not just QuizQuestion (previously only QuizQuestion had this,
+// which left QuizScore.UserId etc. always defaulting to 0 and breaking ownership checks).
+foreach (var modelType in typeof(APLH.Models.User).Assembly.GetTypes()
+             .Where(t => t.Namespace == "APLH.Models"))
+{
+    SqlMapper.SetTypeMap(
+        modelType,
+        new CustomPropertyTypeMap(
+            modelType,
+            (type, columnName) => type.GetProperties().FirstOrDefault(prop =>
+                prop.Name.Equals(columnName.Replace("_", ""), StringComparison.OrdinalIgnoreCase))
+        )
+    );
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
