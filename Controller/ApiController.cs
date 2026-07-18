@@ -214,8 +214,56 @@ namespace APLH.Controllers
                 return Unauthorized();
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+
+            if (request.Answers != null && request.Answers.Count > 0)
+            {
+                var answers = request.Answers.Select(a => new QuizAnswer
+                {
+                    QuestionId = a.QuestionId,
+                    SelectedAnswer = a.SelectedAnswer,
+                    IsCorrect = a.IsCorrect
+                });
+
+                var attemptId = await _service.SaveQuizAttemptAsync(userId, request.CourseId, request.Score, request.Total, answers);
+                return Ok(new { success = true, attemptId });
+            }
+
+            // Fallback: no per-question answers supplied, just save the aggregate score.
             await _service.SaveQuizScoreAsync(userId, request.CourseId, request.Score, request.Total);
             return Ok(new { success = true });
+        }
+
+        // Tells the front end whether the current user has already attempted this
+        // course's quiz, so it can offer "Review" vs "Retake" instead of jumping
+        // straight into the quiz.
+        [HttpGet("quiz/attempt/{courseId}")]
+        public async Task<IActionResult> GetLatestQuizAttempt(int courseId)
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+                return Unauthorized();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            var attempt = await _service.GetLatestQuizAttemptAsync(userId, courseId);
+            return Ok(attempt); // null if the user has never attempted this quiz
+        }
+
+        // Question-by-question detail for a past attempt (what they picked vs the
+        // correct answer), used by the "Review My Answers" screen.
+        [HttpGet("quiz/attempt/{attemptId}/review")]
+        public async Task<IActionResult> GetQuizAttemptReview(int attemptId)
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+                return Unauthorized();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+
+            // Make sure the attempt actually belongs to the requesting user.
+            var attempt = await _service.GetQuizScoreByIdAsync(attemptId);
+            if (attempt == null || attempt.UserId != userId)
+                return NotFound();
+
+            var review = await _service.GetQuizAttemptReviewAsync(attemptId);
+            return Ok(new { attempt, questions = review });
         }
 
 
@@ -444,7 +492,20 @@ public async Task<IActionResult> DeleteUser(int id)
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class RegisterRequest { public string Name { get; set; } = string.Empty; public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class EnrollRequest { public int CourseId { get; set; } }
-    public class QuizScoreRequest { public int Score { get; set; } public int Total { get; set; } public int CourseId { get; set; } }
+    public class QuizScoreRequest
+    {
+        public int Score { get; set; }
+        public int Total { get; set; }
+        public int CourseId { get; set; }
+        public List<QuizAnswerRequest>? Answers { get; set; }
+    }
+
+    public class QuizAnswerRequest
+    {
+        public int QuestionId { get; set; }
+        public int SelectedAnswer { get; set; }
+        public bool IsCorrect { get; set; }
+    }
     public class ForgotPasswordRequest { public string Email { get; set; } = string.Empty; }
     public class VerifyOtpRequest { public string Email { get; set; } = string.Empty; public string Otp { get; set; } = string.Empty; }
     public class ResetPasswordRequest { public string Email { get; set; } = string.Empty; public string Otp { get; set; } = string.Empty; public string NewPassword { get; set; } = string.Empty; }

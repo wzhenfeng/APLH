@@ -48,7 +48,7 @@
         {
             <hr class="sidebar-divider" />
             <button class="sidebar-quiz-btn"
-                    onclick="location.href='/Quiz?courseId=@Model.Course.Id'">
+                    onclick="startQuizFlow(@Model.Course.Id)">
                     Quiz
             </button>
         }
@@ -150,7 +150,61 @@
 
 </div>
 
+<!-- Review vs Retake modal (shown only if the student already attempted this quiz) -->
+<div class="modal-overlay" id="quizChoiceOverlay">
+    <div class="modal" style="max-width:420px;text-align:center;">
+        <h2>You've already taken this quiz</h2>
+        <p id="quizChoiceSub" style="color:#888;font-size:14px;margin-top:-10px;margin-bottom:1.5rem;"></p>
+        <div class="modal-actions" style="flex-direction:column;">
+            <button class="qnav-btn primary" style="width:100%;" onclick="reviewPreviousAttempt()">👁 Review My Last Attempt</button>
+            <button class="qnav-btn" style="width:100%;" onclick="retakeQuiz()">↺ Retake Quiz</button>
+            <button class="qnav-btn" style="width:100%;background:transparent;" onclick="closeQuizChoice()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+<script>
+    let pendingQuizCourseId = null;
+
+    function startQuizFlow(courseId) {
+        pendingQuizCourseId = courseId;
+
+        $.ajax({
+            url: `/api/api/quiz/attempt/${courseId}`,
+            type: 'GET',
+            success(attempt) {
+                if (attempt) {
+                    // Previously attempted: let the student choose review vs retake.
+                    const pct = attempt.percentage != null ? Math.round(attempt.percentage) : Math.round((attempt.score / attempt.totalQuestions) * 100);
+                    const date = attempt.quizDate ? new Date(attempt.quizDate).toLocaleDateString() : '';
+                    $('#quizChoiceSub').text(`Last score: ${attempt.score}/${attempt.totalQuestions} (${pct}%)${date ? ' on ' + date : ''}`);
+                    window._lastQuizAttemptId = attempt.id;
+                    $('#quizChoiceOverlay').addClass('open');
+                } else {
+                    // No previous attempt: go straight into the quiz.
+                    location.href = `/Quiz?courseId=${courseId}`;
+                }
+            },
+            error() {
+                // If the check fails for any reason, don't block the student — just start the quiz.
+                location.href = `/Quiz?courseId=${courseId}`;
+            }
+        });
+    }
+
+    function closeQuizChoice() {
+        $('#quizChoiceOverlay').removeClass('open');
+    }
+
+    function retakeQuiz() {
+        location.href = `/Quiz?courseId=${pendingQuizCourseId}`;
+    }
+
+    function reviewPreviousAttempt() {
+        location.href = `/Quiz?courseId=${pendingQuizCourseId}&reviewAttemptId=${window._lastQuizAttemptId}`;
+    }
+</script>
 <script>
     const totalChapters = @totalChapters;
 

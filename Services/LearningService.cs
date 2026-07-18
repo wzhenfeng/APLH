@@ -92,6 +92,30 @@ namespace APLH.Services
             await _repository.SaveQuizScoreAsync(quizScore);
         }
 
+        // Saves the attempt summary + every per-question answer, returns the new attempt id.
+        public async Task<int> SaveQuizAttemptAsync(int userId, int courseId, int score, int total, IEnumerable<QuizAnswer> answers)
+        {
+            var quizScore = new QuizScore
+            {
+                UserId = userId,
+                CourseId = courseId,
+                Score = score,
+                TotalQuestions = total
+            };
+            return await _repository.SaveQuizAttemptAsync(quizScore, answers);
+        }
+
+        // Most recent attempt a user has made for a specific course's quiz, if any.
+        public async Task<QuizScore?> GetLatestQuizAttemptAsync(int userId, int courseId)
+            => await _repository.GetLatestQuizAttemptAsync(userId, courseId);
+
+        public async Task<QuizScore?> GetQuizScoreByIdAsync(int attemptId)
+            => await _repository.GetQuizScoreByIdAsync(attemptId);
+
+        // Question-by-question detail for the "Review My Answers" screen.
+        public async Task<IEnumerable<QuizAnswerReviewItem>> GetQuizAttemptReviewAsync(int attemptId)
+            => await _repository.GetQuizAttemptReviewAsync(attemptId);
+
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _repository.GetUserByEmailAsync(email);

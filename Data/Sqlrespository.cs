@@ -320,12 +320,105 @@ namespace APLH.Data
             });
         }
 
+        // Saves the attempt summary (quiz_scores) plus every per-question answer
+        // (quiz_answers) in one transaction, and returns the new attempt id.
+        public async Task<int> SaveQuizAttemptAsync(QuizScore score, IEnumerable<QuizAnswer> answers)
+        {
+            using var connection = (NpgsqlConnection)CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                var percentage = score.TotalQuestions > 0
+                    ? (decimal)score.Score / score.TotalQuestions * 100
+                    : 0;
+
+                var insertScoreSql = @"INSERT INTO quiz_scores (user_id, course_id, score, total_questions, percentage, quiz_date)
+                                        VALUES (@UserId, @CourseId, @Score, @TotalQuestions, @Percentage, @QuizDate)
+                                        RETURNING id";
+
+                var attemptId = await connection.ExecuteScalarAsync<int>(insertScoreSql, new
+                {
+                    score.UserId,
+                    score.CourseId,
+                    score.Score,
+                    score.TotalQuestions,
+                    Percentage = percentage,
+                    QuizDate = DateTime.Now
+                }, transaction);
+
+                var insertAnswerSql = @"INSERT INTO quiz_answers (quiz_score_id, question_id, selected_answer, is_correct)
+                                         VALUES (@QuizScoreId, @QuestionId, @SelectedAnswer, @IsCorrect)";
+
+                foreach (var answer in answers)
+                {
+                    await connection.ExecuteAsync(insertAnswerSql, new
+                    {
+                        QuizScoreId = attemptId,
+                        answer.QuestionId,
+                        answer.SelectedAnswer,
+                        answer.IsCorrect
+                    }, transaction);
+                }
+
+                transaction.Commit();
+                return attemptId;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<QuizScore>> GetUserQuizScoresAsync(int userId)
         {
             using var connection = CreateConnection();
             return await connection.QueryAsync<QuizScore>(
                 "SELECT * FROM quiz_scores WHERE user_id = @UserId ORDER BY quiz_date DESC",
                 new { UserId = userId });
+        }
+
+        // Most recent attempt a user has made for a specific course's quiz, if any.
+        public async Task<QuizScore?> GetLatestQuizAttemptAsync(int userId, int courseId)
+        {
+            using var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<QuizScore>(
+                @"SELECT * FROM quiz_scores
+                  WHERE user_id = @UserId AND course_id = @CourseId
+                  ORDER BY quiz_date DESC, id DESC
+                  LIMIT 1",
+                new { UserId = userId, CourseId = courseId });
+        }
+
+        public async Task<QuizScore?> GetQuizScoreByIdAsync(int attemptId)
+        {
+            using var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<QuizScore>(
+                "SELECT * FROM quiz_scores WHERE id = @Id", new { Id = attemptId });
+        }
+
+        // Question-by-question detail (question, options, correct answer, what the
+        // student picked) for a past attempt, used by the "Review My Answers" screen.
+        public async Task<IEnumerable<QuizAnswerReviewItem>> GetQuizAttemptReviewAsync(int attemptId)
+        {
+            using var connection = CreateConnection();
+            var sql = @"SELECT qa.question_id      AS question_id,
+                               qq.question,
+                               qq.option_a,
+                               qq.option_b,
+                               qq.option_c,
+                               qq.option_d,
+                               qq.correct_answer    AS correct_answer,
+                               qa.selected_answer   AS selected_answer,
+                               qq.chapter_order      AS chapter_order,
+                               qq.chapter_title       AS chapter_title
+                        FROM quiz_answers qa
+                        INNER JOIN quiz_questions qq ON qq.id = qa.question_id
+                        WHERE qa.quiz_score_id = @AttemptId
+                        ORDER BY qq.chapter_order ASC, qa.id ASC";
+
+            return await connection.QueryAsync<QuizAnswerReviewItem>(sql, new { AttemptId = attemptId });
         }
 
         //Email

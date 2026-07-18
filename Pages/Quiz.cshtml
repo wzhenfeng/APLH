@@ -16,6 +16,7 @@
 <script>
 const urlParams = new URLSearchParams(window.location.search);
 const courseId   = urlParams.get('courseId');
+const reviewAttemptId = urlParams.get('reviewAttemptId');
 const apiUrl     = courseId ? `/api/api/quiz/questions/${courseId}` : '/api/api/quiz/questions';
 
 let chapters      = [];   // [{order, title, questions:[]}]
@@ -25,45 +26,141 @@ let answered      = false;
 let chapterScores = [];   // [{name, score, total}]
 let totalScore    = 0;
 let totalQuestions = 0;
+let submittedAnswers = []; // [{questionId, selectedAnswer, isCorrect}] across the whole attempt
 
 /* ── Boot ── */
-$.ajax({
-    url: apiUrl,
-    type: 'GET',
-    success(data) {
-        if (!data || data.length === 0) {
-            $('#quizRoot').html(`
-                <div class="empty-state">
-                    <div style="font-size:48px;">❓</div>
-                    <p style="margin-top:12px;">No quiz questions available for this course.</p>
-                </div>`);
-            return;
-        }
-
-        // Group into chapters by chapterOrder + chapterTitle
-        const map = new Map();
-        data.forEach(q => {
-            const key = q.chapterOrder ?? 1;
-            if (!map.has(key)) {
-                map.set(key, {
-                    order: key,
-                    title: q.chapterTitle || `Chapter ${key}`,
-                    questions: []
-                });
+if (reviewAttemptId) {
+    bootReviewMode();
+} else {
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        success(data) {
+            if (!data || data.length === 0) {
+                $('#quizRoot').html(`
+                    <div class="empty-state">
+                        <div style="font-size:48px;">❓</div>
+                        <p style="margin-top:12px;">No quiz questions available for this course.</p>
+                    </div>`);
+                return;
             }
-            map.get(key).questions.push(q);
-        });
 
-        chapters = [...map.values()].sort((a, b) => a.order - b.order);
-        totalQuestions = data.length;
+            // Group into chapters by chapterOrder + chapterTitle
+            const map = new Map();
+            data.forEach(q => {
+                const key = q.chapterOrder ?? 1;
+                if (!map.has(key)) {
+                    map.set(key, {
+                        order: key,
+                        title: q.chapterTitle || `Chapter ${key}`,
+                        questions: []
+                    });
+                }
+                map.get(key).questions.push(q);
+            });
 
-        renderShell();
-        renderQuestion();
-    },
-    error() {
-        $('#quizRoot').html(`<div class="empty-state"><p>Failed to load quiz.</p></div>`);
-    }
-});
+            chapters = [...map.values()].sort((a, b) => a.order - b.order);
+            totalQuestions = data.length;
+
+            renderShell();
+            renderQuestion();
+        },
+        error() {
+            $('#quizRoot').html(`<div class="empty-state"><p>Failed to load quiz.</p></div>`);
+        }
+    });
+}
+
+/* ── Review mode: read-only walkthrough of a past attempt ── */
+function bootReviewMode() {
+    $.ajax({
+        url: `/api/api/quiz/attempt/${reviewAttemptId}/review`,
+        type: 'GET',
+        success(data) {
+            if (!data || !data.questions || data.questions.length === 0) {
+                $('#quizRoot').html(`
+                    <div class="empty-state">
+                        <div style="font-size:48px;">❓</div>
+                        <p style="margin-top:12px;">No review data available for this attempt.</p>
+                    </div>`);
+                return;
+            }
+
+            const attempt = data.attempt;
+            const map = new Map();
+            data.questions.forEach(q => {
+                const key = q.chapterOrder ?? 1;
+                if (!map.has(key)) {
+                    map.set(key, { order: key, title: q.chapterTitle || `Chapter ${key}`, questions: [] });
+                }
+                map.get(key).questions.push(q);
+            });
+            const reviewChapters = [...map.values()].sort((a, b) => a.order - b.order);
+            const letters = ['A', 'B', 'C', 'D'];
+
+            const sidebarTabs = reviewChapters.map((ch, i) => `
+                <div class="chapter-tab" id="rtab-${i}">
+                    <div class="tab-dot"></div>
+                    <div class="tab-info">
+                        <div class="tab-name">${ch.title}</div>
+                        <div class="tab-count">${ch.questions.length} question${ch.questions.length !== 1 ? 's' : ''}</div>
+                    </div>
+                </div>`).join('');
+
+            let mainHtml = `
+                <div class="quiz-chapter-header">
+                    <span class="quiz-chapter-badge">Review</span>
+                    <h2 class="quiz-chapter-title">Your Last Attempt</h2>
+                </div>
+                <div class="final-result-card" style="margin-bottom:24px;">
+                    <div class="final-score">${attempt.score}/${attempt.totalQuestions}</div>
+                    <div class="final-sub">Scored ${Math.round(attempt.percentage)}% on ${attempt.quizDate ? new Date(attempt.quizDate).toLocaleDateString() : ''}</div>
+                </div>`;
+
+            reviewChapters.forEach(ch => {
+                mainHtml += `<h3 style="margin:24px 0 12px;">${ch.title}</h3>`;
+                ch.questions.forEach((q, i) => {
+                    const optHtml = q.options.map((opt, oi) => {
+                        let cls = '';
+                        if (oi === q.correctAnswer) cls = 'correct';
+                        else if (oi === q.selectedAnswer && q.selectedAnswer !== q.correctAnswer) cls = 'wrong';
+                        return `<div class="q-option ${cls}" style="cursor:default;">
+                                    <div class="q-option-letter">${letters[oi]}</div>
+                                    ${opt}
+                                </div>`;
+                    }).join('');
+
+                    mainHtml += `
+                        <div class="q-card">
+                            <div class="q-number">Question ${i + 1}</div>
+                            <div class="q-text">${q.question}</div>
+                            <div class="q-options">${optHtml}</div>
+                        </div>`;
+                });
+            });
+
+            mainHtml += `
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;">
+                    <button class="qnav-btn" onclick="location.href='/Quiz?courseId=${courseId}'">↺ Retake Quiz</button>
+                    ${courseId ? `<a href="/Learning?courseId=${courseId}" class="qnav-btn primary">← Back to Course</a>` : ''}
+                </div>`;
+
+            $('#quizRoot').html(`
+                <div class="quiz-layout">
+                    <aside class="quiz-sidebar">
+                        <div class="sidebar-label">Quiz Chapters</div>
+                        ${sidebarTabs}
+                        <hr class="sidebar-divider">
+                        <div class="sidebar-score-box">Final score: <strong>${attempt.score} / ${attempt.totalQuestions}</strong></div>
+                    </aside>
+                    <main class="quiz-main">${mainHtml}</main>
+                </div>`);
+        },
+        error() {
+            $('#quizRoot').html(`<div class="empty-state"><p>Failed to load your past attempt.</p></div>`);
+        }
+    });
+}
 
 /* ── Shell (sidebar + main area) ── */
 function renderShell() {
@@ -161,7 +258,10 @@ function submitAnswer() {
 
     // Store answer on question object
     q._userAnswer = selectedAnswer;
-    if (selectedAnswer === q.correctAnswer) {
+    const isCorrect = selectedAnswer === q.correctAnswer;
+    submittedAnswers.push({ questionId: q.id, selectedAnswer: selectedAnswer, isCorrect: isCorrect });
+
+    if (isCorrect) {
         totalScore++;
         if (!ch._score) ch._score = 0;
         ch._score++;
@@ -273,6 +373,8 @@ function retryChapter() {
     const ch = chapters[chapterIndex];
     ch._score = 0;
     ch._answered = 0;
+    const chQuestionIds = new Set(ch.questions.map(q => q.id));
+    submittedAnswers = submittedAnswers.filter(a => !chQuestionIds.has(a.questionId));
     ch.questions.forEach(q => delete q._userAnswer);
     questionIndex = 0;
     selectedAnswer = null;
@@ -337,6 +439,7 @@ function restartAll() {
     answered = false;
     totalScore = 0;
     chapterScores = [];
+    submittedAnswers = [];
     chapters.forEach(ch => {
         ch._score = 0;
         ch._answered = 0;
@@ -372,7 +475,8 @@ function saveQuizScore() {
             courseId: parseInt(courseId),
             score: totalScore,
             total: totalQuestions,
-            percentage: Math.round((totalScore / totalQuestions) * 100)
+            percentage: Math.round((totalScore / totalQuestions) * 100),
+            answers: submittedAnswers
         })
     });
 }
