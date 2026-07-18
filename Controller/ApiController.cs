@@ -224,8 +224,24 @@ namespace APLH.Controllers
                     IsCorrect = a.IsCorrect
                 });
 
-                var attemptId = await _service.SaveQuizAttemptAsync(userId, request.CourseId, request.Score, request.Total, answers);
-                return Ok(new { success = true, attemptId });
+                try
+                {
+                    var attemptId = await _service.SaveQuizAttemptAsync(userId, request.CourseId, request.Score, request.Total, answers);
+                    return Ok(new { success = true, attemptId });
+                }
+                catch (Exception ex)
+                {
+                    // Most likely cause: the quiz_answers table/migration hasn't been applied yet.
+                    // Don't lose the attempt entirely — save the aggregate score as a fallback,
+                    // but tell the caller detailed review won't be available for this attempt.
+                    await _service.SaveQuizScoreAsync(userId, request.CourseId, request.Score, request.Total);
+                    return Ok(new
+                    {
+                        success = true,
+                        detailedSaveFailed = true,
+                        error = ex.Message
+                    });
+                }
             }
 
             // Fallback: no per-question answers supplied, just save the aggregate score.
@@ -262,8 +278,16 @@ namespace APLH.Controllers
             if (attempt == null || attempt.UserId != userId)
                 return NotFound();
 
-            var review = await _service.GetQuizAttemptReviewAsync(attemptId);
-            return Ok(new { attempt, questions = review });
+            try
+            {
+                var review = await _service.GetQuizAttemptReviewAsync(attemptId);
+                return Ok(new { attempt, questions = review });
+            }
+            catch (Exception ex)
+            {
+                // Most likely cause: the quiz_answers table/migration hasn't been applied yet.
+                return StatusCode(500, new { error = "Could not load answer detail for this attempt.", detail = ex.Message });
+            }
         }
 
 

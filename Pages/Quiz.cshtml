@@ -81,7 +81,10 @@ function bootReviewMode() {
                 $('#quizRoot').html(`
                     <div class="empty-state">
                         <div style="font-size:48px;">❓</div>
-                        <p style="margin-top:12px;">No review data available for this attempt.</p>
+                        <p style="margin-top:12px;">This attempt doesn't have detailed answers saved (it may have been taken before answer tracking was added).</p>
+                        <div style="margin-top:16px;">
+                            <button class="qnav-btn primary" onclick="location.href='/Quiz?courseId=${courseId}'">↺ Retake Quiz</button>
+                        </div>
                     </div>`);
                 return;
             }
@@ -156,8 +159,12 @@ function bootReviewMode() {
                     <main class="quiz-main">${mainHtml}</main>
                 </div>`);
         },
-        error() {
-            $('#quizRoot').html(`<div class="empty-state"><p>Failed to load your past attempt.</p></div>`);
+        error(xhr) {
+            console.error('Failed to load quiz attempt review:', xhr.status, xhr.responseText);
+            const msg = xhr.status === 404
+                ? "This attempt couldn't be found."
+                : "Failed to load your past attempt. The quiz_answers table may not be set up yet — see console for details.";
+            $('#quizRoot').html(`<div class="empty-state"><p>${msg}</p></div>`);
         }
     });
 }
@@ -477,7 +484,17 @@ function saveQuizScore() {
             total: totalQuestions,
             percentage: Math.round((totalScore / totalQuestions) * 100),
             answers: submittedAnswers
-        })
+        }),
+        success(res) {
+            if (res && res.detailedSaveFailed) {
+                console.error('Detailed answer save failed, only the score was saved:', res.error);
+                showToast('Score saved, but detailed review isn\'t available for this attempt.', 'error');
+            }
+        },
+        error(xhr) {
+            console.error('Failed to save quiz result:', xhr.status, xhr.responseText);
+            showToast('Could not save your quiz result. Please check your connection and try again.', 'error');
+        }
     });
 }
 </script>
