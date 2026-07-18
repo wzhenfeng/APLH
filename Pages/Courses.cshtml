@@ -35,10 +35,10 @@
 
         function checkAdminAccess() {
             $.ajax({
-                url: '/api/auth/currentuser',
+                url: '/api/api/auth/currentuser',
                 type: 'GET',
                 success: function(user) {
-                    if (user && user.Role === 'admin') {
+                    if (user && (user.role === 'admin' || user.Role === 'admin')) {
                         $('#addCourseBtn').show();
                     }
                 }
