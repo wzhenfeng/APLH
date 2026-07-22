@@ -10,8 +10,6 @@ namespace APLH.Services
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
 
-        // Brevo's transactional email API. Plain HTTPS (port 443) — not blocked
-        // by hosts (like Render's free tier) that block outbound SMTP ports.
         private const string BrevoApiUrl = "https://api.brevo.com/v3/smtp/email";
 
         public EmailService(IConfiguration configuration, HttpClient httpClient)

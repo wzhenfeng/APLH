@@ -20,7 +20,7 @@ namespace APLH.Models
         public string OptionD { get; set; } = string.Empty;
 
         [Column("correct_answer")]
-        public int CorrectAnswer { get; set; } // 0=A,1=B,2=C,3=D
+        public int CorrectAnswer { get; set; }
 
         [Column("course_id")]
         public int? CourseId { get; set; }

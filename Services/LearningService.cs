@@ -12,7 +12,7 @@ namespace APLH.Services
             _repository = repository;
         }
 
-        // User operations
+
         public async Task<User?> AuthenticateAsync(string email, string password)
         {
             var user = await _repository.GetUserByEmailAsync(email);
@@ -23,7 +23,7 @@ namespace APLH.Services
 
         public async Task<User> RegisterUserAsync(string name, string email, string password)
 {
-    // Check for duplicate email (like signup.php does)
+
     if (await _repository.EmailExistsAsync(email))
         throw new Exception("An account with this email already exists.");
 
@@ -37,7 +37,7 @@ namespace APLH.Services
     {
         Name = name,
         Email = email,
-        Password = BCrypt.Net.BCrypt.HashPassword(password), //change the password to hash for security
+        Password = BCrypt.Net.BCrypt.HashPassword(password),
         Role = "member",
         Joined = DateTime.Now
     };

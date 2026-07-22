@@ -10,7 +10,6 @@
         "dependencies": {
           "BCrypt.Net-Next": "4.0.3",
           "Dapper": "2.1.72",
-          "MailKit": "4.16.0",
           "Microsoft.AspNetCore.Authentication.Google": "8.0.0",
           "Microsoft.Data.SqlClient": "5.2.1",
           "Npgsql": "10.0.2"
@@ -55,30 +54,11 @@
           }
         }
       },
-      "BouncyCastle.Cryptography/2.6.2": {
-        "runtime": {
-          "lib/net6.0/BouncyCastle.Cryptography.dll": {
-            "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.6.2.46322"
-          }
-        }
-      },
       "Dapper/2.1.72": {
         "runtime": {
           "lib/net8.0/Dapper.dll": {
             "assemblyVersion": "2.0.0.0",
             "fileVersion": "2.1.72.10375"
-          }
-        }
-      },
-      "MailKit/4.16.0": {
-        "dependencies": {
-          "MimeKit": "4.16.0"
-        },
-        "runtime": {
-          "lib/net8.0/MailKit.dll": {
-            "assemblyVersion": "4.16.0.0",
-            "fileVersion": "4.16.0.0"
           }
         }
       },
@@ -283,18 +263,6 @@
           }
         }
       },
-      "MimeKit/4.16.0": {
-        "dependencies": {
-          "BouncyCastle.Cryptography": "2.6.2",
-          "System.Security.Cryptography.Pkcs": "8.0.1"
-        },
-        "runtime": {
-          "lib/net8.0/MimeKit.dll": {
-            "assemblyVersion": "4.16.0.0",
-            "fileVersion": "4.16.0.0"
-          }
-        }
-      },
       "Npgsql/10.0.2": {
         "dependencies": {
           "System.Diagnostics.DiagnosticSource": "9.0.11"
@@ -375,22 +343,6 @@
           }
         }
       },
-      "System.Security.Cryptography.Pkcs/8.0.1": {
-        "runtime": {
-          "lib/net8.0/System.Security.Cryptography.Pkcs.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1024.46610"
-          }
-        },
-        "runtimeTargets": {
-          "runtimes/win/lib/net8.0/System.Security.Cryptography.Pkcs.dll": {
-            "rid": "win",
-            "assetType": "runtime",
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1024.46610"
-          }
-        }
-      },
       "System.Security.Cryptography.ProtectedData/8.0.0": {
         "runtime": {
           "lib/net8.0/System.Security.Cryptography.ProtectedData.dll": {
@@ -428,26 +380,12 @@
       "path": "bcrypt.net-next/4.0.3",
       "hashPath": "bcrypt.net-next.4.0.3.nupkg.sha512"
     },
-    "BouncyCastle.Cryptography/2.6.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-7oWOcvnntmMKNzDLsdxAYqApt+AjpRpP2CShjMfIa3umZ42UQMvH0tl1qAliYPNYO6vTdcGMqnRrCPmsfzTI1w==",
-      "path": "bouncycastle.cryptography/2.6.2",
-      "hashPath": "bouncycastle.cryptography.2.6.2.nupkg.sha512"
-    },
     "Dapper/2.1.72": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-ns4mGqQd9a/MhP8m6w556vVlZIa0/MfUu03zrxjZC/jlr1uVCsUac8bkdB+Fs98Llbd56rRSo1eZH5VVmeGZyw==",
       "path": "dapper/2.1.72",
       "hashPath": "dapper.2.1.72.nupkg.sha512"
-    },
-    "MailKit/4.16.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-trJ82DOpAmo8i1jO1vNE+dGn4mPRyeYfy4swRcAGgMJhPoI1Kohf4OFJJf0+YIj4iUxgxPn8W+ht7e7KiYzSjg==",
-      "path": "mailkit/4.16.0",
-      "hashPath": "mailkit.4.16.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authentication.Google/8.0.0": {
       "type": "package",
@@ -540,13 +478,6 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
-    "MimeKit/4.16.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-X0LFxeM4gPRIhODyY/HYS9b+zRZ7y//v59rFzgS6wLxcPuZThnMtNZHtrr0fjLyRRkg3gqJBtvW36XfUzZ7Djw==",
-      "path": "mimekit/4.16.0",
-      "hashPath": "mimekit.4.16.0.nupkg.sha512"
-    },
     "Npgsql/10.0.2": {
       "type": "package",
       "serviceable": true,
@@ -595,13 +526,6 @@
       "sha512": "sha512-4TmlmvGp4kzZomm7J2HJn6IIx0UUrQyhBDyb5O1XiunZlQImXW+B8b7W/sTPcXhSf9rp5NR5aDtQllwbB5elOQ==",
       "path": "system.runtime.caching/8.0.0",
       "hashPath": "system.runtime.caching.8.0.0.nupkg.sha512"
-    },
-    "System.Security.Cryptography.Pkcs/8.0.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-CoCRHFym33aUSf/NtWSVSZa99dkd0Hm7OCZUxORBjRB16LNhIEOf8THPqzIYlvKM0nNDAPTRBa1FxEECrgaxxA==",
-      "path": "system.security.cryptography.pkcs/8.0.1",
-      "hashPath": "system.security.cryptography.pkcs.8.0.1.nupkg.sha512"
     },
     "System.Security.Cryptography.ProtectedData/8.0.0": {
       "type": "package",

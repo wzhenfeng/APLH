@@ -1,5 +1,4 @@
-﻿// Authentication check
-function checkAuth() {
+﻿function checkAuth() {
     $.ajax({
         url: '/api/api/auth/currentuser',
         type: 'GET',
@@ -40,7 +39,6 @@ function updateUIForLoggedOutUser() {
     $('#addCourseBtn').hide();
 }
 
-// Authentication functions
 function handleLogin() {
     const email = $('#loginEmail').val().trim();
     const password = $('#loginPassword').val();
@@ -116,7 +114,7 @@ function logout() {
     });
 }
 
-// Course functions
+
 let activeCategory = 'all';
 
 function loadCourses() {
@@ -191,7 +189,7 @@ function enrollCourse(courseId) {
     });
 }
 
-// Helper functions
+
 function getCategoryColor(cat) {
     const colors = { Technology: '#6bcbff', Design: '#a78bfa', Business: '#ffd93d', Science: '#4ade80' };
     return colors[cat] || '#6bcbff';
@@ -252,8 +250,7 @@ function showCoursesLoginMessage() {
     }, 1000);
 }
 
-// Populate the course category dropdown from the database
-// (the original 4 defaults + any custom categories currently in use by a course)
+
 function loadCourseCategories(selectedValue) {
     return $.ajax({
         url: '/api/api/courses/categories',
@@ -264,7 +261,7 @@ function loadCourseCategories(selectedValue) {
 
         select.empty();
         (categories || []).forEach(function (cat) {
-            const safe = $('<div>').text(cat).html(); // basic HTML-escape
+            const safe = $('<div>').text(cat).html();
             select.append(`<option value="${safe}">${safe}</option>`);
         });
 
@@ -274,12 +271,12 @@ function loadCourseCategories(selectedValue) {
             select.val(select.find('option').first().val());
         }
     }).fail(function () {
-        // If the request fails, leave whatever options are already in the dropdown
+
         if (selectedValue) $('#courseCat').val(selectedValue);
     });
 }
 
-// Open the "Add Category" popup (Admin)
+
 function openCategoryModal(e) {
     if (e) e.preventDefault();
 
@@ -288,11 +285,11 @@ function openCategoryModal(e) {
 
     openModal('categoryModal');
 
-    // Focus the input once the modal is visible
+
     setTimeout(() => $('#newCategoryName').trigger('focus'), 100);
 }
 
-// Confirm/save the new category from the popup and add it to the course category dropdown (Admin)
+
 function confirmAddCategory() {
     const input = $('#newCategoryName');
     const trimmed = (input.val() || '').trim();
@@ -305,7 +302,7 @@ function confirmAddCategory() {
 
     const select = $('#courseCat');
 
-    // Avoid duplicate options (case-insensitive)
+
     const exists = select.find('option').filter(function () {
         return $(this).val().toLowerCase() === trimmed.toLowerCase();
     }).length > 0;
@@ -323,7 +320,6 @@ function confirmAddCategory() {
     showToast(`Category "${trimmed}" added`, 'success');
 }
 
-//Save course button(Admin)
 function saveCourse() {
 
         const course = {
@@ -429,12 +425,12 @@ function saveQuizQuestion() {
     });
 }
 
-//Click on Blank area to close modals
+
 $(document).ready(function () {
 
     $('.modal-overlay').on('click', function (e) {
 
-        // Only close when clicking the overlay itself
+
         if ($(e.target).hasClass('modal-overlay')) {
             $(this).removeClass('open');
         }
@@ -443,13 +439,13 @@ $(document).ready(function () {
 
 });
 
-// Initialize
+
 $(document).ready(function() {
     checkAuth();
     if ($('#coursesGrid').length) loadCourses();
 });
 
-//Funtional for Keyboard Enter key
+
 $(document).on('keypress', function(e) {
 
     if (e.key === 'Enter') {
@@ -467,8 +463,7 @@ $(document).on('keypress', function(e) {
             handleRegister();
             return;
         }
-        // categoryModal is checked before courseModal since it can be
-        // open as a popup on top of courseModal
+
         if (
             $('#categoryModal').hasClass('open') ||
             $('#categoryModal').hasClass('active')
@@ -513,7 +508,7 @@ function handleForgotPassword() {
         success: function (response) {
             btn.prop('disabled', false).text('Send OTP');
             if (response.success) {
-                // store email for subsequent steps
+
                 window._fpEmail = email;
                 closeModal('forgotPasswordModal');
                 $('#otpCode').val('');
@@ -553,7 +548,7 @@ function handleVerifyOtp() {
         success: function (response) {
             btn.prop('disabled', false).text('Verify OTP');
             if (response.success) {
-                // store otp to pass with reset
+
                 window._fpOtp = otp;
                 closeModal('otpModal');
                 $('#resetNewPassword').val('');

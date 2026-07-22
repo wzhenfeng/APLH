@@ -239,7 +239,6 @@ namespace APLH.Data
 
             if (question.Id > 0)
             {
-                // Update existing question in place instead of inserting a duplicate row
                 var updateSql = @"UPDATE quiz_questions SET
                     question = @Question,
                     option_a = @OptionA,
@@ -270,7 +269,6 @@ namespace APLH.Data
                 {
                     return question;
                 }
-                // If no row matched (e.g. stale/invalid id), fall through and insert a new one
             }
 
             var insertSql = @"INSERT INTO quiz_questions (question, option_a, option_b, option_c, option_d, correct_answer, course_id, chapter_order, chapter_title)
@@ -320,8 +318,6 @@ namespace APLH.Data
             });
         }
 
-        // Saves the attempt summary (quiz_scores) plus every per-question answer
-        // (quiz_answers) in one transaction, and returns the new attempt id.
         public async Task<int> SaveQuizAttemptAsync(QuizScore score, IEnumerable<QuizAnswer> answers)
         {
             using var connection = (NpgsqlConnection)CreateConnection();
@@ -379,7 +375,6 @@ namespace APLH.Data
                 new { UserId = userId });
         }
 
-        // Most recent attempt a user has made for a specific course's quiz, if any.
         public async Task<QuizScore?> GetLatestQuizAttemptAsync(int userId, int courseId)
         {
             using var connection = CreateConnection();
@@ -398,8 +393,6 @@ namespace APLH.Data
                 "SELECT * FROM quiz_scores WHERE id = @Id", new { Id = attemptId });
         }
 
-        // Question-by-question detail (question, options, correct answer, what the
-        // student picked) for a past attempt, used by the "Review My Answers" screen.
         public async Task<IEnumerable<QuizAnswerReviewItem>> GetQuizAttemptReviewAsync(int attemptId)
         {
             using var connection = CreateConnection();

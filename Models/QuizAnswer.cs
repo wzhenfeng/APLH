@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APLH.Models
 {
-    // One row per question answered in a single quiz attempt (quiz_scores row).
     public class QuizAnswer
     {
         public int Id { get; set; }
@@ -23,8 +22,7 @@ namespace APLH.Models
         public DateTime CreatedAt { get; set; }
     }
 
-    // Joined view used to render the "Review My Answers" screen:
-    // the question + options + correct answer + what the student picked.
+
     public class QuizAnswerReviewItem
     {
         [Column("question_id")]

@@ -5,7 +5,6 @@
 }
 
 <div id="quizRoot">
-    <!-- Filled by JS -->
     <div class="empty-state">
         <div style="font-size:40px;">⏳</div>
         <p style="margin-top:12px;">Loading quiz...</p>
@@ -19,16 +18,15 @@ const courseId   = urlParams.get('courseId');
 const reviewAttemptId = urlParams.get('reviewAttemptId');
 const apiUrl     = courseId ? `/api/api/quiz/questions/${courseId}` : '/api/api/quiz/questions';
 
-let chapters      = [];   // [{order, title, questions:[]}]
-let chapterIndex  = 0;    // current chapter (0-based)
-let questionIndex = 0;    // question within chapter
+let chapters      = [];
+let chapterIndex  = 0;
+let questionIndex = 0;
 let answered      = false;
-let chapterScores = [];   // [{name, score, total}]
+let chapterScores = [];
 let totalScore    = 0;
 let totalQuestions = 0;
-let submittedAnswers = []; // [{questionId, selectedAnswer, isCorrect}] across the whole attempt
+let submittedAnswers = [];
 
-/* ── Boot ── */
 if (reviewAttemptId) {
     bootReviewMode();
 } else {
@@ -45,7 +43,6 @@ if (reviewAttemptId) {
                 return;
             }
 
-            // Group into chapters by chapterOrder + chapterTitle
             const map = new Map();
             data.forEach(q => {
                 const key = q.chapterOrder ?? 1;
@@ -71,7 +68,6 @@ if (reviewAttemptId) {
     });
 }
 
-/* ── Review mode: read-only walkthrough of a past attempt ── */
 function bootReviewMode() {
     $.ajax({
         url: `/api/api/quiz/attempt/${reviewAttemptId}/review`,
@@ -169,7 +165,6 @@ function bootReviewMode() {
     });
 }
 
-/* ── Shell (sidebar + main area) ── */
 function renderShell() {
     const sidebarTabs = chapters.map((ch, i) => `
         <div class="chapter-tab ${i === 0 ? 'active' : ''}" id="tab-${i}" onclick="jumpToChapter(${i})">
@@ -194,7 +189,6 @@ function renderShell() {
         </div>`);
 }
 
-/* ── Render current question ── */
 function renderQuestion() {
     const ch = chapters[chapterIndex];
     const q  = ch.questions[questionIndex];
@@ -241,7 +235,6 @@ function renderQuestion() {
     updateSidebarScore();
 }
 
-/* ── Answer selection ── */
 let selectedAnswer = null;
 
 function selectAnswer(idx) {
@@ -263,7 +256,6 @@ function submitAnswer() {
     const ch = chapters[chapterIndex];
     const q  = ch.questions[questionIndex];
 
-    // Store answer on question object
     q._userAnswer = selectedAnswer;
     const isCorrect = selectedAnswer === q.correctAnswer;
     submittedAnswers.push({ questionId: q.id, selectedAnswer: selectedAnswer, isCorrect: isCorrect });
@@ -276,7 +268,6 @@ function submitAnswer() {
     if (!ch._answered) ch._answered = 0;
     ch._answered++;
 
-    // Show correct/wrong highlighting
     for (let i = 0; i < 4; i++) {
         if (i === q.correctAnswer) $(`#opt-${i}`).addClass('correct');
         else if (i === selectedAnswer) $(`#opt-${i}`).addClass('wrong');
@@ -284,7 +275,6 @@ function submitAnswer() {
 
     updateSidebarScore();
 
-    // Delay then advance
     setTimeout(advanceQuestion, 900);
 }
 
@@ -308,7 +298,6 @@ function prevQuestion() {
     }
 }
 
-/* ── Chapter result ── */
 function showChapterResult() {
     const ch = chapters[chapterIndex];
     const score = ch._score || 0;
@@ -337,7 +326,6 @@ function showChapterResult() {
         </div>`);
 }
 
-/* ── Chapter review ── */
 function reviewChapter() {
     const ch = chapters[chapterIndex];
     const letters = ['A','B','C','D'];
@@ -375,7 +363,6 @@ function reviewChapter() {
     $('#quizMain').html(html);
 }
 
-/* ── Retry chapter ── */
 function retryChapter() {
     const ch = chapters[chapterIndex];
     ch._score = 0;
@@ -389,7 +376,6 @@ function retryChapter() {
     renderQuestion();
 }
 
-/* ── Next chapter ── */
 function nextChapter() {
     chapterIndex++;
     questionIndex = 0;
@@ -399,7 +385,6 @@ function nextChapter() {
     renderQuestion();
 }
 
-/* ── Jump to chapter from sidebar ── */
 function jumpToChapter(idx) {
     chapterIndex = idx;
     questionIndex = 0;
@@ -409,7 +394,6 @@ function jumpToChapter(idx) {
     renderQuestion();
 }
 
-/* ── Final result ── */
 function showFinalResult() {
     saveQuizScore();
 
@@ -438,7 +422,6 @@ function showFinalResult() {
         </div>`);
 }
 
-/* ── Restart everything ── */
 function restartAll() {
     chapterIndex = 0;
     questionIndex = 0;
@@ -457,7 +440,6 @@ function restartAll() {
     renderQuestion();
 }
 
-/* ── Sidebar helpers ── */
 function updateSidebarActive() {
     $('.chapter-tab').removeClass('active');
     $(`#tab-${chapterIndex}`).addClass('active');
@@ -471,7 +453,6 @@ function updateSidebarScore() {
     $('#sidebarScore').html(`Score so far: <strong>${totalScore} / ${totalQuestions}</strong>`);
 }
 
-/* ── Save score ── */
 function saveQuizScore() {
     if (!courseId) return;
     $.ajax({

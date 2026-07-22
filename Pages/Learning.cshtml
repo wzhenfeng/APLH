@@ -5,7 +5,6 @@
 }
 
 @{
-    // Group materials by chapter
     var chapters = Model.Materials
         .GroupBy(m => new { m.ChapterOrder, m.ChapterTitle })
         .OrderBy(g => g.Key.ChapterOrder)
@@ -175,19 +174,16 @@
             type: 'GET',
             success(attempt) {
                 if (attempt) {
-                    // Previously attempted: let the student choose review vs retake.
                     const pct = attempt.percentage != null ? Math.round(attempt.percentage) : Math.round((attempt.score / attempt.totalQuestions) * 100);
                     const date = attempt.quizDate ? new Date(attempt.quizDate).toLocaleDateString() : '';
                     $('#quizChoiceSub').text(`Last score: ${attempt.score}/${attempt.totalQuestions} (${pct}%)${date ? ' on ' + date : ''}`);
                     window._lastQuizAttemptId = attempt.id;
                     $('#quizChoiceOverlay').addClass('open');
                 } else {
-                    // No previous attempt: go straight into the quiz.
                     location.href = `/Quiz?courseId=${courseId}`;
                 }
             },
             error() {
-                // If the check fails for any reason, don't block the student — just start the quiz.
                 location.href = `/Quiz?courseId=${courseId}`;
             }
         });
@@ -211,22 +207,18 @@
     function goToChapter(num) {
         if (num < 1 || num > totalChapters) return;
 
-        // Hide all chapters
         document.querySelectorAll('.chapter-section').forEach(el => el.style.display = 'none');
 
-        // Show target
         const target = document.getElementById('chapter-' + num);
         if (target) {
             target.style.display = 'block';
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Update sidebar active state
         document.querySelectorAll('.chapter-nav-item').forEach(el => {
             el.classList.toggle('active', parseInt(el.dataset.chapter) === num);
         });
 
-        // Update progress bar
         const pct = Math.round((num / totalChapters) * 100);
         const fill = document.getElementById('progressFill');
         const label = document.getElementById('progressLabel');
@@ -234,7 +226,6 @@
         if (label) label.textContent = 'Chapter ' + num + ' of ' + totalChapters;
     }
 
-    // Init
     goToChapter(1);
 </script>
 }

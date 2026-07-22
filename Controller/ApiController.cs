@@ -58,7 +58,7 @@ namespace APLH.Controllers
                 var user = await _service.RegisterUserAsync(request.Name, request.Email, request.Password);
                 await _service.CreateActivityLogAsync(user.Id, "Registered a new account");
 
-                // Send welcome email — don't let email failure block registration
+
                 try { await _emailService.SendEmailAsync(request.Email, request.Name); } catch { }
 
                 return Ok(new { success = true });
@@ -231,9 +231,6 @@ namespace APLH.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Most likely cause: the quiz_answers table/migration hasn't been applied yet.
-                    // Don't lose the attempt entirely — save the aggregate score as a fallback,
-                    // but tell the caller detailed review won't be available for this attempt.
                     await _service.SaveQuizScoreAsync(userId, request.CourseId, request.Score, request.Total);
                     return Ok(new
                     {
@@ -244,14 +241,10 @@ namespace APLH.Controllers
                 }
             }
 
-            // Fallback: no per-question answers supplied, just save the aggregate score.
             await _service.SaveQuizScoreAsync(userId, request.CourseId, request.Score, request.Total);
             return Ok(new { success = true });
         }
 
-        // Tells the front end whether the current user has already attempted this
-        // course's quiz, so it can offer "Review" vs "Retake" instead of jumping
-        // straight into the quiz.
         [HttpGet("quiz/attempt/{courseId}")]
         public async Task<IActionResult> GetLatestQuizAttempt(int courseId)
         {
@@ -260,11 +253,10 @@ namespace APLH.Controllers
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
             var attempt = await _service.GetLatestQuizAttemptAsync(userId, courseId);
-            return Ok(attempt); // null if the user has never attempted this quiz
+            return Ok(attempt);
         }
 
-        // Question-by-question detail for a past attempt (what they picked vs the
-        // correct answer), used by the "Review My Answers" screen.
+
         [HttpGet("quiz/attempt/{attemptId}/review")]
         public async Task<IActionResult> GetQuizAttemptReview(int attemptId)
         {
@@ -273,7 +265,7 @@ namespace APLH.Controllers
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
 
-            // Make sure the attempt actually belongs to the requesting user.
+
             var attempt = await _service.GetQuizScoreByIdAsync(attemptId);
             if (attempt == null || attempt.UserId != userId)
                 return NotFound();
@@ -285,7 +277,7 @@ namespace APLH.Controllers
             }
             catch (Exception ex)
             {
-                // Most likely cause: the quiz_answers table/migration hasn't been applied yet.
+
                 return StatusCode(500, new { error = "Could not load answer detail for this attempt.", detail = ex.Message });
             }
         }
@@ -451,7 +443,7 @@ public async Task<IActionResult> DeleteUser(int id)
     await _service.DeleteUserAsync(id);
     return Ok(new { success = true });
 }
-        // ── Forgot Password ──────────────────────────────────────────────────────
+
 
         [HttpPost("auth/forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
