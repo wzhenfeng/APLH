@@ -98,7 +98,7 @@
                         {
                             <button class="btn btn-primary"
                                     style="width:100%; padding:14px; font-size:1rem"
-                                    onclick="enrollCourse(@Model.Course.Id)">
+                                    onclick="enrollCourse(@Model.Course.Id, @Model.Course.Price.ToString(System.Globalization.CultureInfo.InvariantCulture))">
 
                                 @(Model.Course.Price == 0 ? "Enroll for Free" : "Enroll Now")
 
@@ -262,7 +262,12 @@ else
     let selectedChapter = null;
     const currentCourseId = @Model.Course.Id;
 
-    function enrollCourse(courseId) {
+    function enrollCourse(courseId, price) {
+        if (price > 0) {
+            location.href = '/Payment?courseId=' + courseId;
+            return;
+        }
+
         $.ajax({
             url: '/api/api/courses/enroll',
             type: 'POST',

@@ -362,9 +362,18 @@ public async Task<IActionResult> GoogleResponse()
 
     var user = await _service.GetUserByEmailAsync(email);
 
+    var isNewUser = false;
+
     if (user == null)
     {
         user = await _service.RegisterGoogleUserAsync(name ?? "Google User", email);
+        isNewUser = true;
+    }
+
+    if (isNewUser)
+    {
+        await _service.CreateActivityLogAsync(user.Id, "Registered a new account");
+        try { await _emailService.SendEmailAsync(user.Email, user.Name); } catch { }
     }
 
     var claims = new List<Claim>
