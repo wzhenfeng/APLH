@@ -17,9 +17,9 @@
   --radius: 16px;
   --radius-sm: 8px;
   --shadow: 0 8px 32px rgba(0,0,0,0.4);
-  --font-display: 'Times New Roman';
-  --font-body: 'Times New Roman';
-  --font-mono: 'Times New Roman';
+  --font-display: 'Poppins', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'Inter', 'Segoe UI', sans-serif;
 }
 
 
