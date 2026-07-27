@@ -102,7 +102,8 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .search-box input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px 10px 40px; color: var(--text); font-family: var(--font-body); font-size: 0.875rem; outline: none; transition: border-color 0.2s; }
 .search-box input:focus { border-color: var(--border2); }
 .search-box::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.875rem; }
-.filter-btn { padding: 10px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text2); font-family: var(--font-body); font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
+.category-filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.filter-btn { padding: 10px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text2); font-family: var(--font-body); font-size: 0.875rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
 .courses-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 .course-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all 0.25s; cursor: pointer; }

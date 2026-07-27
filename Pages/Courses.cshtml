@@ -16,11 +16,9 @@
         <div class="search-box">
             <input type="text" id="courseSearch" placeholder="Search courses..." onkeyup="loadCourses()">
         </div>
-        <button class="filter-btn active" onclick="filterCourses('all', this)">All</button>
-        <button class="filter-btn" onclick="filterCourses('Technology', this)">Tech</button>
-        <button class="filter-btn" onclick="filterCourses('Design', this)">Design</button>
-        <button class="filter-btn" onclick="filterCourses('Business', this)">Business</button>
-        <button class="filter-btn" onclick="filterCourses('Science', this)">Science</button>
+        <div class="category-filters" id="categoryFilters">
+            <button class="filter-btn active" onclick="filterCourses('all', this)">All</button>
+        </div>
         <button class="btn btn-primary btn-sm" id="addCourseBtn" style="display:none; margin-left:auto" onclick="openAddCourseModal()">+ Add Course</button>
     </div>
     <div id="coursesGrid" class="courses-grid"></div>
@@ -29,9 +27,29 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            loadCategoryFilters();
             loadCourses();
             checkAdminAccess();
         });
+
+        function loadCategoryFilters() {
+            $.ajax({
+                url: '/api/api/courses/categories',
+                type: 'GET',
+                success: function(categories) {
+                    const container = $('#categoryFilters');
+                    const buttons = (categories || []).map(cat => {
+                        const safe = $('<div>').text(cat).html();
+                        return `<button class="filter-btn" onclick="filterCourses('${safe.replace(/'/g, "\\'")}', this)">${safe}</button>`;
+                    }).join('');
+                    container.html(`<button class="filter-btn active" onclick="filterCourses('all', this)">All</button>${buttons}`);
+                },
+                error: function() {
+                    // Fall back to just the "All" button if categories fail to load.
+                    $('#categoryFilters').html(`<button class="filter-btn active" onclick="filterCourses('all', this)">All</button>`);
+                }
+            });
+        }
 
         function checkAdminAccess() {
             $.ajax({
