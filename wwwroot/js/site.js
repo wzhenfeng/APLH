@@ -109,7 +109,11 @@ function logout() {
         url: '/api/api/auth/logout',
         type: 'POST',
         success: function() {
-            location.reload();
+            location.href = '/';
+        },
+        error: function() {
+
+            location.href = '/';
         }
     });
 }

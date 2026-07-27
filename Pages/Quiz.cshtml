@@ -17,6 +17,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const courseId   = urlParams.get('courseId');
 const reviewAttemptId = urlParams.get('reviewAttemptId');
 const apiUrl     = courseId ? `/api/api/quiz/questions/${courseId}` : '/api/api/quiz/questions';
+const courseDurationMinutes = @Model.CourseDurationMinutes;
 
 let chapters      = [];
 let chapterIndex  = 0;
@@ -26,6 +27,11 @@ let chapterScores = [];
 let totalScore    = 0;
 let totalQuestions = 0;
 let submittedAnswers = [];
+
+// Timer state: the course's total duration is split evenly across chapters.
+let chapterTimeLimitSeconds = 0;
+let timeRemaining = 0;
+let timerInterval = null;
 
 if (reviewAttemptId) {
     bootReviewMode();
@@ -59,8 +65,14 @@ if (reviewAttemptId) {
             chapters = [...map.values()].sort((a, b) => a.order - b.order);
             totalQuestions = data.length;
 
+            // Split the course's total quiz time evenly across chapters.
+            if (courseDurationMinutes > 0 && chapters.length > 0) {
+                chapterTimeLimitSeconds = Math.floor((courseDurationMinutes * 60) / chapters.length);
+            }
+
             renderShell();
             renderQuestion();
+            startChapterTimer();
         },
         error() {
             $('#quizRoot').html(`<div class="empty-state"><p>Failed to load quiz.</p></div>`);
@@ -206,6 +218,7 @@ function renderQuestion() {
         <div class="quiz-chapter-header">
             <span class="quiz-chapter-badge">Chapter ${ch.order}</span>
             <h2 class="quiz-chapter-title">${ch.title}</h2>
+            ${chapterTimeLimitSeconds > 0 ? `<span class="quiz-timer" id="quizTimer">⏱ --:--</span>` : ''}
         </div>
 
         <div class="quiz-progress-wrap">
@@ -233,9 +246,73 @@ function renderQuestion() {
 
     answered = false;
     updateSidebarScore();
+    updateTimerDisplay();
 }
 
 let selectedAnswer = null;
+
+function startChapterTimer() {
+    stopChapterTimer();
+    if (chapterTimeLimitSeconds <= 0) return; // no course duration set — timer disabled
+
+    timeRemaining = chapterTimeLimitSeconds;
+    updateTimerDisplay();
+
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining <= 0) {
+            stopChapterTimer();
+            handleTimeUp();
+        }
+    }, 1000);
+}
+
+function stopChapterTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function updateTimerDisplay() {
+    const el = document.getElementById('quizTimer');
+    if (!el) return;
+    if (chapterTimeLimitSeconds <= 0) {
+        el.textContent = '';
+        return;
+    }
+    const m = Math.max(0, Math.floor(timeRemaining / 60));
+    const s = Math.max(0, timeRemaining % 60);
+    el.textContent = `⏱ ${m}:${s.toString().padStart(2, '0')}`;
+    el.classList.toggle('low-time', timeRemaining <= 30);
+}
+
+function handleTimeUp() {
+    // If the student had picked an answer for the current question but hadn't
+    // clicked "Next" yet, honor that pick before marking the rest as skipped.
+    const ch = chapters[chapterIndex];
+    const current = ch.questions[questionIndex];
+    if (!answered && current && current._userAnswer === undefined && selectedAnswer !== null) {
+        current._userAnswer = selectedAnswer;
+        const isCorrect = selectedAnswer === current.correctAnswer;
+        submittedAnswers.push({ questionId: current.id, selectedAnswer: selectedAnswer, isCorrect: isCorrect });
+        if (isCorrect) { totalScore++; ch._score = (ch._score || 0) + 1; }
+        ch._answered = (ch._answered || 0) + 1;
+    }
+
+    // Mark every remaining unanswered question left in this chapter as skipped (wrong).
+    for (let i = questionIndex; i < ch.questions.length; i++) {
+        const q = ch.questions[i];
+        if (q._userAnswer === undefined) {
+            q._userAnswer = null;
+            submittedAnswers.push({ questionId: q.id, selectedAnswer: -1, isCorrect: false });
+            ch._answered = (ch._answered || 0) + 1;
+        }
+    }
+    showToast("⏰ Time's up for this chapter!", 'error');
+    showChapterResult();
+}
 
 function selectAnswer(idx) {
     if (answered) return;
@@ -299,6 +376,7 @@ function prevQuestion() {
 }
 
 function showChapterResult() {
+    stopChapterTimer();
     const ch = chapters[chapterIndex];
     const score = ch._score || 0;
     const total = ch.questions.length;
@@ -374,6 +452,7 @@ function retryChapter() {
     selectedAnswer = null;
     answered = false;
     renderQuestion();
+    startChapterTimer();
 }
 
 function nextChapter() {
@@ -383,6 +462,7 @@ function nextChapter() {
     answered = false;
     updateSidebarActive();
     renderQuestion();
+    startChapterTimer();
 }
 
 function jumpToChapter(idx) {
@@ -392,9 +472,11 @@ function jumpToChapter(idx) {
     answered = false;
     updateSidebarActive();
     renderQuestion();
+    startChapterTimer();
 }
 
 function showFinalResult() {
+    stopChapterTimer();
     saveQuizScore();
 
     const pct = Math.round((totalScore / totalQuestions) * 100);
@@ -438,6 +520,7 @@ function restartAll() {
     $('.chapter-tab').removeClass('done');
     updateSidebarActive();
     renderQuestion();
+    startChapterTimer();
 }
 
 function updateSidebarActive() {
