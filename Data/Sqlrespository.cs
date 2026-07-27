@@ -210,6 +210,48 @@ namespace APLH.Data
             return await connection.QueryAsync<Course>(sql, new { UserId = userId });
         }
 
+        // How many distinct chapters a course's learning materials are grouped into —
+        // matches the same grouping Learning.cshtml uses to build its chapter sidebar.
+        public async Task<int> GetCourseMaterialChapterCountAsync(int courseId)
+        {
+            using var connection = CreateConnection();
+            return await connection.ExecuteScalarAsync<int>(
+                "SELECT COUNT(DISTINCT chapter_order) FROM course_materials WHERE course_id = @CourseId",
+                new { CourseId = courseId });
+        }
+
+        // Records that a student has reached a given chapter. Progress only ever
+        // moves forward (re-visiting an earlier chapter won't lower it), and the
+        // enrollment is marked completed once every chapter has been reached.
+        public async Task UpdateEnrollmentProgressAsync(int userId, int courseId, int chapterReached)
+        {
+            var totalChapters = await GetCourseMaterialChapterCountAsync(courseId);
+            if (totalChapters <= 0) return;
+
+            var pct = (int)Math.Round(chapterReached / (double)totalChapters * 100);
+            pct = Math.Clamp(pct, 0, 100);
+
+            using var connection = CreateConnection();
+            var sql = @"UPDATE enrollments
+                        SET progress = GREATEST(progress, @Pct),
+                            completed = (GREATEST(progress, @Pct) >= 100)
+                        WHERE user_id = @UserId AND course_id = @CourseId";
+
+            await connection.ExecuteAsync(sql, new { UserId = userId, CourseId = courseId, Pct = pct });
+        }
+
+        // Progress (0-100) for every course the user is enrolled in — used to draw
+        // a progress bar on each course card in the browsing grid.
+        public async Task<IEnumerable<EnrollmentProgress>> GetUserEnrollmentProgressAsync(int userId)
+        {
+            using var connection = CreateConnection();
+            var sql = @"SELECT course_id AS CourseId, progress AS Progress, completed AS Completed
+                        FROM enrollments
+                        WHERE user_id = @UserId";
+
+            return await connection.QueryAsync<EnrollmentProgress>(sql, new { UserId = userId });
+        }
+
         // ── Quiz operations ──────────────────────────────────────────────────────
 
         public async Task<IEnumerable<QuizQuestion>> GetAllQuizQuestionsAsync()

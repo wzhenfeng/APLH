@@ -152,6 +152,32 @@ namespace APLH.Controllers
             return Ok(new { success = false, message = "Already enrolled" });
         }
 
+        // Called as a student navigates chapters in Learning.cshtml — records how
+        // far they've gotten so a progress bar can be shown on the Courses page.
+        [HttpPost("courses/progress")]
+        public async Task<IActionResult> UpdateCourseProgress([FromBody] CourseProgressRequest request)
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+                return Unauthorized();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            await _service.UpdateEnrollmentProgressAsync(userId, request.CourseId, request.ChapterReached);
+            return Ok(new { success = true });
+        }
+
+        // Progress (0-100) per enrolled course for the current user, used to draw
+        // a progress bar on each card in the Courses browsing grid.
+        [HttpGet("courses/my-progress")]
+        public async Task<IActionResult> GetMyCourseProgress()
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+                return Ok(new List<object>()); // logged-out visitors just see no progress bars
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            var progress = await _service.GetUserEnrollmentProgressAsync(userId);
+            return Ok(progress);
+        }
+
         [HttpPost("courses/save")]
         public async Task<IActionResult> SaveCourse([FromBody] Course course)
         {
@@ -517,6 +543,7 @@ public async Task<IActionResult> DeleteUser(int id)
     public class LoginRequest { public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class RegisterRequest { public string Name { get; set; } = string.Empty; public string Email { get; set; } = string.Empty; public string Password { get; set; } = string.Empty; }
     public class EnrollRequest { public int CourseId { get; set; } }
+    public class CourseProgressRequest { public int CourseId { get; set; } public int ChapterReached { get; set; } }
     public class QuizScoreRequest
     {
         public int Score { get; set; }

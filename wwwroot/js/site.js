@@ -124,25 +124,47 @@ let activeCategory = 'all';
 function loadCourses() {
     const search = $('#courseSearch').val() || '';
     const category = activeCategory;
-    
+
     $.ajax({
         url: '/api/api/courses',
         type: 'GET',
         data: { category: category, search: search },
         success: function(courses) {
-            renderCourses(courses);
+            // Progress bars only apply to logged-in students; failures here
+            // (e.g. not logged in) shouldn't block rendering the course grid.
+            $.ajax({ url: '/api/api/courses/my-progress', type: 'GET' })
+                .done(function(progressList) {
+                    renderCourses(courses, progressList || []);
+                })
+                .fail(function() {
+                    renderCourses(courses, []);
+                });
         }
     });
 }
 
-function renderCourses(courses) {
+function renderCourses(courses, progressList) {
+    progressList = progressList || [];
+    const progressByCourse = {};
+    progressList.forEach(p => { progressByCourse[p.courseId] = p; });
+
     const grid = $('#coursesGrid');
     if (!courses || courses.length === 0) {
         grid.html('<div class="empty-state"><div class="icon">🔍</div><p>No courses found.</p></div>');
         return;
     }
     
-    grid.html(courses.map(c => `
+    grid.html(courses.map(c => {
+        const progress = progressByCourse[c.id];
+        const progressHtml = progress ? `
+                <div class="course-progress-wrap">
+                    <div class="course-progress-bg">
+                        <div class="course-progress-fill" style="width:${progress.progress}%"></div>
+                    </div>
+                    <div class="course-progress-label">${progress.completed ? '✅ Completed' : progress.progress + '% complete'}</div>
+                </div>` : '';
+
+        return `
         <div class="course-card" onclick="viewCourseDetail(${c.id})">
             <div class="course-thumb" style="background:${getCategoryBg(c.category)}">${c.emoji}</div>
             <div class="course-body">
@@ -154,12 +176,14 @@ function renderCourses(courses) {
                     <span>📶 ${c.level}</span>
                     <span>👤 ${(c.enrolled || 0).toLocaleString()} enrolled</span>
                 </div>
+                ${progressHtml}
                 <div class="course-footer">
                     <div class="course-price ${c.price === 0 ? 'free' : ''}">${c.price === 0 ? 'FREE' : 'RM ' + c.price}</div>
                 </div>
             </div>
         </div>
-    `).join(''));
+    `;
+    }).join(''));
 }
 
 function viewCourseDetail(courseId) {

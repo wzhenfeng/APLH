@@ -67,6 +67,12 @@ namespace APLH.Services
         public async Task<IEnumerable<Course>> GetUserEnrolledCoursesAsync(int userId)
             => await _repository.GetUserEnrolledCoursesAsync(userId);
 
+        public async Task UpdateEnrollmentProgressAsync(int userId, int courseId, int chapterReached)
+            => await _repository.UpdateEnrollmentProgressAsync(userId, courseId, chapterReached);
+
+        public async Task<IEnumerable<EnrollmentProgress>> GetUserEnrollmentProgressAsync(int userId)
+            => await _repository.GetUserEnrollmentProgressAsync(userId);
+
         // Quiz operations
         public async Task<IEnumerable<QuizQuestion>> GetAllQuizQuestionsAsync()
             => await _repository.GetAllQuizQuestionsAsync();

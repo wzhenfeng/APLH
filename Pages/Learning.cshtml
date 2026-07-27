@@ -203,6 +203,7 @@
 </script>
 <script>
     const totalChapters = @totalChapters;
+    const currentCourseId = @Model.Course.Id;
 
     function goToChapter(num) {
         if (num < 1 || num > totalChapters) return;
@@ -224,6 +225,20 @@
         const label = document.getElementById('progressLabel');
         if (fill) fill.style.width = pct + '%';
         if (label) label.textContent = 'Chapter ' + num + ' of ' + totalChapters;
+
+        updateChapterProgress(num);
+    }
+
+    function updateChapterProgress(chapterReached) {
+        $.ajax({
+            url: '/api/api/courses/progress',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ courseId: currentCourseId, chapterReached: chapterReached }),
+            error: function(xhr) {
+                console.error('Failed to save course progress:', xhr.status, xhr.responseText);
+            }
+        });
     }
 
     goToChapter(1);

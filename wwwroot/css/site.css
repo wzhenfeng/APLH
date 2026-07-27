@@ -113,6 +113,10 @@ nav { position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-bo
 .course-title { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
 .course-desc { font-size: 0.8125rem; color: var(--text2); line-height: 1.5; margin-bottom: 1rem; }
 .course-meta { display: flex; gap: 12px; font-size: 0.75rem; color: var(--text3); margin-bottom: 1rem; }
+.course-progress-wrap { margin-bottom: 1rem; }
+.course-progress-bg { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.course-progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s; }
+.course-progress-label { font-size: 0.7rem; color: var(--text3); margin-top: 0.35rem; font-weight: 600; }
 .course-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border); }
 .course-price { font-weight: 700; font-size: 1.1rem; }
 .course-price.free { color: var(--green); }
